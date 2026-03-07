@@ -4,9 +4,19 @@ import styles from "../styles/components/LogPanel.module.css";
 
 interface LogPanelProps {
   entries: string[];
+  title?: string;
+  collapsedLabel?: string;
+  expandedLabel?: string;
+  emptyMessage?: string;
 }
 
-export function LogPanel({ entries }: LogPanelProps) {
+export function LogPanel({
+  entries,
+  title = "Technical details",
+  collapsedLabel,
+  expandedLabel,
+  emptyMessage = "(no events)",
+}: LogPanelProps) {
   const { isOpen, toggle } = useCollapsible(false);
   const logRef = useRef<HTMLDivElement>(null);
 
@@ -17,6 +27,9 @@ export function LogPanel({ entries }: LogPanelProps) {
   }, [entries, isOpen]);
 
   const panelId = "pipeline-log-content";
+  const triggerLabel = isOpen
+    ? (expandedLabel ?? title)
+    : (collapsedLabel ?? title);
 
   return (
     <div className={styles.panel}>
@@ -42,20 +55,20 @@ export function LogPanel({ entries }: LogPanelProps) {
             strokeLinejoin="round"
           />
         </svg>
-        Pipeline Log
+        {triggerLabel}
         <span className={styles.count}>({entries.length})</span>
       </button>
       <div
         id={panelId}
         className={`${styles.logWrap} ${isOpen ? styles.logWrapOpen : ""}`}
         role="region"
-        aria-label="Pipeline log"
+        aria-label={title}
       >
         <div ref={logRef} className={styles.log}>
           {entries.length > 0 ? (
             entries.join("\n")
           ) : (
-            <span className={styles.empty}>(no events)</span>
+            <span className={styles.empty}>{emptyMessage}</span>
           )}
         </div>
       </div>

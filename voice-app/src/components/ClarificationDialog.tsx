@@ -42,10 +42,13 @@ export function ClarificationDialog({
   return (
     <GlassCard className={styles.card}>
       <div className={styles.header}>
-        <span className={styles.title}>Clarification Needed</span>
+        <span className={styles.title}>Need one detail</span>
         <span className={styles.round}>Round {round}</span>
       </div>
-      <div className={styles.summary}>{partialSummary}</div>
+      <div className={styles.summary}>
+        Add the missing detail so we can create the mission correctly.
+      </div>
+      <div className={styles.partialSummary}>{partialSummary}</div>
       <ol className={styles.questions}>
         {questions.map((q, i) => (
           <li key={i} className={styles.question}>
@@ -60,7 +63,7 @@ export function ClarificationDialog({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type your answer... (Enter to send, Shift+Enter for new line)"
+          placeholder="Type the missing detail and press Enter to send."
           disabled={disabled}
           rows={3}
         />
@@ -73,7 +76,7 @@ export function ClarificationDialog({
             disabled={disabled}
             type="button"
           >
-            Skip
+            Skip for now
           </button>
         )}
         <button
@@ -81,7 +84,7 @@ export function ClarificationDialog({
           onClick={handleSubmit}
           disabled={disabled || !input.trim()}
         >
-          Send
+          Send detail
         </button>
       </div>
     </GlassCard>

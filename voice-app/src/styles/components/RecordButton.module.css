@@ -2,8 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-md) 0;
+  gap: var(--space-sm);
 }
 
 .buttonOuter {
@@ -13,29 +12,27 @@
   justify-content: center;
 }
 
-/* Pulse rings (recording state) */
 .ring {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: 108px;
+  height: 108px;
   border-radius: 50%;
-  border: 2px solid var(--coral);
-  animation: pulse-ring 2s ease-out infinite;
+  border: 1px solid rgba(255, 124, 90, 0.32);
+  animation: pulse-ring 2.2s ease-out infinite;
   pointer-events: none;
 }
 
 .ring2 {
-  animation-delay: 1s;
+  animation-delay: 1.1s;
 }
 
-/* Main button */
 .button {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
-  border: 1px solid var(--glass-border);
-  background: var(--glass-bg);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   color: var(--text-primary);
@@ -46,7 +43,9 @@
   transition:
     transform var(--transition-fast),
     background var(--transition-fast),
-    border-color var(--transition-fast);
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
 }
 
 @supports not (backdrop-filter: blur(1px)) {
@@ -56,42 +55,42 @@
 }
 
 .button:hover:not(:disabled) {
-  transform: scale(1.05);
-  background: var(--glass-bg-hover);
+  transform: translateY(-2px) scale(1.01);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
 .button:active:not(:disabled) {
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 
 .button:disabled {
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: 0.55;
 }
 
-/* Recording state */
 .recording {
-  background: var(--coral);
-  border-color: var(--coral);
+  background: rgba(255, 124, 90, 0.22);
+  border-color: rgba(255, 124, 90, 0.4);
+  box-shadow: 0 18px 40px rgba(255, 124, 90, 0.12);
 }
 
 .recording:hover:not(:disabled) {
-  background: #d63a52;
+  background: rgba(255, 124, 90, 0.28);
 }
 
-/* Waveform bars (visible during recording) */
 .waveform {
   display: flex;
   align-items: center;
-  gap: 3px;
-  height: 24px;
+  gap: 4px;
+  height: 28px;
 }
 
 .bar {
-  width: 3px;
+  width: 4px;
   height: 100%;
   background: white;
-  border-radius: 2px;
+  border-radius: 999px;
   animation: waveform-bar 0.8s ease-in-out infinite;
 }
 
@@ -101,14 +100,12 @@
 .bar:nth-child(4) { animation-delay: 0.45s; }
 .bar:nth-child(5) { animation-delay: 0.6s; }
 
-/* Reactive bars (driven by mic level, no CSS animation) */
 .barReactive {
   animation: none;
   transition: transform 60ms ease-out;
   transform-origin: center;
 }
 
-/* Processing spinner */
 .spinner {
   width: 24px;
   height: 24px;
@@ -118,26 +115,16 @@
   animation: spinner-arc 0.8s linear infinite;
 }
 
-/* Recording timer */
 .timer {
   font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 500;
-  color: var(--coral);
-  letter-spacing: 0.05em;
+  color: rgba(255, 198, 186, 0.96);
+  letter-spacing: 0.08em;
 }
 
-/* Processing step text */
-.stepText {
-  font-size: 12px;
-  color: var(--text-secondary);
-  font-weight: 500;
-  animation: fade-in 300ms ease both;
-}
-
-/* Idle hint */
 .hint {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-tertiary);
-  font-weight: 400;
+  font-weight: 500;
 }

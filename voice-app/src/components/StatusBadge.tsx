@@ -9,10 +9,10 @@ const LABEL: Record<PipelineStatus, string> = {
   idle: "Ready",
   recording: "Recording",
   processing: "Processing",
-  clarifying: "Clarifying",
-  previewing: "Preview",
-  done: "Done",
-  error: "Error",
+  clarifying: "Need detail",
+  previewing: "Review",
+  done: "Created",
+  error: "Issue",
 };
 
 const PULSING: Set<PipelineStatus> = new Set([

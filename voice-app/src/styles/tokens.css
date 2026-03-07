@@ -28,7 +28,7 @@
   --text-tertiary: rgba(188, 199, 232, 0.42);
 
   /* Font */
-  --font-sans: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+  --font-sans: "Inter", "Avenir Next", "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", "SF Mono", "Cascadia Code", ui-monospace, monospace;
 
   /* Radius */

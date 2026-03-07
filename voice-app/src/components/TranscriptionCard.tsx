@@ -1,43 +1,41 @@
+import type { PipelineStatus } from "../stores/pipelineStore";
 import { GlassCard } from "./GlassCard";
 import styles from "../styles/components/TranscriptionCard.module.css";
 
 interface TranscriptionCardProps {
+  status: PipelineStatus;
   text: string;
 }
 
-const MIC_PLACEHOLDER = (
-  <div className={styles.emptyState}>
-    <svg
-      width="28"
-      height="28"
-      viewBox="0 0 24 24"
-      fill="none"
-      className={styles.emptyIcon}
-    >
-      <path
-        d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-    <span>Press Space to start recording</span>
-  </div>
-);
+function getPlaceholder(status: PipelineStatus): string {
+  switch (status) {
+    case "recording":
+      return "Listening for your objective...";
+    case "previewing":
+      return "Review the capture before sending it.";
+    case "processing":
+      return "Preparing transcript and mission context...";
+    case "clarifying":
+      return "Waiting for one detail before mission creation.";
+    case "done":
+      return "Mission created. Record another when you are ready.";
+    case "error":
+      return "Your last capture stays here so you can retry safely.";
+    case "idle":
+    default:
+      return "Your captured objective will appear here.";
+  }
+}
 
-export function TranscriptionCard({ text }: TranscriptionCardProps) {
+export function TranscriptionCard({ status, text }: TranscriptionCardProps) {
   return (
-    <GlassCard>
-      <div className={styles.label}>Transcription</div>
-      {text ? <div className={styles.text}>{text}</div> : MIC_PLACEHOLDER}
+    <GlassCard className={styles.card}>
+      <div className={styles.label}>Captured objective</div>
+      {text ? (
+        <div className={styles.text}>{text}</div>
+      ) : (
+        <div className={styles.emptyState}>{getPlaceholder(status)}</div>
+      )}
     </GlassCard>
   );
 }

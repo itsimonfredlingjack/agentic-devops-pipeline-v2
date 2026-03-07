@@ -36,17 +36,14 @@ describe("GlassCard", () => {
 
 describe("Header", () => {
   it("should render app title", () => {
-    render(
-      <Header status="idle" wsConnected={false} onSettingsClick={vi.fn()} />,
-    );
-    expect(screen.getByText("Voice Mission Control")).toBeInTheDocument();
+    render(<Header status="idle" onSettingsClick={vi.fn()} />);
+    expect(screen.getByText("Voice Intake")).toBeInTheDocument();
     expect(screen.getByText("SEJFA")).toBeInTheDocument();
   });
 
-  it("should render settings button", () => {
-    render(
-      <Header status="idle" wsConnected={false} onSettingsClick={vi.fn()} />,
-    );
+  it("should render status badge and settings button", () => {
+    render(<Header status="processing" onSettingsClick={vi.fn()} />);
+    expect(screen.getByText("Processing")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Settings" }),
     ).toBeInTheDocument();
@@ -55,32 +52,10 @@ describe("Header", () => {
   it("should call onSettingsClick when settings button is clicked", async () => {
     const onSettingsClick = vi.fn();
     const user = userEvent.setup();
-    render(
-      <Header
-        status="idle"
-        wsConnected={false}
-        onSettingsClick={onSettingsClick}
-      />,
-    );
+    render(<Header status="idle" onSettingsClick={onSettingsClick} />);
 
     await user.click(screen.getByRole("button", { name: "Settings" }));
     expect(onSettingsClick).toHaveBeenCalledOnce();
-  });
-
-  it("should show connected state indicator", () => {
-    const { container } = render(
-      <Header status="idle" wsConnected={true} onSettingsClick={vi.fn()} />,
-    );
-    const dot = container.querySelector("[class*='wsConnected']");
-    expect(dot).toBeInTheDocument();
-  });
-
-  it("should show disconnected state indicator", () => {
-    const { container } = render(
-      <Header status="idle" wsConnected={false} onSettingsClick={vi.fn()} />,
-    );
-    const dot = container.querySelector("[class*='wsDisconnected']");
-    expect(dot).toBeInTheDocument();
   });
 });
 
@@ -90,24 +65,19 @@ describe("StatusBadge", () => {
     expect(screen.getByText("Ready")).toBeInTheDocument();
   });
 
-  it("should render Recording for recording status", () => {
-    render(<StatusBadge status="recording" />);
-    expect(screen.getByText("Recording")).toBeInTheDocument();
+  it("should render Need detail for clarifying status", () => {
+    render(<StatusBadge status="clarifying" />);
+    expect(screen.getByText("Need detail")).toBeInTheDocument();
   });
 
-  it("should render Processing for processing status", () => {
-    render(<StatusBadge status="processing" />);
-    expect(screen.getByText("Processing")).toBeInTheDocument();
-  });
-
-  it("should render Done for done status", () => {
+  it("should render Created for done status", () => {
     render(<StatusBadge status="done" />);
-    expect(screen.getByText("Done")).toBeInTheDocument();
+    expect(screen.getByText("Created")).toBeInTheDocument();
   });
 
-  it("should render Error for error status", () => {
+  it("should render Issue for error status", () => {
     render(<StatusBadge status="error" />);
-    expect(screen.getByText("Error")).toBeInTheDocument();
+    expect(screen.getByText("Issue")).toBeInTheDocument();
   });
 
   it("should have role=status for accessibility", () => {
@@ -118,20 +88,20 @@ describe("StatusBadge", () => {
 
 describe("TranscriptionCard", () => {
   it("should show placeholder when no text", () => {
-    render(<TranscriptionCard text="" />);
+    render(<TranscriptionCard status="idle" text="" />);
     expect(
-      screen.getByText("Press Space to start recording"),
+      screen.getByText("Your captured objective will appear here."),
     ).toBeInTheDocument();
   });
 
   it("should show transcription text when provided", () => {
-    render(<TranscriptionCard text="Hello this is a test" />);
+    render(<TranscriptionCard status="processing" text="Hello this is a test" />);
     expect(screen.getByText("Hello this is a test")).toBeInTheDocument();
   });
 
-  it("should show Transcription label", () => {
-    render(<TranscriptionCard text="" />);
-    expect(screen.getByText("Transcription")).toBeInTheDocument();
+  it("should show captured objective label", () => {
+    render(<TranscriptionCard status="idle" text="" />);
+    expect(screen.getByText("Captured objective")).toBeInTheDocument();
   });
 });
 
@@ -142,20 +112,32 @@ describe("SuccessCard", () => {
     summary: "Fix login bug",
   };
 
-  it("should render Ticket Created title", () => {
-    render(<SuccessCard ticket={ticket} onRecordAnother={vi.fn()} />);
-    expect(screen.getByText("Ticket Created")).toBeInTheDocument();
-  });
-
-  it("should render ticket key and summary", () => {
-    render(<SuccessCard ticket={ticket} onRecordAnother={vi.fn()} />);
-    expect(screen.getByText("DEV-42")).toBeInTheDocument();
+  it("should render mission created copy and summary", () => {
+    render(
+      <SuccessCard
+        ticket={ticket}
+        sessionId="sess-42"
+        monitorConnected={true}
+        loopMonitorUrl="http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42"
+        onRecordAnother={vi.fn()}
+      />,
+    );
+    expect(screen.getByText("Mission created")).toBeInTheDocument();
     expect(screen.getByText("Fix login bug")).toBeInTheDocument();
+    expect(screen.getByText("DEV-42 is ready for the loop.")).toBeInTheDocument();
   });
 
   it("should render ticket link with correct href", () => {
-    render(<SuccessCard ticket={ticket} onRecordAnother={vi.fn()} />);
-    const link = screen.getByRole("link");
+    render(
+      <SuccessCard
+        ticket={ticket}
+        sessionId={null}
+        monitorConnected={false}
+        loopMonitorUrl={null}
+        onRecordAnother={vi.fn()}
+      />,
+    );
+    const link = screen.getByRole("link", { name: "Open ticket" });
     expect(link).toHaveAttribute(
       "href",
       "https://jira.example.com/browse/DEV-42",
@@ -164,12 +146,27 @@ describe("SuccessCard", () => {
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
-  it("should render Record Another button", async () => {
+  it("should call record another action and render loop monitor handoff link", async () => {
     const onRecordAnother = vi.fn();
     const user = userEvent.setup();
-    render(<SuccessCard ticket={ticket} onRecordAnother={onRecordAnother} />);
+    render(
+      <SuccessCard
+        ticket={ticket}
+        sessionId="sess-42"
+        monitorConnected={true}
+        loopMonitorUrl="http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42"
+        onRecordAnother={onRecordAnother}
+      />,
+    );
 
-    await user.click(screen.getByText("Record Another"));
+    expect(
+      screen.getByRole("link", { name: "Open loop monitor" }),
+    ).toHaveAttribute(
+      "href",
+      "http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42",
+    );
+    await user.click(screen.getByRole("button", { name: "Record another" }));
+
     expect(onRecordAnother).toHaveBeenCalledOnce();
   });
 });
@@ -206,10 +203,10 @@ describe("ToastContainer", () => {
 });
 
 describe("LogPanel", () => {
-  it("should render Pipeline Log button", () => {
+  it("should render Technical details button", () => {
     render(<LogPanel entries={[]} />);
     expect(
-      screen.getByRole("button", { name: /Pipeline Log/i }),
+      screen.getByRole("button", { name: /Technical details/i }),
     ).toBeInTheDocument();
   });
 
@@ -220,7 +217,7 @@ describe("LogPanel", () => {
 
   it("should start collapsed (aria-expanded=false)", () => {
     render(<LogPanel entries={[]} />);
-    const button = screen.getByRole("button", { name: /Pipeline Log/i });
+    const button = screen.getByRole("button", { name: /Technical details/i });
     expect(button).toHaveAttribute("aria-expanded", "false");
   });
 
@@ -228,17 +225,17 @@ describe("LogPanel", () => {
     const user = userEvent.setup();
     render(<LogPanel entries={["log entry 1"]} />);
 
-    const button = screen.getByRole("button", { name: /Pipeline Log/i });
+    const button = screen.getByRole("button", { name: /Technical details/i });
     await user.click(button);
     expect(button).toHaveAttribute("aria-expanded", "true");
   });
 
-  it("should show (no events) when empty and open", async () => {
+  it("should show custom empty state when empty and open", async () => {
     const user = userEvent.setup();
-    render(<LogPanel entries={[]} />);
+    render(<LogPanel entries={[]} emptyMessage="No details yet." />);
 
-    await user.click(screen.getByRole("button", { name: /Pipeline Log/i }));
-    expect(screen.getByText("(no events)")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /Technical details/i }));
+    expect(screen.getByText("No details yet.")).toBeInTheDocument();
   });
 });
 
@@ -259,7 +256,6 @@ describe("AppShell", () => {
       </AppShell>,
     );
     const blobs = container.querySelectorAll("[class*='blob']");
-    // 3 blob elements + the blobs container = should have at least 3
     expect(blobs.length).toBeGreaterThanOrEqual(3);
   });
 });

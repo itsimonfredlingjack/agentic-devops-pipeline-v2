@@ -5,9 +5,7 @@ import { AudioPreview } from "../components/AudioPreview";
 
 describe("AudioPreview", () => {
   const sampleRate = 16_000;
-  // 3 seconds of silence (48000 samples at 16kHz)
   const threeSecs = new Array(sampleRate * 3).fill(0);
-  // 1 minute 30 seconds
   const ninetySecSamples = new Array(sampleRate * 90).fill(0);
 
   const defaultProps = {
@@ -16,9 +14,9 @@ describe("AudioPreview", () => {
     onDiscard: vi.fn(),
   };
 
-  it("should render the Recording Preview title", () => {
+  it("should render the review title", () => {
     render(<AudioPreview {...defaultProps} />);
-    expect(screen.getByText("Recording Preview")).toBeInTheDocument();
+    expect(screen.getByText("Review Capture")).toBeInTheDocument();
   });
 
   it("should display formatted duration", () => {
@@ -37,22 +35,22 @@ describe("AudioPreview", () => {
     expect(playBtn).toBeInTheDocument();
   });
 
-  it("should render Send and Discard buttons", () => {
+  it("should render primary and secondary actions", () => {
     render(<AudioPreview {...defaultProps} />);
-    expect(screen.getByText("Send")).toBeInTheDocument();
+    expect(screen.getByText("Create mission")).toBeInTheDocument();
     expect(screen.getByText("Discard")).toBeInTheDocument();
   });
 
-  it("should call onSend when Send button is clicked", async () => {
+  it("should call onSend when primary action is clicked", async () => {
     const onSend = vi.fn();
     const user = userEvent.setup();
     render(<AudioPreview {...defaultProps} onSend={onSend} />);
 
-    await user.click(screen.getByText("Send"));
+    await user.click(screen.getByText("Create mission"));
     expect(onSend).toHaveBeenCalledOnce();
   });
 
-  it("should call onDiscard when Discard button is clicked", async () => {
+  it("should call onDiscard when discard button is clicked", async () => {
     const onDiscard = vi.fn();
     const user = userEvent.setup();
     render(<AudioPreview {...defaultProps} onDiscard={onDiscard} />);
@@ -70,6 +68,6 @@ describe("AudioPreview", () => {
   it("should handle empty samples array", () => {
     render(<AudioPreview {...defaultProps} samples={[]} />);
     expect(screen.getByText("00:00")).toBeInTheDocument();
-    expect(screen.getByText("Recording Preview")).toBeInTheDocument();
+    expect(screen.getByText("Review Capture")).toBeInTheDocument();
   });
 });

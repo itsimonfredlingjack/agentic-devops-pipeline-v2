@@ -4,7 +4,6 @@ import userEvent from "@testing-library/user-event";
 import { usePipelineStore } from "../stores/pipelineStore";
 import { invoke } from "@tauri-apps/api/core";
 
-// Mock the WebSocket module to prevent actual connections during render
 vi.mock("../lib/ws", () => ({
   connectWebSocket: vi.fn(),
   disconnectWebSocket: vi.fn(),
@@ -15,24 +14,22 @@ vi.mock("../lib/monitor", () => ({
   disconnectMonitorSocket: vi.fn(),
 }));
 
-// Mock useMicLevel to avoid Tauri API calls
 vi.mock("../hooks/useMicLevel", () => ({
   useMicLevel: () => [],
 }));
 
-// Mock @tauri-apps/api/core invoke
 vi.mock("@tauri-apps/api/core", () => ({
   invoke: vi.fn(),
 }));
 
 describe("App", () => {
   beforeEach(() => {
-    // Reset store to known state before each test
     usePipelineStore.setState({
       status: "idle",
       appMode: "voice",
       previousAppMode: "voice",
       transcription: "",
+      errorMessage: null,
       log: [],
       serverUrl: "http://localhost:8000",
       monitorUrl: "http://localhost:8100",
@@ -63,64 +60,38 @@ describe("App", () => {
     );
   });
 
-  it("should render the app header", async () => {
-    // Dynamic import to ensure mocks are in place
+  it("should render the intake header", async () => {
     const { default: App } = await import("../App");
     render(<App />);
-    expect(screen.getByText("Voice Mission Control")).toBeInTheDocument();
+    expect(screen.getByText("Voice Intake")).toBeInTheDocument();
   });
 
-  it("should render a mission briefing launch screen", async () => {
+  it("should render the redesigned intake screen", async () => {
     const { default: App } = await import("../App");
     render(<App />);
-    expect(screen.getByText("Mission Briefing")).toBeInTheDocument();
+
+    expect(screen.getByText("Say the objective")).toBeInTheDocument();
     expect(
-      screen.getByText(/Speak the mission and SEJFA will turn it into live work/i),
+      screen.getByText(
+        "Speak naturally. We will capture it and create the mission.",
+      ),
     ).toBeInTheDocument();
+    expect(screen.queryByText("Mission Briefing")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Skip to Command Center" }),
+    ).not.toBeInTheDocument();
   });
 
-  it("should render the record button in idle state", async () => {
+  it("should render the record button and supporting panels in idle state", async () => {
     const { default: App } = await import("../App");
     render(<App />);
+
     expect(
       screen.getByRole("button", { name: "Start recording" }),
     ).toBeInTheDocument();
-  });
-
-  it("should render the transcription card", async () => {
-    const { default: App } = await import("../App");
-    render(<App />);
-    expect(screen.getByText("Transcription")).toBeInTheDocument();
-  });
-
-  it("should show idle hint", async () => {
-    const { default: App } = await import("../App");
-    render(<App />);
-    expect(screen.getByText("Press Space to record")).toBeInTheDocument();
-  });
-
-  it("should render a skip action to the command center on startup", async () => {
-    const { default: App } = await import("../App");
-    render(<App />);
-
+    expect(screen.getByText("Captured objective")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "Skip to Command Center" }),
-    ).toBeInTheDocument();
-  });
-
-  it("should render settings button", async () => {
-    const { default: App } = await import("../App");
-    render(<App />);
-    expect(
-      screen.getByRole("button", { name: "Settings" }),
-    ).toBeInTheDocument();
-  });
-
-  it("should render pipeline log", async () => {
-    const { default: App } = await import("../App");
-    render(<App />);
-    expect(
-      screen.getByRole("button", { name: /Pipeline Log/i }),
+      screen.getByRole("button", { name: /Show technical details/i }),
     ).toBeInTheDocument();
   });
 
@@ -131,9 +102,11 @@ describe("App", () => {
     expect(screen.getByText("Hello from voice")).toBeInTheDocument();
   });
 
-  it("should transition into mission control when status is done with ticket result", async () => {
+  it("should keep success inside the intake surface when status is done with a ticket", async () => {
     usePipelineStore.setState({
       status: "done",
+      latestSessionId: "sess-99",
+      monitorConnected: true,
       ticketResult: {
         key: "DEV-99",
         url: "https://jira.example.com/DEV-99",
@@ -143,29 +116,21 @@ describe("App", () => {
     const { default: App } = await import("../App");
     render(<App />);
 
-    await waitFor(() => {
-      expect(screen.getByText("SEJFA Command Center")).toBeInTheDocument();
-    });
-
-    expect(screen.getAllByText(/DEV-99/).length).toBeGreaterThan(0);
     expect(
-      screen.getByRole("link", { name: "Open Ticket" }),
-    ).toHaveAttribute("href", "https://jira.example.com/DEV-99");
+      screen.getByRole("heading", { name: "Mission created" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Test ticket")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open ticket" })).toHaveAttribute(
+      "href",
+      "https://jira.example.com/DEV-99",
+    );
+    expect(
+      screen.getByRole("link", { name: "Open loop monitor" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Session sess-99")).toBeInTheDocument();
   });
 
-  it("should render the command center when appMode is command_center", async () => {
-    usePipelineStore.setState({
-      appMode: "command_center",
-      previousAppMode: "command_center",
-    });
-    const { default: App } = await import("../App");
-    render(<App />);
-
-    expect(screen.getByText("SEJFA Command Center")).toBeInTheDocument();
-    expect(screen.getAllByText("Awaiting your next objective").length).toBeGreaterThan(0);
-  });
-
-  it("should switch to the command center after a successful send", async () => {
+  it("should keep a successful send in intake and expose compact handoff link", async () => {
     const user = userEvent.setup();
     vi.mocked(invoke).mockResolvedValue({
       ticket_key: "DEV-42",
@@ -184,17 +149,18 @@ describe("App", () => {
     const { default: App } = await import("../App");
     render(<App />);
 
-    await user.click(screen.getByRole("button", { name: "Send" }));
+    await user.click(screen.getByRole("button", { name: "Create mission" }));
 
     await waitFor(() => {
-      expect(screen.getByText("SEJFA Command Center")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Mission created" }),
+      ).toBeInTheDocument();
     });
 
-    expect(screen.getAllByText(/DEV-42/).length).toBeGreaterThan(0);
-    expect(
-      screen.getByRole("link", { name: "Open Ticket" }),
-    ).toHaveAttribute("href", "https://jira.example.com/DEV-42");
-    expect(usePipelineStore.getState().appMode).toBe("command_center");
+    expect(usePipelineStore.getState().appMode).toBe("voice");
     expect(usePipelineStore.getState().latestSessionId).toBe("sess-42");
+    expect(
+      screen.getByRole("link", { name: "Open loop monitor" }),
+    ).toHaveAttribute("href", "http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42");
   });
 });

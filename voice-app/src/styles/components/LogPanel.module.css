@@ -1,6 +1,5 @@
 .panel {
   flex-shrink: 0;
-  margin-top: auto;
 }
 
 .toggle {
@@ -8,22 +7,20 @@
   align-items: center;
   gap: var(--space-sm);
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
+  padding: 0;
   border: none;
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.03);
+  background: transparent;
   color: var(--text-secondary);
   font-family: var(--font-sans);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition:
-    background var(--transition-fast),
-    color var(--transition-fast);
+  transition: color var(--transition-fast);
 }
 
 .toggle:hover {
-  background: rgba(255, 255, 255, 0.06);
   color: var(--text-primary);
 }
 
@@ -40,6 +37,8 @@
   color: var(--text-tertiary);
   font-family: var(--font-mono);
   font-size: 11px;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .logWrap {
@@ -53,15 +52,19 @@
 }
 
 .log {
-  padding: var(--space-sm) var(--space-md);
+  margin-top: var(--space-sm);
+  padding: 14px 16px;
   max-height: 240px;
   overflow-y: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.7;
-  color: var(--green);
+  color: rgba(217, 238, 255, 0.78);
   white-space: pre-wrap;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .empty {

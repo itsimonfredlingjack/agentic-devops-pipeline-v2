@@ -3,7 +3,6 @@ import { invoke } from "@tauri-apps/api/core";
 import { usePipelineStore } from "./stores/pipelineStore";
 import { connectWebSocket, disconnectWebSocket } from "./lib/ws";
 import type { LoopEvent } from "./lib/ws";
-import { deriveMissionState } from "./lib/mission";
 import {
   connectMonitorSocket,
   disconnectMonitorSocket,
@@ -16,15 +15,12 @@ import {
 } from "./lib/monitor";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useMicLevel } from "./hooks/useMicLevel";
-
 import { AppShell } from "./components/AppShell";
 import { Header } from "./components/Header";
 import { ClarificationDialog } from "./components/ClarificationDialog";
 import { AudioPreview } from "./components/AudioPreview";
-import { LogPanel } from "./components/LogPanel";
 import { SettingsDrawer } from "./components/SettingsDrawer";
 import { ToastContainer } from "./components/Toast";
-import { CommandCenterView } from "./components/CommandCenterView";
 import { LaunchSequenceView } from "./components/LaunchSequenceView";
 
 function normalizeUrl(url: string): string {
@@ -33,7 +29,7 @@ function normalizeUrl(url: string): string {
 
 function buildConnectionHelpMessage(serverUrl: string): string {
   const target = normalizeUrl(serverUrl) || "<empty>";
-  return `Cannot reach backend at ${target}. Check Settings -> Server URL and ensure the backend is reachable from this Mac.`;
+  return `Cannot reach backend at ${target}. Check Settings and make sure the backend is reachable from this Mac.`;
 }
 
 function formatRequestError(err: unknown, serverUrl: string): string {
@@ -46,10 +42,39 @@ function formatRequestError(err: unknown, serverUrl: string): string {
   ) {
     return buildConnectionHelpMessage(serverUrl);
   }
+
   return `Request failed: ${raw}`;
 }
 
-async function checkBackendHealth(serverUrl: string): Promise<{ ok: boolean; detail: string }> {
+function defaultMissionError(): string {
+  return "Couldn’t create the mission. Check Details and try again.";
+}
+
+function buildLoopMonitorUrl(
+  monitorUrl: string,
+  sessionId: string | null,
+  ticketKey: string | null,
+): string | null {
+  const base = normalizeUrl(monitorUrl);
+  if (!base) return null;
+
+  try {
+    const url = new URL(base);
+    if (sessionId) {
+      url.searchParams.set("session_id", sessionId);
+    }
+    if (ticketKey) {
+      url.searchParams.set("ticket_key", ticketKey);
+    }
+    return url.toString();
+  } catch {
+    return base;
+  }
+}
+
+async function checkBackendHealth(
+  serverUrl: string,
+): Promise<{ ok: boolean; detail: string }> {
   const base = normalizeUrl(serverUrl);
   if (!base) {
     return { ok: false, detail: "Server URL is empty" };
@@ -65,6 +90,7 @@ async function checkBackendHealth(serverUrl: string): Promise<{ ok: boolean; det
     if (!resp.ok) {
       return { ok: false, detail: `Health check returned HTTP ${resp.status}` };
     }
+
     return { ok: true, detail: "ok" };
   } catch (err) {
     return { ok: false, detail: String(err) };
@@ -75,30 +101,23 @@ async function checkBackendHealth(serverUrl: string): Promise<{ ok: boolean; det
 
 function App() {
   const {
-    appMode,
-    previousAppMode,
     status,
     transcription,
+    errorMessage,
     log,
     serverUrl,
     monitorUrl,
     clarification,
-    commandCenterEvents,
     latestSessionId,
     monitorConnected,
-    activeStage,
-    gates,
-    completion,
-    cost,
-    stuckAlert,
     toasts,
     processingStep,
     pendingSamples,
     ticketResult,
     wsConnected,
-    setAppMode,
     setStatus,
     setTranscription,
+    setErrorMessage,
     appendLog,
     setServerUrl,
     setMonitorUrl,
@@ -117,6 +136,7 @@ function App() {
     setProcessingStep,
     setPendingSamples,
     setTicketResult,
+    resetRunState,
   } = usePipelineStore();
 
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -124,39 +144,29 @@ function App() {
   const monitorUrlRef = useRef(monitorUrl);
   const wasBackendReachableRef = useRef<boolean | null>(null);
   const lastHealthCheckUrlRef = useRef("");
+
   serverUrlRef.current = serverUrl;
   monitorUrlRef.current = monitorUrl;
-  const effectiveAppMode =
-    appMode === "clarification_overlay" ? previousAppMode : appMode;
-  const mission = deriveMissionState({
-    status,
-    ticket: ticketResult,
-    activeStage,
-    completion,
-    stuckAlert,
-  });
 
-  useEffect(() => {
-    if (appMode === "voice" && status === "done" && ticketResult) {
-      setAppMode("command_center");
-    }
-  }, [appMode, status, ticketResult, setAppMode]);
-
-  // Mic level visualization
   const micLevels = useMicLevel(status === "recording");
 
   useEffect(() => {
     connectWebSocket(
       () => serverUrlRef.current,
       appendLog,
-      (s) => {
+      (nextStatus) => {
         const store = usePipelineStore.getState();
-        store.setStatus(s);
+        store.setStatus(nextStatus);
 
-        // Trigger toast on completion/error from WS
-        if (s === "done") {
-          store.addToast("success", "Pipeline completed successfully");
-        } else if (s === "error") {
+        if (nextStatus === "done") {
+          store.setErrorMessage(null);
+          if (!store.ticketResult) {
+            store.addToast("success", "Mission processing completed");
+          }
+        } else if (nextStatus === "error") {
+          if (!store.errorMessage) {
+            store.setErrorMessage(defaultMissionError());
+          }
           store.addToast("error", "Pipeline encountered an error");
         }
       },
@@ -167,8 +177,10 @@ function App() {
         usePipelineStore.getState().setWsConnected(connected);
       },
       (data) => {
-        usePipelineStore.getState().setLatestSessionId(data.session_id);
-        usePipelineStore.getState().setClarification({
+        const store = usePipelineStore.getState();
+        store.setLatestSessionId(data.session_id);
+        store.setErrorMessage(null);
+        store.setClarification({
           sessionId: data.session_id,
           questions: data.questions,
           partialSummary: data.partial_summary,
@@ -204,6 +216,7 @@ function App() {
         });
       },
     );
+
     return () => disconnectWebSocket();
   }, [appendLog]);
 
@@ -343,13 +356,17 @@ function App() {
       const result = await checkBackendHealth(serverUrl);
       if (result.ok) return true;
 
-      const msg = buildConnectionHelpMessage(serverUrl);
+      const message = buildConnectionHelpMessage(serverUrl);
       appendLog(`[client] Backend unavailable while ${operation}: ${result.detail}`);
-      addToast("error", msg);
+      addToast("error", message);
       return false;
     },
     [serverUrl, appendLog, addToast],
   );
+
+  const handleRecordAnother = useCallback(() => {
+    resetRunState();
+  }, [resetRunState]);
 
   const handleToggle = useCallback(async () => {
     if (status === "recording") {
@@ -357,44 +374,49 @@ function App() {
         appendLog("[client] Stopping mic...");
         const samples: number[] = await invoke("stop_mic");
         appendLog(`[client] Captured ${samples.length} samples`);
-
-        // Show preview instead of sending immediately
+        setErrorMessage(null);
         setPendingSamples(samples);
         setStatus("previewing");
       } catch (err) {
+        const message = `Couldn’t finish recording. ${String(err)}`;
         appendLog(`[client] Error: ${err}`);
+        setErrorMessage(message);
         setStatus("error");
-        addToast("error", `Recording failed: ${err}`);
+        addToast("error", message);
       }
-    } else if (status === "idle" || status === "done" || status === "error") {
+      return;
+    }
+
+    if (status === "idle" || status === "done" || status === "error") {
       try {
-        // Reset state for new recording
-        setTicketResult(null);
-        setProcessingStep("");
+        resetRunState();
         appendLog("[client] Starting mic...");
         await invoke("start_mic");
         setStatus("recording");
         appendLog("[client] Recording...");
       } catch (err) {
+        const message = `Couldn’t start recording. ${String(err)}`;
         appendLog(`[client] Error: ${err}`);
+        setErrorMessage(message);
         setStatus("error");
-        addToast("error", `Failed to start recording: ${err}`);
+        addToast("error", message);
       }
     }
   }, [
     status,
     appendLog,
-    setStatus,
+    setErrorMessage,
     setPendingSamples,
+    setStatus,
     addToast,
-    setTicketResult,
-    setProcessingStep,
+    resetRunState,
   ]);
 
   const handleSendAudio = useCallback(async () => {
     if (!pendingSamples) return;
 
     const samples = pendingSamples;
+    setErrorMessage(null);
     setStatus("processing");
     setProcessingStep("Sending audio...");
     appendLog(`[client] Sending ${samples.length} samples...`);
@@ -407,12 +429,10 @@ function App() {
         return;
       }
 
-      setPendingSamples(null);
-
-      const result = await invoke<Record<string, unknown>>(
-        "send_audio",
-        { samples, serverUrl },
-      );
+      const result = await invoke<Record<string, unknown>>("send_audio", {
+        samples,
+        serverUrl,
+      });
 
       const endpointUsed =
         typeof result._endpoint_used === "string"
@@ -433,7 +453,7 @@ function App() {
         const sessionId =
           typeof result.session_id === "string" ? result.session_id : "";
         const questions = Array.isArray(result.questions)
-          ? result.questions.filter((q): q is string => typeof q === "string")
+          ? result.questions.filter((question): question is string => typeof question === "string")
           : [];
         const partialSummary =
           typeof result.partial_summary === "string"
@@ -442,11 +462,14 @@ function App() {
         const round = typeof result.round === "number" ? result.round : 1;
 
         if (!sessionId || questions.length === 0) {
+          const message =
+            "Couldn’t continue this mission. The clarification response was invalid.";
           appendLog(
             `[client] Invalid clarification payload (${endpointUsed}): ${JSON.stringify(result)}`,
           );
+          setErrorMessage(message);
           setStatus("error");
-          addToast("error", "Invalid clarification response from server");
+          addToast("error", message);
           return;
         }
 
@@ -456,6 +479,7 @@ function App() {
           partialSummary,
           round,
         });
+        setPendingSamples(null);
         setLatestSessionId(sessionId);
         appendLog(`[client] Clarification needed (${endpointUsed})`);
         return;
@@ -472,14 +496,15 @@ function App() {
 
       if (ticketKey && ticketUrl) {
         clearClarification();
+        setErrorMessage(null);
         setProcessingStep("");
+        setPendingSamples(null);
         setTicketResult({
           key: ticketKey,
           url: ticketUrl,
           summary: summary || ticketKey,
         });
         setLatestSessionId(sessionId);
-        setAppMode("command_center");
         addCommandCenterEvent({
           id: `voice-success-${ticketKey}`,
           timestamp: new Date().toLocaleTimeString(),
@@ -490,92 +515,116 @@ function App() {
         });
         appendLog(`[client] Ticket created: ${ticketKey} — ${ticketUrl}`);
         setStatus("done");
-        addToast("success", `Ticket ${ticketKey} created`);
+        addToast("success", `Mission created: ${ticketKey}`);
         return;
       }
 
       if (typeof result.text === "string") {
+        const message =
+          "The objective was transcribed, but the mission was not created.";
         appendLog(`[client] Transcription received (${endpointUsed})`);
-        // Don't set "done" here in pipeline mode — wait for WS completion.
-        // In fallback mode (/api/transcribe), this is our completion signal.
-        setStatus("done");
+        setProcessingStep("");
+        setErrorMessage(message);
+        setStatus("error");
+        addToast("error", message);
         return;
       }
 
+      const message =
+        "Couldn’t create the mission. The server returned an unexpected response.";
       appendLog(
         `[client] Unexpected response payload (${endpointUsed}): ${JSON.stringify(result)}`,
       );
+      setErrorMessage(message);
       setStatus("error");
-      addToast("error", "Unexpected server response");
+      addToast("error", message);
     } catch (err) {
+      const message = formatRequestError(err, serverUrl);
       appendLog(`[client] Error: ${err}`);
+      setErrorMessage(message);
       setStatus("error");
-      addToast("error", formatRequestError(err, serverUrl));
+      addToast("error", message);
     }
   }, [
     pendingSamples,
     serverUrl,
     appendLog,
+    setErrorMessage,
     setStatus,
-    setTranscription,
-    setPendingSamples,
     setProcessingStep,
-    addToast,
+    ensureBackendAvailable,
+    setPendingSamples,
+    setTranscription,
     setClarification,
+    setLatestSessionId,
     clearClarification,
     setTicketResult,
-    setLatestSessionId,
-    setAppMode,
     addCommandCenterEvent,
-    ensureBackendAvailable,
+    addToast,
   ]);
 
   const handleDiscardAudio = useCallback(() => {
     setPendingSamples(null);
+    setProcessingStep("");
+    setErrorMessage(null);
     setStatus("idle");
     appendLog("[client] Recording discarded");
     addToast("info", "Recording discarded");
-  }, [setPendingSamples, setStatus, appendLog, addToast]);
+  }, [
+    setPendingSamples,
+    setProcessingStep,
+    setErrorMessage,
+    setStatus,
+    appendLog,
+    addToast,
+  ]);
 
-  const handleClarifySubmit = async (answer: string) => {
-    if (!clarification) return;
+  const handleClarifySubmit = useCallback(
+    async (answer: string) => {
+      if (!clarification) return;
 
-    const backendOk = await ensureBackendAvailable("sending clarification");
-    if (!backendOk) {
-      setStatus("clarifying");
-      return;
-    }
+      const backendOk = await ensureBackendAvailable("sending clarification");
+      if (!backendOk) {
+        setStatus("clarifying");
+        return;
+      }
 
-    appendLog(`[client] Sending clarification: ${answer}`);
-    setStatus("processing");
-    setProcessingStep("Sending clarification...");
+      appendLog(`[client] Sending clarification: ${answer}`);
+      setErrorMessage(null);
+      setStatus("processing");
+      setProcessingStep("Sending clarification...");
 
-    try {
-      const resp = await fetch(`${serverUrl}/api/pipeline/clarify`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          session_id: clarification.sessionId,
-          text: answer,
-        }),
-      });
-
-      const data = await resp.json();
-
-      if (data.status === "clarification_needed") {
-        usePipelineStore.getState().setLatestSessionId(data.session_id);
-        setClarification({
-          sessionId: data.session_id,
-          questions: data.questions,
-          partialSummary: data.partial_summary,
-          round: data.round,
+      try {
+        const resp = await fetch(`${serverUrl}/api/pipeline/clarify`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            session_id: clarification.sessionId,
+            text: answer,
+          }),
         });
-        appendLog(`[client] More clarification needed (round ${data.round})`);
-      } else {
+
+        if (!resp.ok) {
+          throw new Error(`HTTP ${resp.status}`);
+        }
+
+        const data = await resp.json();
+
+        if (data.status === "clarification_needed") {
+          usePipelineStore.getState().setLatestSessionId(data.session_id);
+          setClarification({
+            sessionId: data.session_id,
+            questions: data.questions,
+            partialSummary: data.partial_summary,
+            round: data.round,
+          });
+          appendLog(`[client] More clarification needed (round ${data.round})`);
+          return;
+        }
+
         clearClarification();
         setProcessingStep("");
 
-        // Store ticket result
         if (data.ticket_key && data.ticket_url) {
           setTicketResult({
             key: data.ticket_key,
@@ -585,7 +634,6 @@ function App() {
           setLatestSessionId(
             typeof data.session_id === "string" ? data.session_id : null,
           );
-          setAppMode("command_center");
           addCommandCenterEvent({
             id: `clarify-success-${data.ticket_key}`,
             timestamp: new Date().toLocaleTimeString(),
@@ -597,45 +645,74 @@ function App() {
                 ? `Session ${data.session_id}`
                 : data.summary || data.ticket_key,
           });
+          appendLog(
+            `[client] Ticket created: ${data.ticket_key} — ${data.ticket_url}`,
+          );
+          setStatus("done");
+          addToast("success", `Mission created: ${data.ticket_key}`);
+          return;
         }
 
-        appendLog(
-          `[client] Ticket created: ${data.ticket_key} — ${data.ticket_url}`,
-        );
-        setStatus("done");
-        addToast("success", `Ticket ${data.ticket_key} created`);
+        const message =
+          "Couldn’t create the mission. The clarification response was incomplete.";
+        setErrorMessage(message);
+        setStatus("error");
+        addToast("error", message);
+      } catch (err) {
+        const message = formatRequestError(err, serverUrl);
+        appendLog(`[client] Clarification error: ${err}`);
+        setErrorMessage(message);
+        setStatus("error");
+        addToast("error", message);
       }
-    } catch (err) {
-      appendLog(`[client] Clarification error: ${err}`);
-      setStatus("error");
-      addToast("error", formatRequestError(err, serverUrl));
-    }
-  };
+    },
+    [
+      clarification,
+      ensureBackendAvailable,
+      appendLog,
+      setErrorMessage,
+      setStatus,
+      setProcessingStep,
+      serverUrl,
+      setClarification,
+      clearClarification,
+      setTicketResult,
+      setLatestSessionId,
+      addCommandCenterEvent,
+      addToast,
+    ],
+  );
 
-  const handleClarifySkip = () => {
+  const handleClarifySkip = useCallback(() => {
     clearClarification();
+    setErrorMessage(null);
+    setProcessingStep("");
     setStatus("idle");
     appendLog("[client] Clarification skipped");
     addToast("info", "Clarification skipped");
-  };
+  }, [
+    clearClarification,
+    setErrorMessage,
+    setProcessingStep,
+    setStatus,
+    appendLog,
+    addToast,
+  ]);
 
-  const handleSkipToCommandCenter = () => {
-    setAppMode("command_center");
-    addCommandCenterEvent({
-      id: `system-skip-${Date.now()}`,
-      timestamp: new Date().toLocaleTimeString(),
-      kind: "system",
-      severity: "info",
-      title: "Opened command center",
-      detail: "Manual skip from voice start",
-    });
-  };
+  const handleRetry = useCallback(() => {
+    if (pendingSamples) {
+      void handleSendAudio();
+      return;
+    }
+    handleRecordAnother();
+  }, [pendingSamples, handleSendAudio, handleRecordAnother]);
 
-  const handleBackToVoice = () => {
-    setAppMode("voice");
-  };
+  const loopMonitorUrl = buildLoopMonitorUrl(
+    monitorUrl,
+    latestSessionId,
+    ticketResult?.key ?? null,
+  );
 
-  // Keyboard shortcuts
   useKeyboardShortcuts({
     onToggleRecord: handleToggle,
     onEscape: () => {
@@ -651,61 +728,43 @@ function App() {
     <AppShell>
       <Header
         status={status}
-        wsConnected={wsConnected}
         onSettingsClick={() => setSettingsOpen(true)}
       />
-
-      {effectiveAppMode === "voice" ? (
-        <LaunchSequenceView
-          mission={mission}
-          status={status}
-          processingStep={processingStep}
-          transcription={transcription}
-          micLevels={micLevels}
-          wsConnected={wsConnected}
-          monitorConnected={monitorConnected}
-          onToggleRecord={handleToggle}
-          onSkipToCommandCenter={handleSkipToCommandCenter}
-        >
-          {status === "previewing" && pendingSamples ? (
-            <AudioPreview
-              samples={pendingSamples}
-              onSend={handleSendAudio}
-              onDiscard={handleDiscardAudio}
-            />
-          ) : null}
-        </LaunchSequenceView>
-      ) : (
-        <CommandCenterView
-          ticket={ticketResult}
-          sessionId={latestSessionId}
-          status={status}
-          processingStep={processingStep}
-          wsConnected={wsConnected}
-          monitorConnected={monitorConnected}
-          activeStage={activeStage}
-          gates={gates}
-          events={commandCenterEvents}
-          completion={completion}
-          cost={cost}
-          stuckAlert={stuckAlert}
-          onBackToVoice={handleBackToVoice}
-        />
-      )}
-
-      {/* Clarification dialog */}
-      {clarification && (
-        <ClarificationDialog
-          questions={clarification.questions}
-          partialSummary={clarification.partialSummary}
-          round={clarification.round}
-          disabled={status === "processing"}
-          onSubmit={handleClarifySubmit}
-          onSkip={handleClarifySkip}
-        />
-      )}
-
-      <LogPanel entries={log} />
+      <LaunchSequenceView
+        status={status}
+        processingStep={processingStep}
+        transcription={transcription}
+        ticket={ticketResult}
+        errorMessage={errorMessage}
+        micLevels={micLevels}
+        wsConnected={wsConnected}
+        monitorConnected={monitorConnected}
+        sessionId={latestSessionId}
+        loopMonitorUrl={loopMonitorUrl}
+        detailsEntries={log}
+        onToggleRecord={handleToggle}
+        onRetry={handleRetry}
+        onRecordAnother={handleRecordAnother}
+        onOpenSettings={() => setSettingsOpen(true)}
+      >
+        {status === "previewing" && pendingSamples ? (
+          <AudioPreview
+            samples={pendingSamples}
+            onSend={handleSendAudio}
+            onDiscard={handleDiscardAudio}
+          />
+        ) : null}
+        {clarification ? (
+          <ClarificationDialog
+            questions={clarification.questions}
+            partialSummary={clarification.partialSummary}
+            round={clarification.round}
+            disabled={status === "processing"}
+            onSubmit={handleClarifySubmit}
+            onSkip={handleClarifySkip}
+          />
+        ) : null}
+      </LaunchSequenceView>
 
       <SettingsDrawer
         open={settingsOpen}
@@ -716,7 +775,6 @@ function App() {
         onClose={() => setSettingsOpen(false)}
       />
 
-      {/* Toast overlay */}
       <ToastContainer toasts={toasts} onDismiss={removeToast} />
     </AppShell>
   );

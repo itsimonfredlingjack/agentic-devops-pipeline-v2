@@ -1,103 +1,242 @@
-import type { ReactNode } from "react";
-import type { MissionState } from "../lib/mission";
-import type { PipelineStatus } from "../stores/pipelineStore";
+import { Children, type ReactNode } from "react";
+import type { PipelineStatus, TicketResult } from "../stores/pipelineStore";
 import { GlassCard } from "./GlassCard";
+import { LogPanel } from "./LogPanel";
 import { RecordButton } from "./RecordButton";
+import { SuccessCard } from "./SuccessCard";
 import { TranscriptionCard } from "./TranscriptionCard";
 import styles from "../styles/components/LaunchSequenceView.module.css";
 
 interface LaunchSequenceViewProps {
-  mission: MissionState;
   status: PipelineStatus;
   processingStep: string;
   transcription: string;
+  ticket: TicketResult | null;
+  errorMessage: string | null;
   micLevels: number[];
   wsConnected: boolean;
   monitorConnected: boolean;
+  sessionId: string | null;
+  loopMonitorUrl: string | null;
+  detailsEntries: string[];
   onToggleRecord: () => void;
-  onSkipToCommandCenter: () => void;
+  onRetry: () => void;
+  onRecordAnother: () => void;
+  onOpenSettings: () => void;
   children?: ReactNode;
 }
 
+interface IntakeCopy {
+  eyebrow: string;
+  title: string;
+  description: string;
+}
+
+function getIntakeCopy(
+  status: PipelineStatus,
+  ticket: TicketResult | null,
+  errorMessage: string | null,
+): IntakeCopy {
+  switch (status) {
+    case "recording":
+      return {
+        eyebrow: "Listening",
+        title: "Recording objective",
+        description: "Speak naturally. We will create the mission from your objective.",
+      };
+    case "previewing":
+      return {
+        eyebrow: "Review",
+        title: "Review the capture",
+        description: "Create the mission when it sounds right, or discard and record again.",
+      };
+    case "processing":
+      return {
+        eyebrow: "Working",
+        title: "Creating mission from your objective",
+        description: "Transcribing, extracting intent, and preparing handoff.",
+      };
+    case "clarifying":
+      return {
+        eyebrow: "Needs input",
+        title: "Need one detail",
+        description: "Answer the follow-up so we can create the mission correctly.",
+      };
+    case "done":
+      return {
+        eyebrow: ticket ? "Created" : "Captured",
+        title: ticket ? "Mission created" : "Objective captured",
+        description: ticket
+          ? `${ticket.key} is ready for handoff.`
+          : "The transcript is ready, but the mission was not created.",
+      };
+    case "error":
+      return {
+        eyebrow: "Issue",
+        title: "Couldn’t create the mission",
+        description:
+          errorMessage ??
+          "Review the technical details, then retry or record again.",
+      };
+    case "idle":
+    default:
+      return {
+        eyebrow: "Voice intake",
+        title: "Say the objective",
+        description: "Speak naturally. We will capture it and create the mission.",
+      };
+  }
+}
+
+function getProgressLabel(status: PipelineStatus, processingStep: string): string {
+  if (status === "processing") {
+    return processingStep || "Creating mission from your objective…";
+  }
+  if (status === "recording") {
+    return "Listening…";
+  }
+  if (status === "clarifying") {
+    return "Waiting for one clarification before mission creation.";
+  }
+  if (status === "previewing") {
+    return "Reviewing your capture before mission creation.";
+  }
+  if (status === "done") {
+    return "Mission created successfully.";
+  }
+  if (status === "error") {
+    return "Mission creation is blocked until retry.";
+  }
+  return "Ready for your next objective.";
+}
+
+function buildDetailEntries(
+  entries: string[],
+  wsConnected: boolean,
+  monitorConnected: boolean,
+): string[] {
+  const connectionEntries = [
+    `[intake] Voice backend ${wsConnected ? "connected" : "disconnected"}`,
+    `[intake] Loop view ${monitorConnected ? "connected" : "unavailable"}`,
+  ];
+
+  return [...connectionEntries, ...entries];
+}
+
 export function LaunchSequenceView({
-  mission,
   status,
   processingStep,
   transcription,
+  ticket,
+  errorMessage,
   micLevels,
   wsConnected,
   monitorConnected,
+  sessionId,
+  loopMonitorUrl,
+  detailsEntries,
   onToggleRecord,
-  onSkipToCommandCenter,
+  onRetry,
+  onRecordAnother,
+  onOpenSettings,
   children,
 }: LaunchSequenceViewProps) {
+  const copy = getIntakeCopy(status, ticket, errorMessage);
+  const hasTrayContent = Children.toArray(children).some(Boolean);
+  const showRecorder =
+    status === "idle" ||
+    status === "recording" ||
+    (status === "done" && !ticket);
+  const showReviewTray = hasTrayContent;
+  const showSuccess = status === "done" && ticket;
+  const showErrorActions = status === "error";
+  const progressLabel = getProgressLabel(status, processingStep);
+  const detailEntries = buildDetailEntries(
+    detailsEntries,
+    wsConnected,
+    monitorConnected,
+  );
+
   return (
     <div className={styles.layout}>
-      <GlassCard className={styles.hero}>
-        <div className={styles.heroGrid}>
-          <div className={styles.copyBlock}>
-            <div className={styles.kicker}>Mission Briefing</div>
-            <h1 className={styles.title}>Speak the mission. Watch SEJFA wake up.</h1>
-            <p className={styles.subtitle}>
-              Speak the mission and SEJFA will turn it into live work, then
-              switch you into command center to watch the loop take over.
-            </p>
-
-            <div className={styles.badgeRow}>
-              <span className={styles.badge}>Mission state {mission.label}</span>
-              <span className={styles.badge}>
-                Voice backend {wsConnected ? "online" : "offline"}
-              </span>
-              <span className={styles.badge}>
-                Monitor {monitorConnected ? "online" : "offline"}
-              </span>
-            </div>
+      <GlassCard className={styles.intakeCard}>
+        <div className={styles.cardIntro}>
+          <div>
+            <div className={styles.eyebrow}>{copy.eyebrow}</div>
+            <h1 className={styles.title}>{copy.title}</h1>
           </div>
-
-          <div className={styles.rightColumn}>
-            <GlassCard className={styles.launchCard}>
-              <div className={styles.launchLabel}>Launch Control</div>
-              <div className={styles.launchDetail}>{mission.detail}</div>
-              <RecordButton
-                status={status}
-                processingStep={processingStep}
-                micLevels={micLevels}
-                onClick={onToggleRecord}
-              />
-              <button
-                type="button"
-                className={styles.skipButton}
-                onClick={onSkipToCommandCenter}
-              >
-                Skip to Command Center
-              </button>
-            </GlassCard>
+          <div className={styles.connectionSummary}>
+            <span className={styles.connectionChip}>
+              Intake {wsConnected ? "online" : "offline"}
+            </span>
+            <span className={styles.connectionChip}>
+              Loop {monitorConnected ? "available" : "unavailable"}
+            </span>
           </div>
+        </div>
+
+        <p className={styles.description}>{copy.description}</p>
+
+        {showRecorder ? (
+          <div className={styles.controlBlock}>
+            <RecordButton
+              status={status}
+              micLevels={micLevels}
+              onClick={onToggleRecord}
+            />
+          </div>
+        ) : null}
+
+        {showSuccess && ticket ? (
+          <SuccessCard
+            ticket={ticket}
+            sessionId={sessionId}
+            monitorConnected={monitorConnected}
+            loopMonitorUrl={loopMonitorUrl}
+            onRecordAnother={onRecordAnother}
+          />
+        ) : null}
+
+        {showErrorActions ? (
+          <div className={styles.errorActions}>
+            <button
+              type="button"
+              className={styles.primaryButton}
+              onClick={onRetry}
+            >
+              Try again
+            </button>
+            <button
+              type="button"
+              className={styles.secondaryButton}
+              onClick={onRecordAnother}
+            >
+              Record again
+            </button>
+            <button
+              type="button"
+              className={styles.ghostButton}
+              onClick={onOpenSettings}
+            >
+              Open settings
+            </button>
+          </div>
+        ) : null}
+
+        {showReviewTray ? <div className={styles.reviewTray}>{children}</div> : null}
+
+        <div className={styles.progressStrip}>
+          <div className={styles.stepChip}>{progressLabel}</div>
+          <LogPanel
+            collapsedLabel="Show technical details"
+            expandedLabel="Hide technical details"
+            emptyMessage="No details yet."
+            entries={detailEntries}
+          />
         </div>
       </GlassCard>
 
-      <div className={styles.supportGrid}>
-        <TranscriptionCard text={transcription} />
-
-        <GlassCard className={styles.flowCard}>
-          <div className={styles.flowTitle}>Mission Flow</div>
-          <div className={styles.flowTrack}>
-            <span className={styles.flowStep}>Voice</span>
-            <span className={styles.flowArrow}>→</span>
-            <span className={styles.flowStep}>Ticket</span>
-            <span className={styles.flowArrow}>→</span>
-            <span className={styles.flowStep}>Agent</span>
-            <span className={styles.flowArrow}>→</span>
-            <span className={styles.flowStep}>Verify</span>
-          </div>
-          <p className={styles.flowCaption}>
-            The launch sequence records the objective, creates the Jira mission,
-            and hands you into mission control once the loop is alive.
-          </p>
-        </GlassCard>
-      </div>
-
-      {children}
+      <TranscriptionCard status={status} text={transcription} />
     </div>
   );
 }

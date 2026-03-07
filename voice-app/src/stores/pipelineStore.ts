@@ -103,6 +103,7 @@ interface PipelineState {
   previousAppMode: Exclude<AppMode, "clarification_overlay">;
   status: PipelineStatus;
   transcription: string;
+  errorMessage: string | null;
   log: string[];
   serverUrl: string;
   monitorUrl: string;
@@ -131,6 +132,7 @@ interface PipelineState {
   setAppMode: (mode: Exclude<AppMode, "clarification_overlay">) => void;
   setStatus: (status: PipelineStatus) => void;
   setTranscription: (text: string) => void;
+  setErrorMessage: (message: string | null) => void;
   appendLog: (entry: string) => void;
   setServerUrl: (url: string) => void;
   setMonitorUrl: (url: string) => void;
@@ -152,6 +154,7 @@ interface PipelineState {
   setPendingSamples: (samples: number[] | null) => void;
   setTicketResult: (result: TicketResult | null) => void;
   setWsConnected: (connected: boolean) => void;
+  resetRunState: () => void;
 }
 
 const DEFAULT_SERVER_URL = "http://localhost:8000";
@@ -182,6 +185,7 @@ export const usePipelineStore = create<PipelineState>((set) => ({
   previousAppMode: "voice",
   status: "idle",
   transcription: "",
+  errorMessage: null,
   log: [],
   serverUrl: loadServerUrl(),
   monitorUrl: loadMonitorUrl(),
@@ -207,6 +211,8 @@ export const usePipelineStore = create<PipelineState>((set) => ({
 
   setTranscription: (text) => set({ transcription: text }),
 
+  setErrorMessage: (message) => set({ errorMessage: message }),
+
   appendLog: (entry) =>
     set((state) => ({
       log: [...state.log, `[${new Date().toLocaleTimeString()}] ${entry}`],
@@ -231,21 +237,12 @@ export const usePipelineStore = create<PipelineState>((set) => ({
   },
 
   setClarification: (c) =>
-    set((state) => ({
+    set({
       clarification: c,
       status: "clarifying",
-      previousAppMode:
-        state.appMode === "clarification_overlay"
-          ? state.previousAppMode
-          : state.appMode,
-      appMode: "clarification_overlay",
-    })),
+    }),
 
-  clearClarification: () =>
-    set((state) => ({
-      clarification: null,
-      appMode: state.previousAppMode,
-    })),
+  clearClarification: () => set({ clarification: null }),
 
   addLoopEvent: (event) =>
     set((state) => ({
@@ -300,4 +297,23 @@ export const usePipelineStore = create<PipelineState>((set) => ({
   setTicketResult: (result) => set({ ticketResult: result }),
 
   setWsConnected: (connected) => set({ wsConnected: connected }),
+
+  resetRunState: () =>
+    set({
+      status: "idle",
+      transcription: "",
+      errorMessage: null,
+      clarification: null,
+      loopEvents: [],
+      commandCenterEvents: [],
+      latestSessionId: null,
+      activeStage: null,
+      gates: [],
+      completion: null,
+      cost: null,
+      stuckAlert: null,
+      processingStep: "",
+      pendingSamples: null,
+      ticketResult: null,
+    }),
 }));

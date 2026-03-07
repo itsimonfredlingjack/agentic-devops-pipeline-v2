@@ -9,6 +9,7 @@ function resetStore() {
     previousAppMode: "voice",
     status: "idle",
     transcription: "",
+    errorMessage: null,
     log: [],
     serverUrl: "http://localhost:8000",
     monitorUrl: "http://localhost:8100",
@@ -52,6 +53,11 @@ describe("pipelineStore", () => {
       expect(state.transcription).toBe("");
     });
 
+    it("should start with no error message", () => {
+      const state = usePipelineStore.getState();
+      expect(state.errorMessage).toBeNull();
+    });
+
     it("should start with empty log", () => {
       const state = usePipelineStore.getState();
       expect(state.log).toEqual([]);
@@ -77,7 +83,7 @@ describe("pipelineStore", () => {
       );
     });
 
-    it("should enter clarification overlay and restore the previous mode when cleared", () => {
+    it("should keep current app mode while clarification is active", () => {
       usePipelineStore.getState().setAppMode("command_center");
       usePipelineStore.getState().setClarification({
         sessionId: "sess-123",
@@ -86,9 +92,7 @@ describe("pipelineStore", () => {
         round: 1,
       });
 
-      expect(usePipelineStore.getState().appMode).toBe(
-        "clarification_overlay",
-      );
+      expect(usePipelineStore.getState().appMode).toBe("command_center");
 
       usePipelineStore.getState().clearClarification();
 
@@ -134,6 +138,19 @@ describe("pipelineStore", () => {
       usePipelineStore.getState().setTranscription("Some text");
       usePipelineStore.getState().setTranscription("");
       expect(usePipelineStore.getState().transcription).toBe("");
+    });
+  });
+
+  describe("setErrorMessage", () => {
+    it("should update the error message", () => {
+      usePipelineStore.getState().setErrorMessage("Something broke");
+      expect(usePipelineStore.getState().errorMessage).toBe("Something broke");
+    });
+
+    it("should clear the error message with null", () => {
+      usePipelineStore.getState().setErrorMessage("Something broke");
+      usePipelineStore.getState().setErrorMessage(null);
+      expect(usePipelineStore.getState().errorMessage).toBeNull();
     });
   });
 
@@ -333,6 +350,89 @@ describe("pipelineStore", () => {
       expect(usePipelineStore.getState().wsConnected).toBe(true);
       usePipelineStore.getState().setWsConnected(false);
       expect(usePipelineStore.getState().wsConnected).toBe(false);
+    });
+  });
+
+  describe("resetRunState", () => {
+    it("should clear run-specific mission state", () => {
+      usePipelineStore.getState().setStatus("done");
+      usePipelineStore.getState().setTranscription("Ship it");
+      usePipelineStore.getState().setErrorMessage("Nope");
+      usePipelineStore.getState().setClarification({
+        sessionId: "sess-1",
+        questions: ["Why?"],
+        partialSummary: "Need context",
+        round: 2,
+      });
+      usePipelineStore.getState().addLoopEvent({
+        type: "ticket_queued",
+        issueKey: "DEV-77",
+        timestamp: "12:00:00",
+      });
+      usePipelineStore.getState().addCommandCenterEvent({
+        id: "evt-1",
+        timestamp: "12:00:00",
+        kind: "voice",
+        severity: "success",
+        title: "Ticket created",
+      });
+      usePipelineStore.getState().setLatestSessionId("sess-1");
+      usePipelineStore.getState().setActiveStage("agent");
+      usePipelineStore.getState().upsertGate({
+        nodeId: "agent",
+        status: "running",
+        updatedAt: "2026-03-07T10:00:00Z",
+      });
+      usePipelineStore.getState().setCompletion({
+        session_id: "sess-1",
+        ticket_id: "DEV-77",
+        outcome: "done",
+        pytest_summary: null,
+        ruff_summary: null,
+        git_diff_summary: null,
+        pr_url: null,
+      });
+      usePipelineStore.getState().setCost({
+        session_id: "sess-1",
+        total_usd: 1.25,
+        breakdown: {
+          input_usd: 0.5,
+          output_usd: 0.6,
+          cache_usd: 0.15,
+        },
+      });
+      usePipelineStore.getState().setStuckAlert({
+        pattern: "repeat",
+        repeat_count: 4,
+        tokens_burned: 5000,
+        since: "now",
+      });
+      usePipelineStore.getState().setProcessingStep("Creating ticket...");
+      usePipelineStore.getState().setPendingSamples([1, 2, 3]);
+      usePipelineStore.getState().setTicketResult({
+        key: "DEV-77",
+        url: "https://jira.example.com/DEV-77",
+        summary: "Ship it",
+      });
+
+      usePipelineStore.getState().resetRunState();
+
+      const state = usePipelineStore.getState();
+      expect(state.status).toBe("idle");
+      expect(state.transcription).toBe("");
+      expect(state.errorMessage).toBeNull();
+      expect(state.clarification).toBeNull();
+      expect(state.loopEvents).toEqual([]);
+      expect(state.commandCenterEvents).toEqual([]);
+      expect(state.latestSessionId).toBeNull();
+      expect(state.activeStage).toBeNull();
+      expect(state.gates).toEqual([]);
+      expect(state.completion).toBeNull();
+      expect(state.cost).toBeNull();
+      expect(state.stuckAlert).toBeNull();
+      expect(state.processingStep).toBe("");
+      expect(state.pendingSamples).toBeNull();
+      expect(state.ticketResult).toBeNull();
     });
   });
 

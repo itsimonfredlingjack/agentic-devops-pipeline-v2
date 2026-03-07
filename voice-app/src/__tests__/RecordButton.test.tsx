@@ -7,7 +7,6 @@ import type { PipelineStatus } from "../stores/pipelineStore";
 describe("RecordButton", () => {
   const defaultProps = {
     status: "idle" as PipelineStatus,
-    processingStep: "",
     onClick: vi.fn(),
   };
 
@@ -36,26 +35,9 @@ describe("RecordButton", () => {
   });
 
   it("should show processing state with aria-label", () => {
-    render(
-      <RecordButton
-        {...defaultProps}
-        status="processing"
-        processingStep="Transcribing audio..."
-      />,
-    );
+    render(<RecordButton {...defaultProps} status="processing" />);
     const button = screen.getByRole("button", { name: "Processing audio" });
     expect(button).toBeDisabled();
-  });
-
-  it("should show processing step text", () => {
-    render(
-      <RecordButton
-        {...defaultProps}
-        status="processing"
-        processingStep="Analyzing intent..."
-      />,
-    );
-    expect(screen.getByText("Analyzing intent...")).toBeInTheDocument();
   });
 
   it("should disable button during clarifying state", () => {
@@ -94,9 +76,7 @@ describe("RecordButton", () => {
   it("should not call onClick when disabled", async () => {
     const onClick = vi.fn();
     const user = userEvent.setup();
-    render(
-      <RecordButton {...defaultProps} onClick={onClick} status="processing" />,
-    );
+    render(<RecordButton {...defaultProps} onClick={onClick} status="processing" />);
 
     await user.click(screen.getByRole("button"));
     expect(onClick).not.toHaveBeenCalled();
@@ -110,7 +90,6 @@ describe("RecordButton", () => {
         micLevels={[0.2, 0.5, 0.8, 0.3, 0.6]}
       />,
     );
-    // Should render 5 reactive bars (from micLevels)
     const bars = container.querySelectorAll("[class*='bar']");
     expect(bars.length).toBeGreaterThanOrEqual(5);
   });
@@ -119,7 +98,6 @@ describe("RecordButton", () => {
     const { container } = render(
       <RecordButton {...defaultProps} status="recording" />,
     );
-    // Should render 5 default bars (no micLevels provided)
     const bars = container.querySelectorAll("[class*='bar']");
     expect(bars.length).toBe(5);
   });

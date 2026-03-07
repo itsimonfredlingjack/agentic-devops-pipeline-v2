@@ -4,7 +4,6 @@ import styles from "../styles/components/RecordButton.module.css";
 
 interface RecordButtonProps {
   status: PipelineStatus;
-  processingStep: string;
   micLevels?: number[];
   onClick: () => void;
 }
@@ -53,7 +52,6 @@ function getAriaLabel(status: PipelineStatus): string {
 
 export function RecordButton({
   status,
-  processingStep,
   micLevels,
   onClick,
 }: RecordButtonProps) {
@@ -133,12 +131,6 @@ export function RecordButton({
       {isRecording && (
         <span className={styles.timer}>{formatTime(elapsed)}</span>
       )}
-
-      {/* Processing step text */}
-      {isProcessing && processingStep && (
-        <span className={styles.stepText}>{processingStep}</span>
-      )}
-
       {/* Idle hint */}
       {isIdle && <span className={styles.hint}>Press Space to record</span>}
     </div>

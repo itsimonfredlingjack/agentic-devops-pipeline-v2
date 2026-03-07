@@ -82,7 +82,7 @@ export function SettingsDrawer({
 
         <div className={styles.fieldGroup}>
           <label className={styles.label} htmlFor="server-url">
-            Server URL
+            Voice backend URL
           </label>
           <input
             ref={inputRef}
@@ -97,7 +97,7 @@ export function SettingsDrawer({
 
         <div className={styles.fieldGroup}>
           <label className={styles.label} htmlFor="monitor-url">
-            Monitor URL
+            Loop view URL
           </label>
           <input
             id="monitor-url"

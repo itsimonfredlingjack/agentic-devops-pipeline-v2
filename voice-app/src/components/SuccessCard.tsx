@@ -1,58 +1,63 @@
 import type { TicketResult } from "../stores/pipelineStore";
-import { GlassCard } from "./GlassCard";
 import styles from "../styles/components/SuccessCard.module.css";
 
 interface SuccessCardProps {
   ticket: TicketResult;
+  sessionId: string | null;
+  monitorConnected: boolean;
+  loopMonitorUrl: string | null;
   onRecordAnother: () => void;
 }
 
-export function SuccessCard({ ticket, onRecordAnother }: SuccessCardProps) {
+export function SuccessCard({
+  ticket,
+  sessionId,
+  monitorConnected,
+  loopMonitorUrl,
+  onRecordAnother,
+}: SuccessCardProps) {
   return (
-    <GlassCard className={styles.card}>
-      <div className={styles.checkRow}>
-        <div className={styles.checkCircle}>
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path
-              d="M5 10l3.5 3.5L15 7"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-        <span className={styles.title}>Ticket Created</span>
+    <section className={styles.card} aria-label="Mission created">
+      <div className={styles.summary}>
+        <div className={styles.kicker}>Mission created</div>
+        <div className={styles.headline}>{ticket.summary}</div>
+        <div className={styles.support}>{ticket.key} is ready for the loop.</div>
       </div>
 
-      <a
-        className={styles.ticketLink}
-        href={ticket.url}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <span className={styles.ticketKey}>{ticket.key}</span>
-        <span className={styles.ticketSummary}>{ticket.summary}</span>
-        <svg
-          className={styles.externalIcon}
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
+      <div className={styles.actions}>
+        <a
+          className={styles.primaryAction}
+          href={ticket.url}
+          target="_blank"
+          rel="noopener noreferrer"
         >
-          <path
-            d="M4.5 1.5H2a.5.5 0 00-.5.5v8a.5.5 0 00.5.5h8a.5.5 0 00.5-.5V7.5M7 1.5h3.5V5M5.5 6.5l5-5"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </a>
+          Open ticket
+        </a>
+        {loopMonitorUrl ? (
+          <a
+            className={styles.secondaryAction}
+            href={loopMonitorUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open loop monitor
+          </a>
+        ) : null}
+        <button
+          type="button"
+          className={styles.tertiaryAction}
+          onClick={onRecordAnother}
+        >
+          Record another
+        </button>
+      </div>
 
-      <button className={styles.recordBtn} onClick={onRecordAnother}>
-        Record Another
-      </button>
-    </GlassCard>
+      <div className={styles.metaRow}>
+        <span className={styles.metaItem}>
+          Loop monitor {monitorConnected ? "available" : "unavailable"}
+        </span>
+        {sessionId ? <span className={styles.metaItem}>Session {sessionId}</span> : null}
+      </div>
+    </section>
   );
 }

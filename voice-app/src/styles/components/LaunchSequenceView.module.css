@@ -1,0 +1,177 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -12% -24% 38%;
+  height: 340px;
+  background: radial-gradient(circle, rgba(82, 210, 255, 0.22), transparent 70%);
+  pointer-events: none;
+}
+
+.heroGrid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.85fr);
+  gap: var(--space-lg);
+  align-items: center;
+}
+
+.copyBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.kicker {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--text-secondary);
+}
+
+.title {
+  max-width: 12ch;
+  font-size: clamp(2.2rem, 4vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+}
+
+.subtitle {
+  max-width: 60ch;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.badgeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.badge {
+  border-radius: 999px;
+  padding: 7px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.rightColumn {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.launchCard {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-md);
+  border-color: rgba(82, 210, 255, 0.18);
+}
+
+.launchLabel {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-secondary);
+}
+
+.launchDetail {
+  color: var(--text-primary);
+  font-size: 15px;
+  min-height: 44px;
+}
+
+.skipButton {
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  padding: 11px 16px;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.skipButton:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(82, 210, 255, 0.28);
+}
+
+.supportGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.9fr);
+  gap: var(--space-md);
+}
+
+.flowCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.flowTitle {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-secondary);
+}
+
+.flowTrack {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.flowStep {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.flowArrow {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.flowCaption {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 900px) {
+  .heroGrid,
+  .supportGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .rightColumn {
+    justify-content: stretch;
+  }
+
+  .launchCard {
+    max-width: none;
+  }
+}

@@ -1,0 +1,101 @@
+# Agentic Dev Loop - Docker Compose Configuration
+#
+# Usage:
+#   docker compose up -d        # Start container
+#   docker compose exec agent bash  # Enter container
+#   docker compose down         # Stop container
+
+services:
+  agent:
+    build:
+      context: .
+      target: development
+    container_name: agentic-dev-loop
+    hostname: agentic-agent
+
+    # Mount workspace (read-write for code, read-only for sensitive)
+    volumes:
+      # Main workspace - read-write
+      - .:/workspace:rw
+
+      # Git credentials - read-only
+      - ~/.gitconfig:/home/agent/.gitconfig:ro
+
+      # GitHub CLI auth - read-only
+      - ~/.config/gh:/home/agent/.config/gh:ro
+
+      # SSH keys for git - read-only (optional)
+      # - ~/.ssh:/home/agent/.ssh:ro
+
+      # Prevent access to host Docker socket
+      # (DO NOT mount /var/run/docker.sock)
+
+    # Environment variables (non-sensitive only)
+    environment:
+      - TERM=xterm-256color
+      - EDITOR=cat
+      - GIT_AUTHOR_NAME=Agent
+      - GIT_AUTHOR_EMAIL=agent@localhost
+      - GIT_COMMITTER_NAME=Agent
+      - GIT_COMMITTER_EMAIL=agent@localhost
+      # Jira credentials from .env file
+      - JIRA_URL
+      - JIRA_USERNAME
+      - JIRA_API_TOKEN
+
+    # Load secrets from .env file
+    env_file:
+      - .env
+
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+    # Network restrictions
+    networks:
+      - agent-network
+
+    # No privileged access
+    privileged: false
+
+    # Read-only root filesystem (with exceptions)
+    read_only: false  # Set to true for stricter security
+
+    # Temporary filesystem for runtime
+    tmpfs:
+      - /tmp:size=100M
+      - /home/agent/.cache:size=500M
+
+    # Keep container running
+    tty: true
+    stdin_open: true
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "python3", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  agent-network:
+    driver: bridge
+    internal: false  # Set to true to block internet access
+
+# Named volumes for persistence (optional)
+# volumes:
+#   agent-cache:

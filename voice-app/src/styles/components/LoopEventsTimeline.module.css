@@ -1,0 +1,81 @@
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-sm);
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+  padding-left: 20px;
+}
+
+/* Vertical line */
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: var(--glass-border);
+}
+
+.event {
+  position: relative;
+  padding: 4px 0 12px;
+  animation: fade-in 300ms ease both;
+}
+
+.event:last-child {
+  padding-bottom: 0;
+}
+
+/* Status dot on timeline */
+.dot {
+  position: absolute;
+  left: -20px;
+  top: 7px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-gradient-from);
+}
+
+.dotQueued {
+  background: var(--yellow);
+}
+
+.dotStarted {
+  background: var(--blue);
+}
+
+.dotCompleted {
+  background: var(--green);
+}
+
+.dotFailed {
+  background: var(--red);
+}
+
+.timestamp {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  margin-bottom: 2px;
+}
+
+.text {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.issueKey {
+  color: var(--text-primary);
+  font-weight: 500;
+}

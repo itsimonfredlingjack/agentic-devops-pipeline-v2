@@ -1,0 +1,86 @@
+.shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top center, rgba(82, 210, 255, 0.1), transparent 34%),
+    radial-gradient(circle at 78% 18%, rgba(255, 124, 90, 0.08), transparent 22%),
+    linear-gradient(
+      180deg,
+      var(--bg-gradient-from) 0%,
+      var(--bg-gradient-mid) 45%,
+      var(--bg-gradient-to) 100%
+    );
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding: var(--space-md);
+  gap: var(--space-md);
+}
+
+.shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--bg-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--bg-grid) 1px, transparent 1px);
+  background-size: 72px 72px;
+  opacity: 0.16;
+  mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.8), transparent 92%);
+  pointer-events: none;
+}
+
+/* ── Animated background blobs ── */
+.blobs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(96px);
+  opacity: 0.12;
+  animation: blob-drift 20s ease-in-out infinite;
+}
+
+.blob1 {
+  width: 300px;
+  height: 300px;
+  background: var(--coral);
+  top: -60px;
+  right: -40px;
+  animation-delay: 0s;
+}
+
+.blob2 {
+  width: 250px;
+  height: 250px;
+  background: var(--blue);
+  bottom: -30px;
+  left: -50px;
+  animation-delay: -7s;
+}
+
+.blob3 {
+  width: 200px;
+  height: 200px;
+  background: var(--green);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: -14s;
+}

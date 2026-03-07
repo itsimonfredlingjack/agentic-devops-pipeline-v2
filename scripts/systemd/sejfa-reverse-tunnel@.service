@@ -1,0 +1,21 @@
+[Unit]
+Description=SEJFA Reverse Tunnel to %i (Mac localhost:8000)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ai-server2
+WorkingDirectory=/home/ai-server2/04-voice-mode-4-loop
+Environment=REMOTE_PORT=8000
+Environment=LOCAL_HOST=localhost
+Environment=LOCAL_PORT=8000
+ExecStart=/bin/bash /home/ai-server2/04-voice-mode-4-loop/scripts/reverse-tunnel.sh run %i
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sejfa-reverse-tunnel
+
+[Install]
+WantedBy=multi-user.target

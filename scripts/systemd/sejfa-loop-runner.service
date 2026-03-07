@@ -1,0 +1,22 @@
+[Unit]
+Description=SEJFA Loop Runner (polls queue, triggers Ralph Loop)
+After=sejfa-voice-pipeline.service
+Requires=sejfa-voice-pipeline.service
+
+[Service]
+Type=simple
+User=ai-server2
+WorkingDirectory=/home/ai-server2/04-voice-mode-4-loop/agentic-devops-loop
+Environment=LOOP_RUNNER_BACKEND_URL=http://localhost:8000
+Environment=LOOP_RUNNER_REPO_DIR=/home/ai-server2/04-voice-mode-4-loop/agentic-devops-loop
+Environment=LOOP_RUNNER_POLL_INTERVAL=10
+Environment=PATH=/home/ai-server2/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/bin/bash /home/ai-server2/04-voice-mode-4-loop/agentic-devops-loop/scripts/loop-runner.sh
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sejfa-loop
+
+[Install]
+WantedBy=multi-user.target

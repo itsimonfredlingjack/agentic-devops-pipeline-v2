@@ -83,9 +83,9 @@ export function AudioPreview({
   const barWidth = svgWidth / WAVE_POINTS;
 
   return (
-    <section className={styles.card} aria-label="Review capture">
+    <section className={styles.card} aria-label="Review recording">
       <div className={styles.header}>
-        <span className={styles.title}>Review Capture</span>
+        <span className={styles.title}>Review recording</span>
         <span className={styles.duration}>{duration}</span>
       </div>
 
@@ -136,7 +136,7 @@ export function AudioPreview({
           Discard
         </button>
         <button className={styles.sendBtn} onClick={onSend}>
-          Start run
+          Create task
         </button>
       </div>
     </section>

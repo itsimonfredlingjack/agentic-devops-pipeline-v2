@@ -42,8 +42,10 @@ interface CanvasCopy {
 }
 
 function humanizeStage(stage: string | null): string {
-  if (!stage) return "loop";
-  return stage.replace(/[_/]+/g, " ").toLowerCase();
+  if (!stage) return "Loop";
+  return stage
+    .replace(/[_/]+/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 function getCanvasCopy(
@@ -56,77 +58,77 @@ function getCanvasCopy(
 ): CanvasCopy {
   if (status === "error") {
     return {
-      title: "Couldn’t start the run",
+      title: "Couldn’t start task creation",
       description:
         errorMessage ??
-        "The run needs attention before it can continue.",
-      helper: "Retry the request, record again, or open settings.",
+        "The request needs attention before it can continue.",
+      helper: "Retry, record again, or review settings.",
     };
   }
 
   switch (canvasState.phase) {
     case "listening":
       return {
-        title: "Listening for the objective",
-        description: "Voice is flowing into SEJFA while the run takes shape.",
-        helper: "Keep speaking. The machine is taking in your objective.",
+        title: "Listening for your request",
+        description: "Voice input is being captured for task creation.",
+        helper: "Keep speaking until you have described the request.",
       };
     case "processing":
       if (status === "previewing") {
         return {
-          title: "Review the captured objective",
-          description: "Confirm the capture before it condenses into work.",
-          helper: "Play it back or start the run when it sounds right.",
+          title: "Review your recording",
+          description: "Confirm the recording before we create the task.",
+          helper: "Play it back, then submit when it sounds right.",
         };
       }
 
       return {
-        title: "Extracting task context",
-        description: "SEJFA is turning the objective into structured work.",
-        helper: "The work core is forming from the captured objective.",
+        title: "Preparing task details",
+        description: "SEJFA is converting your request into structured task data.",
+        helper: "This usually takes a few seconds.",
       };
     case "clarifying":
       return {
-        title: "Waiting for one missing detail",
-        description: "The run is paused until one missing piece is supplied.",
-        helper: "Answer the clarification to complete the work core.",
+        title: "Need one more detail",
+        description: "Task creation is paused until one missing detail is provided.",
+        helper: "Answer the clarification prompt below to continue.",
       };
     case "queued":
       return {
-        title: "Queued for execution",
+        title: "Task queued",
         description: ticket
-          ? `${ticket.key} is ready for execution pickup.`
-          : "This objective is ready to enter execution.",
-        helper: "Stay here while execution picks up the run.",
+          ? `${ticket.key} is queued for execution.`
+          : "Your request is queued for execution.",
+        helper: "Stay on this screen to monitor progress.",
       };
     case "running":
       return {
         title: `Running ${humanizeStage(activeStage)}`,
-        description: "The delivery pipeline is moving this session through work.",
-        helper: "Watch the active stage while execution advances the run.",
+        description: "The execution pipeline is processing this task.",
+        helper: "Current stage updates are shown in real time.",
       };
     case "blocked":
       return {
         title: `Blocked in ${humanizeStage(activeStage)}`,
         description:
-          "The loop jammed in one stage and needs operator attention.",
-        helper: "Review the failed stage and retry when the path is clear.",
+          "This task is blocked in the current stage and needs manual review.",
+        helper: "Review details and retry when ready.",
       };
     case "done":
       return {
-        title: "Run completed",
+        title: "Task completed",
         description: completion?.pr_url
-          ? "Delivery artifacts are ready to inspect from the center flow."
-          : "The run settled successfully and the outcome is ready to inspect.",
-        helper: "Inspect the outcome, then launch the next objective when ready.",
+          ? "Execution artifacts are ready for review."
+          : "Execution finished successfully and results are ready.",
+        helper: "Review the outcome, then start the next request when ready.",
       };
     case "idle":
     default:
       return {
-        title: "Start with your objective",
+        title: "Start with a request",
         description:
-          "Voice input becomes structured task context and then a live run.",
-        helper: "Press record and describe what should happen.",
+          "Record a request to create a task and start execution tracking.",
+        helper: "Press record and describe what you need.",
       };
   }
 }
@@ -136,20 +138,42 @@ function getProgressLabel(status: PipelineStatus, processingStep: string): strin
 
   switch (status) {
     case "recording":
-      return "Listening…";
+      return "Listening...";
     case "previewing":
-      return "Capture ready for review.";
+      return "Recording ready for review.";
     case "processing":
-      return "Extracting task context.";
+      return "Preparing task details.";
     case "clarifying":
-      return "Waiting for one missing detail.";
+      return "Waiting for required detail.";
     case "done":
-      return "Run is settled.";
+      return "Task processing complete.";
     case "error":
-      return "Run start is blocked until retry.";
+      return "Task start failed. Retry to continue.";
     case "idle":
     default:
-      return "Ready for your next objective.";
+      return "Ready for a new request.";
+  }
+}
+
+function phaseLabel(phase: CanvasState["phase"]): string {
+  switch (phase) {
+    case "listening":
+      return "Listening";
+    case "processing":
+      return "Preparing";
+    case "clarifying":
+      return "Needs detail";
+    case "queued":
+      return "Queued";
+    case "running":
+      return "Running";
+    case "blocked":
+      return "Blocked";
+    case "done":
+      return "Done";
+    case "idle":
+    default:
+      return "Ready";
   }
 }
 
@@ -192,13 +216,13 @@ export function TransformationCanvas({
   const progressLabel =
     processingStep ||
     (canvasState.phase === "queued"
-      ? "Queued for execution."
+      ? "Task queued."
       : canvasState.phase === "running"
         ? `Running ${humanizeStage(activeStage)}.`
         : canvasState.phase === "blocked"
           ? `Blocked in ${humanizeStage(activeStage)}.`
           : canvasState.phase === "done"
-            ? "Run completed."
+            ? "Task completed."
             : getProgressLabel(status, processingStep));
   const shellClassName = [
     styles.shell,
@@ -214,8 +238,8 @@ export function TransformationCanvas({
       <GlassCard className={shellClassName}>
         <div className={styles.topRail}>
           <div>
-            <div className={styles.eyebrow}>Execution flow</div>
-            <div className={styles.loopLabel}>Delivery pipeline</div>
+            <div className={styles.eyebrow}>Task flow</div>
+            <div className={styles.loopLabel}>Execution pipeline</div>
           </div>
           <div className={styles.connectionSummary}>
             <span className={styles.connectionChip}>
@@ -229,7 +253,7 @@ export function TransformationCanvas({
 
         <div className={styles.coreGrid}>
           <div className={styles.intakeAperture}>
-            <div className={styles.apertureLabel}>Voice input</div>
+            <div className={styles.apertureLabel}>Voice capture</div>
             <RecordButton
               status={status}
               micLevels={micLevels}
@@ -239,7 +263,7 @@ export function TransformationCanvas({
           </div>
 
           <div className={styles.workCore}>
-            <div className={styles.phaseBadge}>{canvasState.phase}</div>
+            <div className={styles.phaseBadge}>{phaseLabel(canvasState.phase)}</div>
             {showReactor ? (
               <div className={styles.reactorWrap}>
                 <MissionReactor
@@ -264,7 +288,7 @@ export function TransformationCanvas({
 
             {ticket ? (
               <div className={styles.metaRow}>
-                <span className={styles.metaChip}>Ticket {ticket.key}</span>
+                <span className={styles.metaChip}>Task {ticket.key}</span>
                 {sessionId ? (
                   <span className={styles.metaChip}>Session {sessionId}</span>
                 ) : null}
@@ -325,7 +349,7 @@ export function TransformationCanvas({
                   className={styles.primaryButton}
                   onClick={onRetry}
                 >
-                  Try again
+                  Retry
                 </button>
                 <button
                   type="button"
@@ -339,7 +363,7 @@ export function TransformationCanvas({
                   className={styles.ghostButton}
                   onClick={onOpenSettings}
                 >
-                  Open settings
+                  Settings
                 </button>
               </div>
             ) : null}

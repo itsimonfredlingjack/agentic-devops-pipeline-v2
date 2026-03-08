@@ -41,11 +41,11 @@ export function ClarificationDialog({
   return (
     <section className={styles.card} aria-label="Clarification detail">
       <div className={styles.header}>
-        <span className={styles.title}>Need one detail</span>
+        <span className={styles.title}>Need one more detail</span>
         <span className={styles.round}>Round {round}</span>
       </div>
       <div className={styles.summary}>
-        Add the missing detail so we can continue this run correctly.
+        Add the missing detail so task creation can continue.
       </div>
       <div className={styles.partialSummary}>{partialSummary}</div>
       <ol className={styles.questions}>
@@ -62,7 +62,7 @@ export function ClarificationDialog({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type the missing detail and press Enter to send."
+          placeholder="Type the missing detail, then press Enter to send."
           disabled={disabled}
           rows={3}
         />

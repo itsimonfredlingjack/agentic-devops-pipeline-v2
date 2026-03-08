@@ -56,10 +56,10 @@ export function SupportRail({
   const links = artifactLinks(ticket, completion, loopMonitorUrl);
 
   return (
-    <aside aria-label="SEJFA support rail" className={styles.rail}>
+    <aside aria-label="SEJFA support panel" className={styles.rail}>
       <GlassCard compact className={styles.card}>
         <section className={styles.section}>
-          <div className={styles.sectionTitle}>Pending queue</div>
+          <div className={styles.sectionTitle}>Queue</div>
           <div className={styles.sectionBody}>
             {queueItems.length > 0 ? (
               <ul className={styles.list}>
@@ -71,13 +71,13 @@ export function SupportRail({
                 ))}
               </ul>
             ) : (
-              <p className={styles.empty}>No queued work right now.</p>
+              <p className={styles.empty}>No queued tasks right now.</p>
             )}
           </div>
         </section>
 
         <section className={styles.section}>
-          <div className={styles.sectionTitle}>Activity</div>
+          <div className={styles.sectionTitle}>Recent activity</div>
           <div className={styles.sectionBody}>
             {recentEvents.length > 0 ? (
               <ol className={styles.activityList}>
@@ -95,7 +95,7 @@ export function SupportRail({
                 ))}
               </ol>
             ) : (
-              <p className={styles.empty}>No loop activity yet.</p>
+              <p className={styles.empty}>No recent activity yet.</p>
             )}
           </div>
         </section>
@@ -119,7 +119,7 @@ export function SupportRail({
               </div>
             ) : (
               <p className={styles.empty}>
-                No active session yet. Artifacts appear when a run is active.
+                No active task yet. Links appear when a task is created.
               </p>
             )}
           </div>

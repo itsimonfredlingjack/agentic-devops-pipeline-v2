@@ -16,11 +16,11 @@ export function SuccessCard({
   onRecordAnother,
 }: SuccessCardProps) {
   return (
-    <section className={styles.card} aria-label="Run queued">
+    <section className={styles.card} aria-label="Task queued">
       <div className={styles.summary}>
-        <div className={styles.kicker}>Run queued</div>
+        <div className={styles.kicker}>Task queued</div>
         <div className={styles.headline}>{ticket.summary}</div>
-        <div className={styles.support}>{ticket.key} is ready for execution.</div>
+        <div className={styles.support}>{ticket.key} queued for execution.</div>
       </div>
 
       <div className={styles.actions}>

@@ -52,7 +52,7 @@ function formatRequestError(err: unknown, serverUrl: string): string {
 }
 
 function defaultMissionError(): string {
-  return "Couldn’t start the run. Check Details and try again.";
+  return "Couldn’t start task creation. Check details and try again.";
 }
 
 function buildLoopMonitorUrl(
@@ -208,7 +208,7 @@ function App() {
           tone: status === "previewing" ? ("previewing" as const) : ("processing" as const),
         };
       case "clarifying":
-        return { label: "Need detail", tone: "clarifying" as const };
+        return { label: "Needs detail", tone: "clarifying" as const };
       case "queued":
         return { label: "Queued", tone: "queued" as const };
       case "running":
@@ -242,7 +242,7 @@ function App() {
         if (nextStatus === "done") {
           store.setErrorMessage(null);
           if (!store.ticketResult) {
-            store.addToast("success", "Run processing completed");
+            store.addToast("success", "Task processing completed");
           }
         } else if (nextStatus === "error") {
           if (!store.errorMessage) {
@@ -558,7 +558,7 @@ function App() {
 
         if (!sessionId || questions.length === 0) {
           const message =
-            "Couldn’t continue this run. The clarification response was invalid.";
+            "Couldn’t continue task creation. The clarification response was invalid.";
           appendLog(
             `[client] Invalid clarification payload (${endpointUsed}): ${JSON.stringify(result)}`,
           );
@@ -610,13 +610,13 @@ function App() {
         });
         appendLog(`[client] Ticket created: ${ticketKey} — ${ticketUrl}`);
         setStatus("done");
-        addToast("success", `Run created: ${ticketKey}`);
+        addToast("success", `Task created: ${ticketKey}`);
         return;
       }
 
       if (typeof result.text === "string") {
         const message =
-          "The objective was transcribed, but no run was created.";
+          "The request was transcribed, but no task was created.";
         appendLog(`[client] Transcription received (${endpointUsed})`);
         setProcessingStep("");
         setErrorMessage(message);
@@ -626,7 +626,7 @@ function App() {
       }
 
       const message =
-        "Couldn’t start the run. The server returned an unexpected response.";
+        "Couldn’t start task creation. The server returned an unexpected response.";
       appendLog(
         `[client] Unexpected response payload (${endpointUsed}): ${JSON.stringify(result)}`,
       );
@@ -744,12 +744,12 @@ function App() {
             `[client] Ticket created: ${data.ticket_key} — ${data.ticket_url}`,
           );
           setStatus("done");
-          addToast("success", `Run created: ${data.ticket_key}`);
+          addToast("success", `Task created: ${data.ticket_key}`);
           return;
         }
 
         const message =
-          "Couldn’t start the run. The clarification response was incomplete.";
+          "Couldn’t start task creation. The clarification response was incomplete.";
         setErrorMessage(message);
         setStatus("error");
         addToast("error", message);
@@ -784,7 +784,7 @@ function App() {
     setProcessingStep("");
     setStatus("idle");
     appendLog("[client] Clarification skipped");
-    addToast("info", "Clarification skipped");
+    addToast("info", "Clarification skipped for now");
   }, [
     clearClarification,
     setErrorMessage,

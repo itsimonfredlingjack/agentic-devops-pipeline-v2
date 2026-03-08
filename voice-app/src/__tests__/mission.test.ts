@@ -12,7 +12,7 @@ describe("deriveMissionState", () => {
     });
 
     expect(mission.phase).toBe("idle");
-    expect(mission.label).toBe("Idle");
+    expect(mission.label).toBe("Ready");
   });
 
   it("should treat recording as capturing", () => {
@@ -25,7 +25,7 @@ describe("deriveMissionState", () => {
     });
 
     expect(mission.phase).toBe("capturing");
-    expect(mission.label).toBe("Recording");
+    expect(mission.label).toBe("Listening");
   });
 
   it("should treat a created ticket without active loop stages as queued", () => {
@@ -116,7 +116,7 @@ describe("deriveCanvasState", () => {
       }),
     ).toEqual({
       phase: "idle",
-      caption: "Start with your objective",
+      caption: "Start with a request",
       emphasis: "intake",
     });
   });
@@ -132,7 +132,7 @@ describe("deriveCanvasState", () => {
       }),
     ).toEqual({
       phase: "listening",
-      caption: "Listening for the objective",
+      caption: "Listening for your request",
       emphasis: "intake",
     });
   });
@@ -148,7 +148,7 @@ describe("deriveCanvasState", () => {
       }),
     ).toEqual({
       phase: "processing",
-      caption: "Extracting task context",
+      caption: "Preparing task details",
       emphasis: "formation",
     });
 
@@ -162,7 +162,7 @@ describe("deriveCanvasState", () => {
       }),
     ).toEqual({
       phase: "processing",
-      caption: "Review the captured objective",
+      caption: "Review your recording",
       emphasis: "formation",
     });
   });
@@ -178,7 +178,7 @@ describe("deriveCanvasState", () => {
       }),
     ).toEqual({
       phase: "clarifying",
-      caption: "Waiting for one missing detail",
+      caption: "Need one more detail",
       emphasis: "formation",
     });
   });
@@ -200,7 +200,7 @@ describe("deriveCanvasState", () => {
       }),
     ).toEqual({
       phase: "queued",
-      caption: "Queued for execution",
+      caption: "Task queued",
       emphasis: "loop",
     });
 
@@ -263,7 +263,7 @@ describe("deriveCanvasState", () => {
       }),
     ).toEqual({
       phase: "done",
-      caption: "Run completed",
+      caption: "Task completed",
       emphasis: "outcome",
     });
   });

@@ -75,7 +75,7 @@ export function MissionReactor({
 
   return (
     <section
-      aria-label="Delivery pipeline map"
+      aria-label="Execution pipeline map"
       className={`${styles.reactor} ${phaseClass(mission)}`}
     >
       <div className={styles.backdropRing} aria-hidden="true" />

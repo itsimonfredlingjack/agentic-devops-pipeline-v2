@@ -1,6 +1,6 @@
 .surface {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
+  grid-template-columns: minmax(0, 1fr) minmax(264px, 304px);
   gap: var(--space-lg);
   align-items: start;
 }
@@ -13,7 +13,7 @@
 .card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-lg);
   min-height: 100%;
 }
 
@@ -35,13 +35,13 @@
 .timestamp,
 .key {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--text-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .sectionTitle {
-  color: rgba(226, 248, 255, 0.92);
+  color: rgba(226, 248, 255, 0.9);
 }
 
 .sectionBody {
@@ -64,11 +64,11 @@
 .activityItem {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 12px;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.025);
 }
 
 .key,
@@ -79,7 +79,8 @@
 .summary,
 .eventTitle {
   color: var(--text-primary);
-  line-height: 1.45;
+  line-height: 1.5;
+  font-size: var(--text-sm);
 }
 
 .activityMeta {
@@ -97,26 +98,31 @@
 
 .eventDetail,
 .empty {
-  line-height: 1.55;
+  line-height: 1.58;
+  font-size: var(--text-sm);
 }
 
 .links {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-sm);
 }
 
 .link {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  min-height: 38px;
   width: fit-content;
-  padding: 10px 14px;
+  padding: 8px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(82, 210, 255, 0.2);
-  background: rgba(82, 210, 255, 0.08);
+  border: 1px solid rgba(82, 210, 255, 0.16);
+  background: rgba(82, 210, 255, 0.06);
   color: rgba(226, 248, 255, 0.94);
   text-decoration: none;
+}
+
+.link:hover {
+  background: rgba(82, 210, 255, 0.11);
 }
 
 @media (max-width: 1100px) {
@@ -126,5 +132,23 @@
 
   .rail {
     position: static;
+  }
+
+  .card {
+    gap: var(--space-md);
+  }
+}
+
+@media (max-width: 640px) {
+  .sectionTitle,
+  .eventKind,
+  .timestamp,
+  .key {
+    letter-spacing: 0.08em;
+  }
+
+  .link {
+    width: 100%;
+    justify-content: center;
   }
 }

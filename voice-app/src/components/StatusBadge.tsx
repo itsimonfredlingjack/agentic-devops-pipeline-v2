@@ -17,7 +17,7 @@ const LABEL: Record<PipelineStatus, string> = {
   idle: "Ready",
   recording: "Listening",
   processing: "Preparing",
-  clarifying: "Need detail",
+  clarifying: "Needs detail",
   previewing: "Review",
   done: "Done",
   error: "Issue",

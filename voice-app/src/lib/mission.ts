@@ -68,7 +68,7 @@ export function deriveMissionState({
     return {
       phase: "completed",
       label: "Done",
-      detail: "Run completed successfully",
+      detail: "Task completed successfully",
     };
   }
 
@@ -76,7 +76,7 @@ export function deriveMissionState({
     return {
       phase: "blocked",
       label: "Blocked",
-      detail: "Operator attention requested",
+      detail: "Manual review needed",
     };
   }
 
@@ -84,15 +84,15 @@ export function deriveMissionState({
     return {
       phase: "failed",
       label: "Failed",
-      detail: "The loop hit an unrecovered error",
+      detail: "Task failed in the current stage",
     };
   }
 
   if (status === "recording") {
     return {
       phase: "capturing",
-      label: "Recording",
-      detail: "Listening for your objective",
+      label: "Listening",
+      detail: "Capturing your request",
     };
   }
 
@@ -103,8 +103,8 @@ export function deriveMissionState({
   ) {
     return {
       phase: "processing",
-      label: "Igniting",
-      detail: "Turning voice input into a runnable task",
+      label: "Preparing",
+      detail: "Converting voice input into task details",
     };
   }
 
@@ -119,8 +119,8 @@ export function deriveMissionState({
   if (activeStage && ACTIVE_STAGES.has(activeStage)) {
     return {
       phase: "agent_active",
-      label: "Agent Running",
-      detail: `${humanizeStage(activeStage)} is live`,
+      label: "Running",
+      detail: `${humanizeStage(activeStage)} is active`,
     };
   }
 
@@ -128,14 +128,14 @@ export function deriveMissionState({
     return {
       phase: "queued",
       label: "Queued",
-      detail: "Task accepted and waiting for agent pickup",
+      detail: "Task queued for agent pickup",
     };
   }
 
   return {
     phase: "idle",
-    label: "Idle",
-    detail: "Awaiting your next objective",
+    label: "Ready",
+    detail: "Ready for your next request",
   };
 }
 
@@ -149,7 +149,7 @@ export function deriveCanvasState({
   if (completion?.outcome === "done") {
     return {
       phase: "done",
-      caption: "Run completed",
+      caption: "Task completed",
       emphasis: "outcome",
     };
   }
@@ -165,7 +165,7 @@ export function deriveCanvasState({
   if (status === "recording") {
     return {
       phase: "listening",
-      caption: "Listening for the objective",
+      caption: "Listening for your request",
       emphasis: "intake",
     };
   }
@@ -173,7 +173,7 @@ export function deriveCanvasState({
   if (status === "clarifying") {
     return {
       phase: "clarifying",
-      caption: "Waiting for one missing detail",
+      caption: "Need one more detail",
       emphasis: "formation",
     };
   }
@@ -181,7 +181,7 @@ export function deriveCanvasState({
   if (status === "processing") {
     return {
       phase: "processing",
-      caption: "Extracting task context",
+      caption: "Preparing task details",
       emphasis: "formation",
     };
   }
@@ -189,7 +189,7 @@ export function deriveCanvasState({
   if (status === "previewing") {
     return {
       phase: "processing",
-      caption: "Review the captured objective",
+      caption: "Review your recording",
       emphasis: "formation",
     };
   }
@@ -205,14 +205,14 @@ export function deriveCanvasState({
   if (ticket) {
     return {
       phase: "queued",
-      caption: "Queued for execution",
+      caption: "Task queued",
       emphasis: "loop",
     };
   }
 
   return {
     phase: "idle",
-    caption: "Start with your objective",
+    caption: "Start with a request",
     emphasis: "intake",
   };
 }

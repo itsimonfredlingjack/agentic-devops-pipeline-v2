@@ -2,7 +2,6 @@ import { Children, type ReactNode } from "react";
 import { type CanvasState } from "../lib/mission";
 import type { PipelineStatus, TicketResult } from "../stores/pipelineStore";
 import { GlassCard } from "./GlassCard";
-import { LogPanel } from "./LogPanel";
 import { RecordButton } from "./RecordButton";
 import { SuccessCard } from "./SuccessCard";
 import styles from "../styles/components/TransformationCanvas.module.css";
@@ -11,14 +10,12 @@ interface TransformationCanvasProps {
   status: PipelineStatus;
   canvasState: CanvasState;
   processingStep: string;
-  transcription: string;
   ticket: TicketResult | null;
   errorMessage: string | null;
   micLevels: number[];
   wsConnected: boolean;
   monitorConnected: boolean;
   sessionId: string | null;
-  detailsEntries: string[];
   onToggleRecord: () => void;
   onRetry: () => void;
   onRecordAnother: () => void;
@@ -114,14 +111,12 @@ export function TransformationCanvas({
   status,
   canvasState,
   processingStep,
-  transcription,
   ticket,
   errorMessage,
   micLevels,
   wsConnected,
   monitorConnected,
   sessionId,
-  detailsEntries,
   onToggleRecord,
   onRetry,
   onRecordAnother,
@@ -181,13 +176,6 @@ export function TransformationCanvas({
               </div>
             ) : null}
 
-            <div className={styles.transcriptBlock}>
-              <div className={styles.blockLabel}>Objective transcript</div>
-              <div className={styles.transcriptText}>
-                {transcription || "Your captured objective will appear here."}
-              </div>
-            </div>
-
             {showSuccess && ticket ? (
               <SuccessCard
                 ticket={ticket}
@@ -229,12 +217,6 @@ export function TransformationCanvas({
 
         <div className={styles.progressStrip}>
           <div className={styles.stepChip}>{progressLabel}</div>
-          <LogPanel
-            collapsedLabel="Show technical details"
-            expandedLabel="Hide technical details"
-            emptyMessage="No details yet."
-            entries={detailsEntries}
-          />
         </div>
       </GlassCard>
     </section>

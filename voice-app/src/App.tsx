@@ -23,6 +23,7 @@ import { SettingsDrawer } from "./components/SettingsDrawer";
 import { ToastContainer } from "./components/Toast";
 import { TransformationCanvas } from "./components/TransformationCanvas";
 import { SupportRail } from "./components/SupportRail";
+import { DetailShelf } from "./components/DetailShelf";
 import { deriveCanvasState } from "./lib/mission";
 import type { QueueItem } from "./stores/pipelineStore";
 import railStyles from "./styles/components/SupportRail.module.css";
@@ -805,14 +806,12 @@ function App() {
           status={status}
           canvasState={canvasState}
           processingStep={processingStep}
-          transcription={transcription}
           ticket={ticketResult}
           errorMessage={errorMessage}
           micLevels={micLevels}
           wsConnected={wsConnected}
           monitorConnected={monitorConnected}
           sessionId={latestSessionId}
-          detailsEntries={log}
           onToggleRecord={handleToggle}
           onRetry={handleRetry}
           onRecordAnother={handleRecordAnother}
@@ -845,6 +844,11 @@ function App() {
           loopMonitorUrl={loopMonitorUrl}
         />
       </div>
+
+      <DetailShelf
+        transcription={transcription}
+        detailsEntries={log}
+      />
 
       <SettingsDrawer
         open={settingsOpen}

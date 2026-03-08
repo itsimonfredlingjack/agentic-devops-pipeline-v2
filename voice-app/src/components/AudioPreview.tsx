@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState } from "react";
-import { GlassCard } from "./GlassCard";
 import styles from "../styles/components/AudioPreview.module.css";
 
 const SAMPLE_RATE = 16_000;
@@ -84,7 +83,7 @@ export function AudioPreview({
   const barWidth = svgWidth / WAVE_POINTS;
 
   return (
-    <GlassCard className={styles.card}>
+    <section className={styles.card} aria-label="Review capture">
       <div className={styles.header}>
         <span className={styles.title}>Review Capture</span>
         <span className={styles.duration}>{duration}</span>
@@ -140,6 +139,6 @@ export function AudioPreview({
           Create mission
         </button>
       </div>
-    </GlassCard>
+    </section>
   );
 }

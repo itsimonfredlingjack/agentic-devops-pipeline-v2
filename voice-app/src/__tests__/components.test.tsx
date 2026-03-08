@@ -7,6 +7,7 @@ import { StatusBadge } from "../components/StatusBadge";
 import { TranscriptionCard } from "../components/TranscriptionCard";
 import { SuccessCard } from "../components/SuccessCard";
 import { SupportRail } from "../components/SupportRail";
+import { DetailShelf } from "../components/DetailShelf";
 import { ToastContainer } from "../components/Toast";
 import { LogPanel } from "../components/LogPanel";
 import { AppShell } from "../components/AppShell";
@@ -231,6 +232,26 @@ describe("SupportRail", () => {
       "href",
       "https://github.com/example/repo/pull/42",
     );
+  });
+});
+
+describe("DetailShelf", () => {
+  it("should render the transcript and technical details inside the shelf", async () => {
+    const user = userEvent.setup();
+    render(
+      <DetailShelf
+        transcription="Fix the login flow"
+        detailsEntries={["[12:00:00] Queue refreshed"]}
+      />,
+    );
+
+    expect(screen.getByLabelText("SEJFA detail shelf")).toBeInTheDocument();
+    expect(screen.getByText("Objective transcript")).toBeInTheDocument();
+    expect(screen.getByText("Fix the login flow")).toBeInTheDocument();
+
+    const toggle = screen.getByRole("button", { name: /Show technical details/i });
+    await user.click(toggle);
+    expect(screen.getByText("[12:00:00] Queue refreshed")).toBeInTheDocument();
   });
 });
 

@@ -28,6 +28,9 @@ async function renderApp() {
   await waitFor(() => {
     expect(screen.getByLabelText("SEJFA support rail")).toBeInTheDocument();
   });
+  await waitFor(() => {
+    expect(screen.getByLabelText("SEJFA detail shelf")).toBeInTheDocument();
+  });
 }
 
 describe("App", () => {
@@ -97,6 +100,8 @@ describe("App", () => {
     expect(screen.getByText("Ralph Loop")).toBeInTheDocument();
     expect(screen.getByText("Pending queue")).toBeInTheDocument();
     expect(screen.getByText("Activity")).toBeInTheDocument();
+    expect(screen.getByLabelText("SEJFA detail shelf")).toBeInTheDocument();
+    expect(screen.getByText("Objective transcript")).toBeInTheDocument();
     expect(
       screen.getByText(
         "Your objective becomes structured work and then a live run.",
@@ -135,7 +140,8 @@ describe("App", () => {
   it("should show transcription text when store has transcription", async () => {
     usePipelineStore.setState({ transcription: "Hello from voice" });
     await renderApp();
-    expect(screen.getByText("Hello from voice")).toBeInTheDocument();
+    const shelf = screen.getByLabelText("SEJFA detail shelf");
+    expect(within(shelf).getByText("Hello from voice")).toBeInTheDocument();
   });
 
   it("should keep success inside the intake surface when status is done with a ticket", async () => {

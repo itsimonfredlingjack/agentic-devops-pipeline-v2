@@ -5,7 +5,7 @@ interface SuccessCardProps {
   ticket: TicketResult;
   sessionId: string | null;
   monitorConnected: boolean;
-  loopMonitorUrl: string | null;
+  loopMonitorUrl?: string | null;
   onRecordAnother: () => void;
 }
 
@@ -13,7 +13,6 @@ export function SuccessCard({
   ticket,
   sessionId,
   monitorConnected,
-  loopMonitorUrl,
   onRecordAnother,
 }: SuccessCardProps) {
   return (
@@ -25,24 +24,6 @@ export function SuccessCard({
       </div>
 
       <div className={styles.actions}>
-        <a
-          className={styles.primaryAction}
-          href={ticket.url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Open ticket
-        </a>
-        {loopMonitorUrl ? (
-          <a
-            className={styles.secondaryAction}
-            href={loopMonitorUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Open loop monitor
-          </a>
-        ) : null}
         <button
           type="button"
           className={styles.tertiaryAction}

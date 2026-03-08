@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { usePipelineStore } from "../stores/pipelineStore";
 import { invoke } from "@tauri-apps/api/core";
@@ -22,8 +22,19 @@ vi.mock("@tauri-apps/api/core", () => ({
   invoke: vi.fn(),
 }));
 
+async function renderApp() {
+  const { default: App } = await import("../App");
+  render(<App />);
+  await waitFor(() => {
+    expect(screen.getByLabelText("SEJFA support rail")).toBeInTheDocument();
+  });
+}
+
 describe("App", () => {
+  let queuePayload: Array<{ key: string; summary: string }>;
+
   beforeEach(() => {
+    queuePayload = [];
     usePipelineStore.setState({
       status: "idle",
       appMode: "voice",
@@ -46,6 +57,7 @@ describe("App", () => {
       toasts: [],
       processingStep: "",
       pendingSamples: null,
+      queueItems: [],
       ticketResult: null,
       wsConnected: false,
     });
@@ -53,16 +65,26 @@ describe("App", () => {
     vi.mocked(invoke).mockReset();
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () => ({
-        ok: true,
-        json: async () => ({ ok: true }),
-      })),
+      vi.fn(async (input: string | URL | Request) => {
+        const url = String(input);
+
+        if (url.endsWith("/api/loop/queue")) {
+          return {
+            ok: true,
+            json: async () => queuePayload,
+          };
+        }
+
+        return {
+          ok: true,
+          json: async () => ({ ok: true }),
+        };
+      }),
     );
   });
 
   it("should render the SEJFA desktop shell", async () => {
-    const { default: App } = await import("../App");
-    render(<App />);
+    await renderApp();
     expect(screen.getByText("SEJFA Desktop")).toBeInTheDocument();
     expect(
       screen.getByLabelText("SEJFA transformation canvas"),
@@ -70,11 +92,11 @@ describe("App", () => {
   });
 
   it("should render the center-first idle surface", async () => {
-    const { default: App } = await import("../App");
-    render(<App />);
-
+    await renderApp();
     expect(screen.getByText("Speak the next objective")).toBeInTheDocument();
     expect(screen.getByText("Ralph Loop")).toBeInTheDocument();
+    expect(screen.getByText("Pending queue")).toBeInTheDocument();
+    expect(screen.getByText("Activity")).toBeInTheDocument();
     expect(
       screen.getByText(
         "Your objective becomes structured work and then a live run.",
@@ -84,8 +106,7 @@ describe("App", () => {
   });
 
   it("should render the record button inside the transformation canvas", async () => {
-    const { default: App } = await import("../App");
-    render(<App />);
+    await renderApp();
 
     expect(
       screen.getByRole("button", { name: "Start recording" }),
@@ -96,10 +117,24 @@ describe("App", () => {
     ).toBeInTheDocument();
   });
 
+  it("should render pending queue items from the loop queue endpoint", async () => {
+    queuePayload = [
+      { key: "DEV-10", summary: "Fix CI flakes" },
+      { key: "DEV-11", summary: "Repair deploy hook" },
+    ];
+
+    await renderApp();
+
+    await waitFor(() => {
+      expect(screen.getByText("DEV-10")).toBeInTheDocument();
+    });
+    expect(screen.getByText("Fix CI flakes")).toBeInTheDocument();
+    expect(screen.getByText("DEV-11")).toBeInTheDocument();
+  });
+
   it("should show transcription text when store has transcription", async () => {
     usePipelineStore.setState({ transcription: "Hello from voice" });
-    const { default: App } = await import("../App");
-    render(<App />);
+    await renderApp();
     expect(screen.getByText("Hello from voice")).toBeInTheDocument();
   });
 
@@ -114,8 +149,7 @@ describe("App", () => {
         summary: "Test ticket",
       },
     });
-    const { default: App } = await import("../App");
-    render(<App />);
+    await renderApp();
 
     expect(
       screen.getByLabelText("SEJFA transformation canvas"),
@@ -124,12 +158,13 @@ describe("App", () => {
       screen.getByRole("heading", { name: "Mission created" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Test ticket")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Open ticket" })).toHaveAttribute(
+    const rail = screen.getByLabelText("SEJFA support rail");
+    expect(within(rail).getByRole("link", { name: "Open ticket" })).toHaveAttribute(
       "href",
       "https://jira.example.com/DEV-99",
     );
     expect(
-      screen.getByRole("link", { name: "Open loop monitor" }),
+      within(rail).getByRole("link", { name: "Open loop monitor" }),
     ).toBeInTheDocument();
     expect(screen.getAllByText("Session sess-99").length).toBeGreaterThan(0);
   });
@@ -150,8 +185,7 @@ describe("App", () => {
       pendingSamples: [100, -100, 300, -300],
     });
 
-    const { default: App } = await import("../App");
-    render(<App />);
+    await renderApp();
 
     await user.click(screen.getByRole("button", { name: "Create mission" }));
 
@@ -166,8 +200,9 @@ describe("App", () => {
     expect(
       screen.getByLabelText("SEJFA transformation canvas"),
     ).toBeInTheDocument();
+    const rail = screen.getByLabelText("SEJFA support rail");
     expect(
-      screen.getByRole("link", { name: "Open loop monitor" }),
+      within(rail).getByRole("link", { name: "Open loop monitor" }),
     ).toHaveAttribute("href", "http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42");
   });
 });

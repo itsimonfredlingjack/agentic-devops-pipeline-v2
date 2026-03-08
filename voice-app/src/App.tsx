@@ -22,7 +22,10 @@ import { AudioPreview } from "./components/AudioPreview";
 import { SettingsDrawer } from "./components/SettingsDrawer";
 import { ToastContainer } from "./components/Toast";
 import { TransformationCanvas } from "./components/TransformationCanvas";
+import { SupportRail } from "./components/SupportRail";
 import { deriveCanvasState } from "./lib/mission";
+import type { QueueItem } from "./stores/pipelineStore";
+import railStyles from "./styles/components/SupportRail.module.css";
 
 function normalizeUrl(url: string): string {
   return url.trim().replace(/\/+$/, "");
@@ -100,6 +103,35 @@ async function checkBackendHealth(
   }
 }
 
+function normalizeQueueItems(payload: unknown): QueueItem[] {
+  if (!Array.isArray(payload)) return [];
+
+  return payload.flatMap((entry) => {
+    if (
+      entry &&
+      typeof entry === "object" &&
+      typeof entry.key === "string" &&
+      typeof entry.summary === "string"
+    ) {
+      return [{ key: entry.key, summary: entry.summary }];
+    }
+
+    return [];
+  });
+}
+
+async function fetchLoopQueue(serverUrl: string): Promise<QueueItem[]> {
+  const base = normalizeUrl(serverUrl);
+  if (!base) return [];
+
+  const resp = await fetch(`${base}/api/loop/queue`);
+  if (!resp.ok) {
+    throw new Error(`Queue returned HTTP ${resp.status}`);
+  }
+
+  return normalizeQueueItems(await resp.json());
+}
+
 function App() {
   const {
     status,
@@ -113,6 +145,9 @@ function App() {
     monitorConnected,
     activeStage,
     completion,
+    commandCenterEvents,
+    loopEvents,
+    queueItems,
     stuckAlert,
     toasts,
     processingStep,
@@ -139,6 +174,7 @@ function App() {
     removeToast,
     setProcessingStep,
     setPendingSamples,
+    setQueueItems,
     setTicketResult,
     resetRunState,
   } = usePipelineStore();
@@ -160,6 +196,15 @@ function App() {
     completion,
     stuckAlert,
   });
+
+  const refreshQueue = useCallback(async () => {
+    try {
+      const items = await fetchLoopQueue(serverUrlRef.current);
+      setQueueItems(items);
+    } catch (err) {
+      appendLog(`[client] Queue refresh failed: ${String(err)}`);
+    }
+  }, [appendLog, setQueueItems]);
 
   useEffect(() => {
     connectWebSocket(
@@ -334,6 +379,20 @@ function App() {
     setStuckAlert,
     upsertGate,
   ]);
+
+  useEffect(() => {
+    void refreshQueue();
+    const intervalId = window.setInterval(() => {
+      void refreshQueue();
+    }, 10_000);
+
+    return () => window.clearInterval(intervalId);
+  }, [refreshQueue]);
+
+  useEffect(() => {
+    if (!ticketResult && !completion && loopEvents.length === 0) return;
+    void refreshQueue();
+  }, [ticketResult, completion, loopEvents.length, refreshQueue]);
 
   useEffect(() => {
     if (settingsOpen) return;
@@ -741,42 +800,51 @@ function App() {
         status={status}
         onSettingsClick={() => setSettingsOpen(true)}
       />
-      <TransformationCanvas
-        status={status}
-        canvasState={canvasState}
-        processingStep={processingStep}
-        transcription={transcription}
-        ticket={ticketResult}
-        errorMessage={errorMessage}
-        micLevels={micLevels}
-        wsConnected={wsConnected}
-        monitorConnected={monitorConnected}
-        sessionId={latestSessionId}
-        loopMonitorUrl={loopMonitorUrl}
-        detailsEntries={log}
-        onToggleRecord={handleToggle}
-        onRetry={handleRetry}
-        onRecordAnother={handleRecordAnother}
-        onOpenSettings={() => setSettingsOpen(true)}
-      >
-        {status === "previewing" && pendingSamples ? (
-          <AudioPreview
-            samples={pendingSamples}
-            onSend={handleSendAudio}
-            onDiscard={handleDiscardAudio}
-          />
-        ) : null}
-        {clarification ? (
-          <ClarificationDialog
-            questions={clarification.questions}
-            partialSummary={clarification.partialSummary}
-            round={clarification.round}
-            disabled={status === "processing"}
-            onSubmit={handleClarifySubmit}
-            onSkip={handleClarifySkip}
-          />
-        ) : null}
-      </TransformationCanvas>
+      <div className={railStyles.surface}>
+        <TransformationCanvas
+          status={status}
+          canvasState={canvasState}
+          processingStep={processingStep}
+          transcription={transcription}
+          ticket={ticketResult}
+          errorMessage={errorMessage}
+          micLevels={micLevels}
+          wsConnected={wsConnected}
+          monitorConnected={monitorConnected}
+          sessionId={latestSessionId}
+          detailsEntries={log}
+          onToggleRecord={handleToggle}
+          onRetry={handleRetry}
+          onRecordAnother={handleRecordAnother}
+          onOpenSettings={() => setSettingsOpen(true)}
+        >
+          {status === "previewing" && pendingSamples ? (
+            <AudioPreview
+              samples={pendingSamples}
+              onSend={handleSendAudio}
+              onDiscard={handleDiscardAudio}
+            />
+          ) : null}
+          {clarification ? (
+            <ClarificationDialog
+              questions={clarification.questions}
+              partialSummary={clarification.partialSummary}
+              round={clarification.round}
+              disabled={status === "processing"}
+              onSubmit={handleClarifySubmit}
+              onSkip={handleClarifySkip}
+            />
+          ) : null}
+        </TransformationCanvas>
+
+        <SupportRail
+          queueItems={queueItems}
+          events={commandCenterEvents}
+          ticket={ticketResult}
+          completion={completion}
+          loopMonitorUrl={loopMonitorUrl}
+        />
+      </div>
 
       <SettingsDrawer
         open={settingsOpen}

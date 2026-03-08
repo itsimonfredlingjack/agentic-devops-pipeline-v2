@@ -26,6 +26,7 @@ function resetStore() {
     toasts: [],
     processingStep: "",
     pendingSamples: null,
+    queueItems: [],
     ticketResult: null,
     wsConnected: false,
   });
@@ -71,6 +72,11 @@ describe("pipelineStore", () => {
     it("should start with wsConnected false", () => {
       const state = usePipelineStore.getState();
       expect(state.wsConnected).toBe(false);
+    });
+
+    it("should start with an empty queue", () => {
+      const state = usePipelineStore.getState();
+      expect(state.queueItems).toEqual([]);
     });
   });
 
@@ -125,6 +131,20 @@ describe("pipelineStore", () => {
         usePipelineStore.getState().setStatus(s);
         expect(usePipelineStore.getState().status).toBe(s);
       }
+    });
+  });
+
+  describe("queue items", () => {
+    it("should replace the queue with the latest items", () => {
+      usePipelineStore.getState().setQueueItems([
+        { key: "DEV-10", summary: "Fix CI flakes" },
+        { key: "DEV-11", summary: "Repair deploy hook" },
+      ]);
+
+      expect(usePipelineStore.getState().queueItems).toEqual([
+        { key: "DEV-10", summary: "Fix CI flakes" },
+        { key: "DEV-11", summary: "Repair deploy hook" },
+      ]);
     });
   });
 

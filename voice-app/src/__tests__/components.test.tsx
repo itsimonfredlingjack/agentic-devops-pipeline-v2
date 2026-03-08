@@ -6,6 +6,7 @@ import { Header } from "../components/Header";
 import { StatusBadge } from "../components/StatusBadge";
 import { TranscriptionCard } from "../components/TranscriptionCard";
 import { SuccessCard } from "../components/SuccessCard";
+import { SupportRail } from "../components/SupportRail";
 import { ToastContainer } from "../components/Toast";
 import { LogPanel } from "../components/LogPanel";
 import { AppShell } from "../components/AppShell";
@@ -127,7 +128,7 @@ describe("SuccessCard", () => {
     expect(screen.getByText("DEV-42 is ready for the loop.")).toBeInTheDocument();
   });
 
-  it("should render ticket link with correct href", () => {
+  it("should render session context without artifact links", () => {
     render(
       <SuccessCard
         ticket={ticket}
@@ -137,16 +138,11 @@ describe("SuccessCard", () => {
         onRecordAnother={vi.fn()}
       />,
     );
-    const link = screen.getByRole("link", { name: "Open ticket" });
-    expect(link).toHaveAttribute(
-      "href",
-      "https://jira.example.com/browse/DEV-42",
-    );
-    expect(link).toHaveAttribute("target", "_blank");
-    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    expect(screen.queryByRole("link", { name: "Open ticket" })).not.toBeInTheDocument();
+    expect(screen.getByText("Loop monitor unavailable")).toBeInTheDocument();
   });
 
-  it("should call record another action and render loop monitor handoff link", async () => {
+  it("should call record another action and render the session handoff meta", async () => {
     const onRecordAnother = vi.fn();
     const user = userEvent.setup();
     render(
@@ -159,15 +155,82 @@ describe("SuccessCard", () => {
       />,
     );
 
+    expect(screen.getByText("Loop monitor available")).toBeInTheDocument();
+    expect(screen.getByText("Session sess-42")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Record another" }));
+
+    expect(onRecordAnother).toHaveBeenCalledOnce();
+  });
+});
+
+describe("SupportRail", () => {
+  const ticket = {
+    key: "DEV-42",
+    url: "https://jira.example.com/browse/DEV-42",
+    summary: "Fix login bug",
+  };
+
+  it("should render queue, activity, and artifact sections", () => {
+    render(
+      <SupportRail
+        queueItems={[{ key: "DEV-10", summary: "Fix CI flakes" }]}
+        events={[
+          {
+            id: "event-1",
+            timestamp: "12:00:00",
+            kind: "voice",
+            severity: "info",
+            title: "Ticket created: DEV-42",
+            detail: "Session sess-42",
+          },
+        ]}
+        ticket={ticket}
+        completion={null}
+        loopMonitorUrl="http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42"
+      />,
+    );
+
+    expect(screen.getByLabelText("SEJFA support rail")).toBeInTheDocument();
+    expect(screen.getByText("Pending queue")).toBeInTheDocument();
+    expect(screen.getByText("Activity")).toBeInTheDocument();
+    expect(screen.getByText("Artifacts")).toBeInTheDocument();
+    expect(screen.getByText("DEV-10")).toBeInTheDocument();
+    expect(screen.getByText("Ticket created: DEV-42")).toBeInTheDocument();
+  });
+
+  it("should render artifact links when run outputs are available", () => {
+    render(
+      <SupportRail
+        queueItems={[]}
+        events={[]}
+        ticket={ticket}
+        completion={{
+          session_id: "sess-42",
+          ticket_id: "DEV-42",
+          outcome: "done",
+          pytest_summary: "12 passed",
+          ruff_summary: "clean",
+          git_diff_summary: "2 files changed",
+          pr_url: "https://github.com/example/repo/pull/42",
+        }}
+        loopMonitorUrl="http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42"
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "Open ticket" })).toHaveAttribute(
+      "href",
+      "https://jira.example.com/browse/DEV-42",
+    );
     expect(
       screen.getByRole("link", { name: "Open loop monitor" }),
     ).toHaveAttribute(
       "href",
       "http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42",
     );
-    await user.click(screen.getByRole("button", { name: "Record another" }));
-
-    expect(onRecordAnother).toHaveBeenCalledOnce();
+    expect(screen.getByRole("link", { name: "Open PR" })).toHaveAttribute(
+      "href",
+      "https://github.com/example/repo/pull/42",
+    );
   });
 });
 

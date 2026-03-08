@@ -18,7 +18,6 @@ interface TransformationCanvasProps {
   wsConnected: boolean;
   monitorConnected: boolean;
   sessionId: string | null;
-  loopMonitorUrl: string | null;
   detailsEntries: string[];
   onToggleRecord: () => void;
   onRetry: () => void;
@@ -122,7 +121,6 @@ export function TransformationCanvas({
   wsConnected,
   monitorConnected,
   sessionId,
-  loopMonitorUrl,
   detailsEntries,
   onToggleRecord,
   onRetry,
@@ -195,7 +193,6 @@ export function TransformationCanvas({
                 ticket={ticket}
                 sessionId={sessionId}
                 monitorConnected={monitorConnected}
-                loopMonitorUrl={loopMonitorUrl}
                 onRecordAnother={onRecordAnother}
               />
             ) : null}

@@ -122,6 +122,35 @@ describe("App", () => {
     ).toBeInTheDocument();
   });
 
+  it("should render the listening composition while recording", async () => {
+    usePipelineStore.setState({ status: "recording" });
+    await renderApp();
+
+    expect(
+      screen.getByRole("heading", { name: "Listening for the objective" }),
+    ).toBeInTheDocument();
+  });
+
+  it("should keep clarification anchored in the canvas flow", async () => {
+    usePipelineStore.setState({
+      status: "clarifying",
+      clarification: {
+        sessionId: "sess-clarify",
+        questions: ["Which deploy target is failing?"],
+        partialSummary: "The release is blocked in deploy.",
+        round: 2,
+      },
+    });
+
+    await renderApp();
+
+    expect(
+      screen.getByRole("heading", { name: "Waiting for one missing detail" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Need one detail")).toBeInTheDocument();
+    expect(screen.getByText("Which deploy target is failing?")).toBeInTheDocument();
+  });
+
   it("should render pending queue items from the loop queue endpoint", async () => {
     queuePayload = [
       { key: "DEV-10", summary: "Fix CI flakes" },
@@ -161,7 +190,7 @@ describe("App", () => {
       screen.getByLabelText("SEJFA transformation canvas"),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Mission created" }),
+      screen.getByRole("heading", { name: "Queued for Ralph Loop" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Test ticket")).toBeInTheDocument();
     const rail = screen.getByLabelText("SEJFA support rail");
@@ -173,6 +202,84 @@ describe("App", () => {
       within(rail).getByRole("link", { name: "Open loop monitor" }),
     ).toBeInTheDocument();
     expect(screen.getAllByText("Session sess-99").length).toBeGreaterThan(0);
+  });
+
+  it("should render the active loop stage prominently while running", async () => {
+    usePipelineStore.setState({
+      status: "done",
+      activeStage: "agent",
+      latestSessionId: "sess-run",
+      ticketResult: {
+        key: "DEV-77",
+        url: "https://jira.example.com/DEV-77",
+        summary: "Ship the login refactor",
+      },
+    });
+
+    await renderApp();
+
+    expect(
+      screen.getByRole("heading", { name: "Running agent" }),
+    ).toBeInTheDocument();
+    const reactor = screen.getByLabelText("Ralph Loop reactor");
+    expect(reactor).toBeInTheDocument();
+    expect(within(reactor).getAllByText("Agent").length).toBeGreaterThan(0);
+  });
+
+  it("should surface blocked state composition when the loop jams", async () => {
+    usePipelineStore.setState({
+      status: "done",
+      activeStage: "deploy",
+      ticketResult: {
+        key: "DEV-88",
+        url: "https://jira.example.com/DEV-88",
+        summary: "Repair deploy step",
+      },
+      stuckAlert: {
+        pattern: "deploy retry",
+        repeat_count: 4,
+        tokens_burned: 1800,
+        since: new Date().toISOString(),
+      },
+    });
+
+    await renderApp();
+
+    expect(
+      screen.getByRole("heading", { name: "Blocked in deploy" }),
+    ).toBeInTheDocument();
+  });
+
+  it("should settle into a completed run with outcome links in the center flow", async () => {
+    usePipelineStore.setState({
+      status: "done",
+      latestSessionId: "sess-complete",
+      ticketResult: {
+        key: "DEV-100",
+        url: "https://jira.example.com/DEV-100",
+        summary: "Close the release loop",
+      },
+      completion: {
+        session_id: "sess-complete",
+        ticket_id: "DEV-100",
+        outcome: "done",
+        pytest_summary: "15 passed",
+        ruff_summary: "clean",
+        git_diff_summary: "3 files changed",
+        pr_url: "https://github.com/example/repo/pull/100",
+      },
+    });
+
+    await renderApp();
+
+    expect(
+      screen.getByRole("heading", { name: "Run completed" }),
+    ).toBeInTheDocument();
+    expect(
+      within(screen.getByLabelText("SEJFA transformation canvas")).getByRole("link", {
+        name: "Open PR",
+      }),
+    ).toHaveAttribute("href", "https://github.com/example/repo/pull/100");
   });
 
   it("should keep a successful send in intake and expose compact handoff link", async () => {
@@ -197,7 +304,7 @@ describe("App", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("heading", { name: "Mission created" }),
+        screen.getByRole("heading", { name: "Queued for Ralph Loop" }),
       ).toBeInTheDocument();
     });
 

@@ -74,7 +74,10 @@ export function MissionReactor({
   });
 
   return (
-    <div className={`${styles.reactor} ${phaseClass(mission)}`}>
+    <section
+      aria-label="Ralph Loop reactor"
+      className={`${styles.reactor} ${phaseClass(mission)}`}
+    >
       <div className={styles.backdropRing} aria-hidden="true" />
       <div className={styles.orbitRing} aria-hidden="true" />
       <div className={styles.core}>
@@ -97,6 +100,6 @@ export function MissionReactor({
           </div>
         );
       })}
-    </div>
+    </section>
   );
 }

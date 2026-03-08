@@ -145,6 +145,7 @@ function App() {
     latestSessionId,
     monitorConnected,
     activeStage,
+    gates,
     completion,
     commandCenterEvents,
     loopEvents,
@@ -812,6 +813,11 @@ function App() {
           wsConnected={wsConnected}
           monitorConnected={monitorConnected}
           sessionId={latestSessionId}
+          activeStage={activeStage}
+          gates={gates}
+          completion={completion}
+          stuckAlert={stuckAlert}
+          loopMonitorUrl={loopMonitorUrl}
           onToggleRecord={handleToggle}
           onRetry={handleRetry}
           onRecordAnother={handleRecordAnother}

@@ -96,15 +96,15 @@ describe("App", () => {
 
   it("should render the center-first idle surface", async () => {
     await renderApp();
-    expect(screen.getByText("Speak the next objective")).toBeInTheDocument();
-    expect(screen.getByText("Ralph Loop")).toBeInTheDocument();
+    expect(screen.getByText("Start with your objective")).toBeInTheDocument();
+    expect(screen.getByText("Delivery pipeline")).toBeInTheDocument();
     expect(screen.getByText("Pending queue")).toBeInTheDocument();
     expect(screen.getByText("Activity")).toBeInTheDocument();
     expect(screen.getByLabelText("SEJFA detail shelf")).toBeInTheDocument();
     expect(screen.getByText("Objective transcript")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Your objective becomes structured work and then a live run.",
+        "Voice input becomes structured task context and then a live run.",
       ),
     ).toBeInTheDocument();
     expect(screen.queryByText("Objective Console")).not.toBeInTheDocument();
@@ -118,9 +118,9 @@ describe("App", () => {
     expect(
       screen.getByRole("button", { name: "Start recording" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Speak the next objective")).toBeInTheDocument();
+    expect(screen.getByText("Start with your objective")).toBeInTheDocument();
     expect(
-      screen.getByText("Speak the objective to start the SEJFA run."),
+      screen.getByText("Press record and describe what should happen."),
     ).toBeInTheDocument();
   });
 
@@ -192,7 +192,7 @@ describe("App", () => {
       screen.getByLabelText("SEJFA transformation canvas"),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Queued for Ralph Loop" }),
+      screen.getByRole("heading", { name: "Queued for execution" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Test ticket")).toBeInTheDocument();
     const rail = screen.getByLabelText("SEJFA support rail");
@@ -224,7 +224,7 @@ describe("App", () => {
       screen.getByRole("heading", { name: "Running agent" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("Running");
-    const reactor = screen.getByLabelText("Ralph Loop reactor");
+    const reactor = screen.getByLabelText("Delivery pipeline map");
     expect(reactor).toBeInTheDocument();
     expect(within(reactor).getAllByText("Agent").length).toBeGreaterThan(0);
   });
@@ -305,11 +305,11 @@ describe("App", () => {
 
     await renderApp();
 
-    await user.click(screen.getByRole("button", { name: "Create mission" }));
+    await user.click(screen.getByRole("button", { name: "Start run" }));
 
     await waitFor(() => {
       expect(
-        screen.getByRole("heading", { name: "Queued for Ralph Loop" }),
+        screen.getByRole("heading", { name: "Queued for execution" }),
       ).toBeInTheDocument();
     });
 

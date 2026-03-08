@@ -116,7 +116,7 @@ describe("deriveCanvasState", () => {
       }),
     ).toEqual({
       phase: "idle",
-      caption: "Speak the next objective",
+      caption: "Start with your objective",
       emphasis: "intake",
     });
   });
@@ -200,7 +200,7 @@ describe("deriveCanvasState", () => {
       }),
     ).toEqual({
       phase: "queued",
-      caption: "Queued for Ralph Loop",
+      caption: "Queued for execution",
       emphasis: "loop",
     });
 

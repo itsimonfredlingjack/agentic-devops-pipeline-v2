@@ -79,9 +79,9 @@ describe("StatusBadge", () => {
     expect(screen.getByText("Need detail")).toBeInTheDocument();
   });
 
-  it("should render Created for done status", () => {
+  it("should render Done for done status", () => {
     render(<StatusBadge status="done" />);
-    expect(screen.getByText("Created")).toBeInTheDocument();
+    expect(screen.getByText("Done")).toBeInTheDocument();
   });
 
   it("should render a custom label and tone when provided", () => {
@@ -126,7 +126,7 @@ describe("SuccessCard", () => {
     summary: "Fix login bug",
   };
 
-  it("should render mission created copy and summary", () => {
+  it("should render queued run copy and summary", () => {
     render(
       <SuccessCard
         ticket={ticket}
@@ -136,9 +136,9 @@ describe("SuccessCard", () => {
         onRecordAnother={vi.fn()}
       />,
     );
-    expect(screen.getByText("Mission created")).toBeInTheDocument();
+    expect(screen.getByText("Run queued")).toBeInTheDocument();
     expect(screen.getByText("Fix login bug")).toBeInTheDocument();
-    expect(screen.getByText("DEV-42 is ready for the loop.")).toBeInTheDocument();
+    expect(screen.getByText("DEV-42 is ready for execution.")).toBeInTheDocument();
   });
 
   it("should render session context without artifact links", () => {
@@ -345,13 +345,13 @@ describe("AppShell", () => {
     expect(screen.getByTestId("child")).toBeInTheDocument();
   });
 
-  it("should render decorative blobs", () => {
+  it("should render a simplified shell without decorative blobs", () => {
     const { container } = render(
       <AppShell>
         <span>Content</span>
       </AppShell>,
     );
     const blobs = container.querySelectorAll("[class*='blob']");
-    expect(blobs.length).toBeGreaterThanOrEqual(3);
+    expect(blobs.length).toBe(0);
   });
 });

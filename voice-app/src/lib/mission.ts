@@ -68,7 +68,7 @@ export function deriveMissionState({
     return {
       phase: "completed",
       label: "Done",
-      detail: "Mission shipped successfully",
+      detail: "Run completed successfully",
     };
   }
 
@@ -104,7 +104,7 @@ export function deriveMissionState({
     return {
       phase: "processing",
       label: "Igniting",
-      detail: "Turning your voice into a mission",
+      detail: "Turning voice input into a runnable task",
     };
   }
 
@@ -128,7 +128,7 @@ export function deriveMissionState({
     return {
       phase: "queued",
       label: "Queued",
-      detail: "Mission accepted and waiting for agent pickup",
+      detail: "Task accepted and waiting for agent pickup",
     };
   }
 
@@ -205,14 +205,14 @@ export function deriveCanvasState({
   if (ticket) {
     return {
       phase: "queued",
-      caption: "Queued for Ralph Loop",
+      caption: "Queued for execution",
       emphasis: "loop",
     };
   }
 
   return {
     phase: "idle",
-    caption: "Speak the next objective",
+    caption: "Start with your objective",
     emphasis: "intake",
   };
 }

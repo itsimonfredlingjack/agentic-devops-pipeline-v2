@@ -136,7 +136,7 @@ export function AudioPreview({
           Discard
         </button>
         <button className={styles.sendBtn} onClick={onSend}>
-          Create mission
+          Start run
         </button>
       </div>
     </section>

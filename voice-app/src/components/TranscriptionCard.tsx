@@ -14,11 +14,11 @@ function getPlaceholder(status: PipelineStatus): string {
     case "previewing":
       return "Review the capture before sending it.";
     case "processing":
-      return "Preparing transcript and mission context...";
+      return "Preparing transcript and task context...";
     case "clarifying":
-      return "Waiting for one detail before mission creation.";
+      return "Waiting for one detail before starting execution.";
     case "done":
-      return "Mission created. Record another when you are ready.";
+      return "Run queued. Record another when you are ready.";
     case "error":
       return "Your last capture stays here so you can retry safely.";
     case "idle":

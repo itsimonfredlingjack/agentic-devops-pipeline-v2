@@ -15,7 +15,7 @@
   display: flex;
   justify-content: space-between;
   gap: var(--space-md);
-  align-items: flex-start;
+  align-items: center;
 }
 
 .eyebrow,
@@ -24,8 +24,8 @@
 .loopLabel,
 .phaseBadge {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.18em;
+  font-size: 10px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -36,7 +36,7 @@
 }
 
 .loopLabel {
-  margin-top: 6px;
+  margin-top: 4px;
   color: rgba(226, 248, 255, 0.92);
 }
 
@@ -93,10 +93,10 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-md);
-  min-height: 360px;
+  min-height: 332px;
   padding: var(--space-lg);
   background:
-    radial-gradient(circle at center, rgba(255, 124, 90, 0.12), transparent 52%),
+    radial-gradient(circle at center, rgba(255, 124, 90, 0.1), transparent 50%),
     rgba(255, 255, 255, 0.03);
 }
 
@@ -104,19 +104,19 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  min-height: 360px;
+  min-height: 332px;
   padding: var(--space-lg);
   background:
-    radial-gradient(circle at 70% 30%, rgba(82, 210, 255, 0.12), transparent 28%),
+    radial-gradient(circle at 70% 30%, rgba(82, 210, 255, 0.1), transparent 28%),
     rgba(255, 255, 255, 0.03);
 }
 
 .phaseListening .intakeAperture {
-  transform: translateY(-2px) scale(1.01);
+  transform: translateY(-1px);
   background:
-    radial-gradient(circle at center, rgba(255, 124, 90, 0.2), transparent 56%),
+    radial-gradient(circle at center, rgba(255, 124, 90, 0.17), transparent 54%),
     rgba(255, 255, 255, 0.04);
-  box-shadow: 0 20px 56px rgba(255, 124, 90, 0.08);
+  box-shadow: 0 16px 44px rgba(255, 124, 90, 0.07);
 }
 
 .phaseProcessing .workCore,
@@ -154,9 +154,9 @@
 }
 
 .title {
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  line-height: 0.96;
-  letter-spacing: -0.04em;
+  font-size: clamp(1.5rem, 2.6vw, 2.2rem);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
 }
 
 .description,
@@ -167,7 +167,7 @@
 
 .helper {
   text-align: center;
-  max-width: 28ch;
+  max-width: 34ch;
 }
 
 .phaseField {
@@ -269,8 +269,8 @@
   width: fit-content;
   padding: 8px 12px;
   border-radius: 999px;
-  background: rgba(82, 210, 255, 0.08);
-  border: 1px solid rgba(82, 210, 255, 0.2);
+  background: rgba(82, 210, 255, 0.06);
+  border: 1px solid rgba(82, 210, 255, 0.17);
   color: rgba(226, 248, 255, 0.94);
 }
 

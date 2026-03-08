@@ -16,11 +16,11 @@ export function SuccessCard({
   onRecordAnother,
 }: SuccessCardProps) {
   return (
-    <section className={styles.card} aria-label="Mission created">
+    <section className={styles.card} aria-label="Run queued">
       <div className={styles.summary}>
-        <div className={styles.kicker}>Mission created</div>
+        <div className={styles.kicker}>Run queued</div>
         <div className={styles.headline}>{ticket.summary}</div>
-        <div className={styles.support}>{ticket.key} is ready for the loop.</div>
+        <div className={styles.support}>{ticket.key} is ready for execution.</div>
       </div>
 
       <div className={styles.actions}>

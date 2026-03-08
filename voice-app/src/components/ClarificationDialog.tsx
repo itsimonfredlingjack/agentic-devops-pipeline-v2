@@ -45,7 +45,7 @@ export function ClarificationDialog({
         <span className={styles.round}>Round {round}</span>
       </div>
       <div className={styles.summary}>
-        Add the missing detail so we can create the mission correctly.
+        Add the missing detail so we can continue this run correctly.
       </div>
       <div className={styles.partialSummary}>{partialSummary}</div>
       <ol className={styles.questions}>

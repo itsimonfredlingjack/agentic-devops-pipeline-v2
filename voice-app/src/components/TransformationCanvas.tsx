@@ -56,7 +56,7 @@ function getCanvasCopy(
 ): CanvasCopy {
   if (status === "error") {
     return {
-      title: "Couldn’t create the mission",
+      title: "Couldn’t start the run",
       description:
         errorMessage ??
         "The run needs attention before it can continue.",
@@ -76,7 +76,7 @@ function getCanvasCopy(
         return {
           title: "Review the captured objective",
           description: "Confirm the capture before it condenses into work.",
-          helper: "Play it back or create the mission when it sounds right.",
+          helper: "Play it back or start the run when it sounds right.",
         };
       }
 
@@ -93,17 +93,17 @@ function getCanvasCopy(
       };
     case "queued":
       return {
-        title: "Queued for Ralph Loop",
+        title: "Queued for execution",
         description: ticket
-          ? `${ticket.key} is ready for loop pickup.`
-          : "This objective is ready to enter Ralph Loop.",
-        helper: "Stay here while the loop picks up the run.",
+          ? `${ticket.key} is ready for execution pickup.`
+          : "This objective is ready to enter execution.",
+        helper: "Stay here while execution picks up the run.",
       };
     case "running":
       return {
         title: `Running ${humanizeStage(activeStage)}`,
-        description: "Ralph Loop is actively moving this session through work.",
-        helper: "Watch the active stage while the loop advances the run.",
+        description: "The delivery pipeline is moving this session through work.",
+        helper: "Watch the active stage while execution advances the run.",
       };
     case "blocked":
       return {
@@ -123,9 +123,10 @@ function getCanvasCopy(
     case "idle":
     default:
       return {
-        title: "Speak the next objective",
-        description: "Your objective becomes structured work and then a live run.",
-        helper: "Speak the objective to start the SEJFA run.",
+        title: "Start with your objective",
+        description:
+          "Voice input becomes structured task context and then a live run.",
+        helper: "Press record and describe what should happen.",
       };
   }
 }
@@ -145,7 +146,7 @@ function getProgressLabel(status: PipelineStatus, processingStep: string): strin
     case "done":
       return "Run is settled.";
     case "error":
-      return "Mission creation is blocked until retry.";
+      return "Run start is blocked until retry.";
     case "idle":
     default:
       return "Ready for your next objective.";
@@ -191,7 +192,7 @@ export function TransformationCanvas({
   const progressLabel =
     processingStep ||
     (canvasState.phase === "queued"
-      ? "Queued for Ralph Loop."
+      ? "Queued for execution."
       : canvasState.phase === "running"
         ? `Running ${humanizeStage(activeStage)}.`
         : canvasState.phase === "blocked"
@@ -213,8 +214,8 @@ export function TransformationCanvas({
       <GlassCard className={shellClassName}>
         <div className={styles.topRail}>
           <div>
-            <div className={styles.eyebrow}>Transformation canvas</div>
-            <div className={styles.loopLabel}>Ralph Loop</div>
+            <div className={styles.eyebrow}>Execution flow</div>
+            <div className={styles.loopLabel}>Delivery pipeline</div>
           </div>
           <div className={styles.connectionSummary}>
             <span className={styles.connectionChip}>
@@ -228,7 +229,7 @@ export function TransformationCanvas({
 
         <div className={styles.coreGrid}>
           <div className={styles.intakeAperture}>
-            <div className={styles.apertureLabel}>Intake aperture</div>
+            <div className={styles.apertureLabel}>Voice input</div>
             <RecordButton
               status={status}
               micLevels={micLevels}

@@ -35,8 +35,8 @@
 .timestamp,
 .key {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
+  font-size: 10px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 

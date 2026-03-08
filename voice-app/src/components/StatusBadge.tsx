@@ -15,11 +15,11 @@ interface StatusBadgeProps {
 
 const LABEL: Record<PipelineStatus, string> = {
   idle: "Ready",
-  recording: "Recording",
-  processing: "Processing",
+  recording: "Listening",
+  processing: "Preparing",
   clarifying: "Need detail",
   previewing: "Review",
-  done: "Created",
+  done: "Done",
   error: "Issue",
 };
 

@@ -33,7 +33,9 @@
 }
 
 .processing .dot,
-.previewing .dot {
+.previewing .dot,
+.queued .dot,
+.running .dot {
   background: var(--blue);
 }
 
@@ -46,5 +48,9 @@
 }
 
 .error .dot {
+  background: var(--red);
+}
+
+.blocked .dot {
   background: var(--red);
 }

@@ -107,6 +107,8 @@ describe("App", () => {
         "Your objective becomes structured work and then a live run.",
       ),
     ).toBeInTheDocument();
+    expect(screen.queryByText("Objective Console")).not.toBeInTheDocument();
+    expect(screen.queryByText("Ralph Loop Workspace")).not.toBeInTheDocument();
     expect(screen.queryByText("Voice Intake")).not.toBeInTheDocument();
   });
 
@@ -221,6 +223,7 @@ describe("App", () => {
     expect(
       screen.getByRole("heading", { name: "Running agent" }),
     ).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Running");
     const reactor = screen.getByLabelText("Ralph Loop reactor");
     expect(reactor).toBeInTheDocument();
     expect(within(reactor).getAllByText("Agent").length).toBeGreaterThan(0);
@@ -248,6 +251,7 @@ describe("App", () => {
     expect(
       screen.getByRole("heading", { name: "Blocked in deploy" }),
     ).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Blocked");
   });
 
   it("should settle into a completed run with outcome links in the center flow", async () => {
@@ -275,6 +279,7 @@ describe("App", () => {
     expect(
       screen.getByRole("heading", { name: "Run completed" }),
     ).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Done");
     expect(
       within(screen.getByLabelText("SEJFA transformation canvas")).getByRole("link", {
         name: "Open PR",

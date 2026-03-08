@@ -54,6 +54,16 @@ function getCanvasCopy(
   activeStage: string | null,
   completion: CompletionEntry | null,
 ): CanvasCopy {
+  if (status === "error") {
+    return {
+      title: "Couldn’t create the mission",
+      description:
+        errorMessage ??
+        "The run needs attention before it can continue.",
+      helper: "Retry the request, record again, or open settings.",
+    };
+  }
+
   switch (canvasState.phase) {
     case "listening":
       return {
@@ -109,14 +119,6 @@ function getCanvasCopy(
           ? "Delivery artifacts are ready to inspect from the center flow."
           : "The run settled successfully and the outcome is ready to inspect.",
         helper: "Inspect the outcome, then launch the next objective when ready.",
-      };
-    case "error":
-      return {
-        title: "Couldn’t create the mission",
-        description:
-          errorMessage ??
-          "The run needs attention before it can continue.",
-        helper: "Retry the request, record again, or open settings.",
       };
     case "idle":
     default:

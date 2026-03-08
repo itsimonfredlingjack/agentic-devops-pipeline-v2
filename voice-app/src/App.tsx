@@ -198,6 +198,29 @@ function App() {
     completion,
     stuckAlert,
   });
+  const headerBadge = (() => {
+    switch (canvasState.phase) {
+      case "listening":
+        return { label: "Listening", tone: "recording" as const };
+      case "processing":
+        return {
+          label: status === "previewing" ? "Review" : "Preparing",
+          tone: status === "previewing" ? ("previewing" as const) : ("processing" as const),
+        };
+      case "clarifying":
+        return { label: "Need detail", tone: "clarifying" as const };
+      case "queued":
+        return { label: "Queued", tone: "queued" as const };
+      case "running":
+        return { label: "Running", tone: "running" as const };
+      case "blocked":
+        return { label: "Blocked", tone: "blocked" as const };
+      case "done":
+        return { label: "Done", tone: "done" as const };
+      default:
+        return { label: "Ready", tone: "idle" as const };
+    }
+  })();
 
   const refreshQueue = useCallback(async () => {
     try {
@@ -800,6 +823,8 @@ function App() {
     <AppShell>
       <Header
         status={status}
+        statusLabel={headerBadge.label}
+        statusTone={headerBadge.tone}
         onSettingsClick={() => setSettingsOpen(true)}
       />
       <div className={railStyles.surface}>

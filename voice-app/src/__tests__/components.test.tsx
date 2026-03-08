@@ -44,8 +44,15 @@ describe("Header", () => {
   });
 
   it("should render status badge and settings button", () => {
-    render(<Header status="processing" onSettingsClick={vi.fn()} />);
-    expect(screen.getByText("Processing")).toBeInTheDocument();
+    render(
+      <Header
+        status="processing"
+        statusLabel="Running"
+        statusTone="running"
+        onSettingsClick={vi.fn()}
+      />,
+    );
+    expect(screen.getByText("Running")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Settings" }),
     ).toBeInTheDocument();
@@ -75,6 +82,11 @@ describe("StatusBadge", () => {
   it("should render Created for done status", () => {
     render(<StatusBadge status="done" />);
     expect(screen.getByText("Created")).toBeInTheDocument();
+  });
+
+  it("should render a custom label and tone when provided", () => {
+    render(<StatusBadge status="idle" label="Running" tone="running" />);
+    expect(screen.getByText("Running")).toBeInTheDocument();
   });
 
   it("should render Issue for error status", () => {

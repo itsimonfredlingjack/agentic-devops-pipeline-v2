@@ -26,7 +26,7 @@ async function renderApp() {
   const { default: App } = await import("../App");
   render(<App />);
   await waitFor(() => {
-    expect(screen.getByLabelText("SEJFA support rail")).toBeInTheDocument();
+    expect(screen.getByLabelText("SEJFA support panel")).toBeInTheDocument();
   });
   await waitFor(() => {
     expect(screen.getByLabelText("SEJFA detail shelf")).toBeInTheDocument();
@@ -96,15 +96,15 @@ describe("App", () => {
 
   it("should render the center-first idle surface", async () => {
     await renderApp();
-    expect(screen.getByText("Start with your objective")).toBeInTheDocument();
-    expect(screen.getByText("Delivery pipeline")).toBeInTheDocument();
-    expect(screen.getByText("Pending queue")).toBeInTheDocument();
-    expect(screen.getByText("Activity")).toBeInTheDocument();
+    expect(screen.getByText("Start with a request")).toBeInTheDocument();
+    expect(screen.getByText("Execution pipeline")).toBeInTheDocument();
+    expect(screen.getByText("Queue")).toBeInTheDocument();
+    expect(screen.getByText("Recent activity")).toBeInTheDocument();
     expect(screen.getByLabelText("SEJFA detail shelf")).toBeInTheDocument();
-    expect(screen.getByText("Objective transcript")).toBeInTheDocument();
+    expect(screen.getByText("Captured request")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Voice input becomes structured task context and then a live run.",
+        "Record a request to create a task and start execution tracking.",
       ),
     ).toBeInTheDocument();
     expect(screen.queryByText("Objective Console")).not.toBeInTheDocument();
@@ -118,9 +118,9 @@ describe("App", () => {
     expect(
       screen.getByRole("button", { name: "Start recording" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Start with your objective")).toBeInTheDocument();
+    expect(screen.getByText("Start with a request")).toBeInTheDocument();
     expect(
-      screen.getByText("Press record and describe what should happen."),
+      screen.getByText("Press record and describe what you need."),
     ).toBeInTheDocument();
   });
 
@@ -129,7 +129,7 @@ describe("App", () => {
     await renderApp();
 
     expect(
-      screen.getByRole("heading", { name: "Listening for the objective" }),
+      screen.getByRole("heading", { name: "Listening for your request" }),
     ).toBeInTheDocument();
   });
 
@@ -147,9 +147,9 @@ describe("App", () => {
     await renderApp();
 
     expect(
-      screen.getByRole("heading", { name: "Waiting for one missing detail" }),
+      screen.getByRole("heading", { name: "Need one more detail" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Need one detail")).toBeInTheDocument();
+    expect(screen.getByText("Round 2")).toBeInTheDocument();
     expect(screen.getByText("Which deploy target is failing?")).toBeInTheDocument();
   });
 
@@ -192,10 +192,10 @@ describe("App", () => {
       screen.getByLabelText("SEJFA transformation canvas"),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Queued for execution" }),
+      screen.getByRole("heading", { name: "Task queued" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Test ticket")).toBeInTheDocument();
-    const rail = screen.getByLabelText("SEJFA support rail");
+    const rail = screen.getByLabelText("SEJFA support panel");
     expect(within(rail).getByRole("link", { name: "Open ticket" })).toHaveAttribute(
       "href",
       "https://jira.example.com/DEV-99",
@@ -221,10 +221,10 @@ describe("App", () => {
     await renderApp();
 
     expect(
-      screen.getByRole("heading", { name: "Running agent" }),
+      screen.getByRole("heading", { name: "Running Agent" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("Running");
-    const reactor = screen.getByLabelText("Delivery pipeline map");
+    const reactor = screen.getByLabelText("Execution pipeline map");
     expect(reactor).toBeInTheDocument();
     expect(within(reactor).getAllByText("Agent").length).toBeGreaterThan(0);
   });
@@ -249,7 +249,7 @@ describe("App", () => {
     await renderApp();
 
     expect(
-      screen.getByRole("heading", { name: "Blocked in deploy" }),
+      screen.getByRole("heading", { name: "Blocked in Deploy" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("Blocked");
   });
@@ -277,7 +277,7 @@ describe("App", () => {
     await renderApp();
 
     expect(
-      screen.getByRole("heading", { name: "Run completed" }),
+      screen.getByRole("heading", { name: "Task completed" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("Done");
     expect(
@@ -305,11 +305,11 @@ describe("App", () => {
 
     await renderApp();
 
-    await user.click(screen.getByRole("button", { name: "Start run" }));
+    await user.click(screen.getByRole("button", { name: "Create task" }));
 
     await waitFor(() => {
       expect(
-        screen.getByRole("heading", { name: "Queued for execution" }),
+        screen.getByRole("heading", { name: "Task queued" }),
       ).toBeInTheDocument();
     });
 
@@ -318,7 +318,7 @@ describe("App", () => {
     expect(
       screen.getByLabelText("SEJFA transformation canvas"),
     ).toBeInTheDocument();
-    const rail = screen.getByLabelText("SEJFA support rail");
+    const rail = screen.getByLabelText("SEJFA support panel");
     expect(
       within(rail).getByRole("link", { name: "Open loop monitor" }),
     ).toHaveAttribute("href", "http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42");

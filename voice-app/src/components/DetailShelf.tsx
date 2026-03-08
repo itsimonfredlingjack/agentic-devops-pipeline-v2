@@ -15,12 +15,12 @@ export function DetailShelf({
     <section aria-label="SEJFA detail shelf" className={styles.shelf}>
       <GlassCard className={styles.card}>
         <div className={styles.header}>
-          <div className={styles.eyebrow}>Detail shelf</div>
-          <div className={styles.title}>Objective transcript</div>
+          <div className={styles.eyebrow}>Transcript</div>
+          <div className={styles.title}>Captured request</div>
         </div>
 
         <div className={styles.transcript}>
-          {transcription || "Your captured objective will appear here."}
+          {transcription || "Your transcript appears here after recording."}
         </div>
 
         <LogPanel

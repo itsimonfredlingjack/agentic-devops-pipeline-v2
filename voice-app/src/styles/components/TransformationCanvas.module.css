@@ -5,26 +5,25 @@
 .shell {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-xl);
   overflow: hidden;
   transition: border-color var(--transition-slow), background var(--transition-slow),
-    transform var(--transition-slow);
+    box-shadow var(--transition-slow);
 }
 
 .topRail {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   gap: var(--space-md);
-  align-items: center;
 }
 
 .eyebrow,
 .apertureLabel,
 .blockLabel,
-.loopLabel,
 .phaseBadge {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--text-xs);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -32,12 +31,15 @@
 .eyebrow,
 .apertureLabel,
 .blockLabel {
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }
 
 .loopLabel {
-  margin-top: 4px;
-  color: rgba(226, 248, 255, 0.92);
+  margin-top: var(--space-xs);
+  color: var(--text-primary);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.01em;
 }
 
 .connectionSummary,
@@ -57,22 +59,23 @@
 .phaseBadge {
   display: inline-flex;
   align-items: center;
-  min-height: 32px;
-  padding: 7px 10px;
+  min-height: 30px;
+  padding: 6px 10px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
   color: var(--text-secondary);
+  font-size: var(--text-xs);
 }
 
 .phaseBadge {
   width: fit-content;
-  color: rgba(226, 248, 255, 0.92);
+  color: var(--text-primary);
 }
 
 .coreGrid {
   display: grid;
-  grid-template-columns: minmax(240px, 0.78fr) minmax(0, 1.22fr);
+  grid-template-columns: minmax(248px, 0.72fr) minmax(0, 1.28fr);
   gap: var(--space-lg);
   align-items: stretch;
   transition: grid-template-columns var(--transition-slow);
@@ -82,9 +85,9 @@
 .workCore {
   border-radius: var(--radius-lg);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.02);
   transition: border-color var(--transition-slow), background var(--transition-slow),
-    transform var(--transition-slow), box-shadow var(--transition-slow);
+    box-shadow var(--transition-slow);
 }
 
 .intakeAperture {
@@ -93,92 +96,92 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-md);
-  min-height: 332px;
-  padding: var(--space-lg);
+  min-height: 328px;
+  padding: var(--space-xl) var(--space-lg);
   background:
-    radial-gradient(circle at center, rgba(255, 124, 90, 0.1), transparent 50%),
-    rgba(255, 255, 255, 0.03);
+    radial-gradient(circle at center, rgba(255, 124, 90, 0.06), transparent 58%),
+    rgba(255, 255, 255, 0.02);
 }
 
 .workCore {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  min-height: 332px;
-  padding: var(--space-lg);
+  min-height: 328px;
+  padding: var(--space-xl) var(--space-lg);
   background:
-    radial-gradient(circle at 70% 30%, rgba(82, 210, 255, 0.1), transparent 28%),
-    rgba(255, 255, 255, 0.03);
+    radial-gradient(circle at 70% 24%, rgba(82, 210, 255, 0.06), transparent 36%),
+    rgba(255, 255, 255, 0.02);
 }
 
 .phaseListening .intakeAperture {
-  transform: translateY(-1px);
-  background:
-    radial-gradient(circle at center, rgba(255, 124, 90, 0.17), transparent 54%),
-    rgba(255, 255, 255, 0.04);
-  box-shadow: 0 16px 44px rgba(255, 124, 90, 0.07);
+  border-color: rgba(255, 124, 90, 0.2);
+  box-shadow: 0 8px 24px rgba(255, 124, 90, 0.08);
 }
 
 .phaseProcessing .workCore,
 .phaseClarifying .workCore {
-  background:
-    radial-gradient(circle at 70% 24%, rgba(82, 210, 255, 0.18), transparent 34%),
-    rgba(255, 255, 255, 0.04);
+  border-color: rgba(82, 210, 255, 0.16);
 }
 
 .phaseQueued .coreGrid,
 .phaseRunning .coreGrid,
 .phaseBlocked .coreGrid,
 .phaseDone .coreGrid {
-  grid-template-columns: minmax(220px, 0.58fr) minmax(0, 1.42fr);
+  grid-template-columns: minmax(224px, 0.58fr) minmax(0, 1.42fr);
 }
 
 .phaseQueued .workCore,
 .phaseRunning .workCore {
   border-color: rgba(82, 210, 255, 0.16);
-  box-shadow: 0 24px 72px rgba(82, 210, 255, 0.08);
+  box-shadow: 0 12px 28px rgba(82, 210, 255, 0.1);
 }
 
 .phaseBlocked .workCore {
-  border-color: rgba(255, 107, 107, 0.22);
+  border-color: rgba(255, 107, 107, 0.2);
   background:
-    radial-gradient(circle at 70% 24%, rgba(255, 107, 107, 0.12), transparent 34%),
-    rgba(255, 255, 255, 0.04);
+    radial-gradient(circle at 70% 24%, rgba(255, 107, 107, 0.08), transparent 36%),
+    rgba(255, 255, 255, 0.02);
 }
 
 .phaseDone .workCore {
-  border-color: rgba(104, 223, 146, 0.18);
+  border-color: rgba(104, 223, 146, 0.2);
   background:
-    radial-gradient(circle at 70% 24%, rgba(104, 223, 146, 0.12), transparent 34%),
-    rgba(255, 255, 255, 0.04);
+    radial-gradient(circle at 70% 24%, rgba(104, 223, 146, 0.08), transparent 36%),
+    rgba(255, 255, 255, 0.02);
 }
 
 .title {
-  font-size: clamp(1.5rem, 2.6vw, 2.2rem);
-  line-height: 1.06;
+  font-size: clamp(var(--text-xl), 2.8vw, var(--text-2xl));
+  line-height: 1.08;
   letter-spacing: -0.02em;
+  font-weight: var(--weight-semibold);
 }
 
 .description,
 .helper {
   color: var(--text-secondary);
-  line-height: 1.65;
+  line-height: 1.62;
+  font-size: var(--text-base);
+}
+
+.description {
+  max-width: 62ch;
 }
 
 .helper {
   text-align: center;
-  max-width: 34ch;
+  max-width: 30ch;
+  font-size: var(--text-md);
 }
 
 .phaseField {
   position: relative;
   overflow: hidden;
-  min-height: 132px;
+  min-height: 126px;
   border-radius: calc(var(--radius-lg) - 6px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255, 124, 90, 0.12), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
 }
 
 .phaseSpark {
@@ -186,9 +189,9 @@
   inset: 18px;
   border-radius: inherit;
   background:
-    radial-gradient(circle at 50% 50%, rgba(82, 210, 255, 0.14), transparent 28%),
-    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-  opacity: 0.9;
+    radial-gradient(circle at 50% 50%, rgba(82, 210, 255, 0.12), transparent 30%),
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+  opacity: 0.72;
 }
 
 .clarificationSeam {
@@ -196,15 +199,15 @@
   top: 18px;
   bottom: 18px;
   left: 50%;
-  width: 2px;
-  background: linear-gradient(180deg, transparent, rgba(82, 210, 255, 0.7), transparent);
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(82, 210, 255, 0.45), transparent);
   transform: translateX(-50%);
 }
 
 .reactorWrap {
   display: flex;
   justify-content: center;
-  padding: 8px 0 4px;
+  padding: var(--space-xs) 0;
 }
 
 .reviewTray,
@@ -216,9 +219,9 @@
 
 .clarificationTray {
   padding: var(--space-sm);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   border: 1px solid rgba(82, 210, 255, 0.14);
-  background: rgba(82, 210, 255, 0.04);
+  background: rgba(82, 210, 255, 0.03);
 }
 
 .outcomePanel {
@@ -226,14 +229,14 @@
   flex-direction: column;
   gap: var(--space-sm);
   padding: var(--space-md);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   border: 1px solid rgba(104, 223, 146, 0.16);
-  background: rgba(104, 223, 146, 0.05);
+  background: rgba(104, 223, 146, 0.04);
 }
 
 .outcomeSummary {
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.58;
 }
 
 .outcomeLinks {
@@ -245,11 +248,11 @@
 .outcomeLink {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
-  padding: 9px 14px;
+  min-height: 38px;
+  padding: 8px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(104, 223, 146, 0.22);
-  background: rgba(104, 223, 146, 0.08);
+  border: 1px solid rgba(104, 223, 146, 0.2);
+  background: rgba(104, 223, 146, 0.06);
   color: rgba(226, 248, 255, 0.94);
   text-decoration: none;
 }
@@ -265,13 +268,14 @@
 .stepChip {
   display: inline-flex;
   align-items: center;
-  min-height: 38px;
+  min-height: 36px;
   width: fit-content;
-  padding: 8px 12px;
+  padding: 7px 12px;
   border-radius: 999px;
-  background: rgba(82, 210, 255, 0.06);
-  border: 1px solid rgba(82, 210, 255, 0.17);
-  color: rgba(226, 248, 255, 0.94);
+  background: rgba(82, 210, 255, 0.05);
+  border: 1px solid rgba(82, 210, 255, 0.14);
+  color: rgba(226, 248, 255, 0.92);
+  font-size: var(--text-md);
 }
 
 .primaryButton,
@@ -280,47 +284,94 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 42px;
-  padding: 10px 16px;
+  min-height: 40px;
+  padding: 9px 14px;
   border-radius: 999px;
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
   cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .primaryButton {
-  background: rgba(82, 210, 255, 0.12);
-  border: 1px solid rgba(82, 210, 255, 0.24);
+  background: rgba(82, 210, 255, 0.1);
+  border: 1px solid rgba(82, 210, 255, 0.2);
   color: #def8ff;
 }
 
 .secondaryButton {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: var(--text-primary);
 }
 
 .ghostButton {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-secondary);
 }
 
-@media (max-width: 960px) {
+.primaryButton:hover,
+.secondaryButton:hover,
+.ghostButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 1100px) {
   .coreGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .topRail {
-    flex-direction: column;
-  }
-
-  .connectionSummary {
-    justify-content: flex-start;
+    grid-template-columns: minmax(220px, 0.68fr) minmax(0, 1.32fr);
   }
 
   .phaseQueued .coreGrid,
   .phaseRunning .coreGrid,
   .phaseBlocked .coreGrid,
   .phaseDone .coreGrid {
+    grid-template-columns: minmax(208px, 0.52fr) minmax(0, 1.48fr);
+  }
+}
+
+@media (max-width: 960px) {
+  .coreGrid,
+  .phaseQueued .coreGrid,
+  .phaseRunning .coreGrid,
+  .phaseBlocked .coreGrid,
+  .phaseDone .coreGrid {
     grid-template-columns: 1fr;
+  }
+
+  .topRail {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .connectionSummary {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .shell {
+    gap: var(--space-lg);
+  }
+
+  .workCore,
+  .intakeAperture {
+    min-height: auto;
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  .outcomeLinks,
+  .errorActions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .outcomeLink,
+  .primaryButton,
+  .secondaryButton,
+  .ghostButton {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -74,9 +74,9 @@ describe("StatusBadge", () => {
     expect(screen.getByText("Ready")).toBeInTheDocument();
   });
 
-  it("should render Need detail for clarifying status", () => {
+  it("should render Needs detail for clarifying status", () => {
     render(<StatusBadge status="clarifying" />);
-    expect(screen.getByText("Need detail")).toBeInTheDocument();
+    expect(screen.getByText("Needs detail")).toBeInTheDocument();
   });
 
   it("should render Done for done status", () => {
@@ -104,7 +104,7 @@ describe("TranscriptionCard", () => {
   it("should show placeholder when no text", () => {
     render(<TranscriptionCard status="idle" text="" />);
     expect(
-      screen.getByText("Your captured objective will appear here."),
+      screen.getByText("Your captured request will appear here."),
     ).toBeInTheDocument();
   });
 
@@ -115,7 +115,7 @@ describe("TranscriptionCard", () => {
 
   it("should show captured objective label", () => {
     render(<TranscriptionCard status="idle" text="" />);
-    expect(screen.getByText("Captured objective")).toBeInTheDocument();
+    expect(screen.getByText("Captured request")).toBeInTheDocument();
   });
 });
 
@@ -136,9 +136,9 @@ describe("SuccessCard", () => {
         onRecordAnother={vi.fn()}
       />,
     );
-    expect(screen.getByText("Run queued")).toBeInTheDocument();
+    expect(screen.getByText("Task queued")).toBeInTheDocument();
     expect(screen.getByText("Fix login bug")).toBeInTheDocument();
-    expect(screen.getByText("DEV-42 is ready for execution.")).toBeInTheDocument();
+    expect(screen.getByText("DEV-42 queued for execution.")).toBeInTheDocument();
   });
 
   it("should render session context without artifact links", () => {
@@ -203,9 +203,9 @@ describe("SupportRail", () => {
       />,
     );
 
-    expect(screen.getByLabelText("SEJFA support rail")).toBeInTheDocument();
-    expect(screen.getByText("Pending queue")).toBeInTheDocument();
-    expect(screen.getByText("Activity")).toBeInTheDocument();
+    expect(screen.getByLabelText("SEJFA support panel")).toBeInTheDocument();
+    expect(screen.getByText("Queue")).toBeInTheDocument();
+    expect(screen.getByText("Recent activity")).toBeInTheDocument();
     expect(screen.getByText("Artifacts")).toBeInTheDocument();
     expect(screen.getByText("DEV-10")).toBeInTheDocument();
     expect(screen.getByText("Ticket created: DEV-42")).toBeInTheDocument();
@@ -258,7 +258,7 @@ describe("DetailShelf", () => {
     );
 
     expect(screen.getByLabelText("SEJFA detail shelf")).toBeInTheDocument();
-    expect(screen.getByText("Objective transcript")).toBeInTheDocument();
+    expect(screen.getByText("Captured request")).toBeInTheDocument();
     expect(screen.getByText("Fix the login flow")).toBeInTheDocument();
 
     const toggle = screen.getByRole("button", { name: /Show technical details/i });

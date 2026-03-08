@@ -10,7 +10,7 @@ interface TranscriptionCardProps {
 function getPlaceholder(status: PipelineStatus): string {
   switch (status) {
     case "recording":
-      return "Listening for your objective...";
+      return "Listening for your request...";
     case "previewing":
       return "Review the capture before sending it.";
     case "processing":
@@ -18,19 +18,19 @@ function getPlaceholder(status: PipelineStatus): string {
     case "clarifying":
       return "Waiting for one detail before starting execution.";
     case "done":
-      return "Run queued. Record another when you are ready.";
+      return "Task queued. Record another when you are ready.";
     case "error":
       return "Your last capture stays here so you can retry safely.";
     case "idle":
     default:
-      return "Your captured objective will appear here.";
+      return "Your captured request will appear here.";
   }
 }
 
 export function TranscriptionCard({ status, text }: TranscriptionCardProps) {
   return (
     <GlassCard className={styles.card}>
-      <div className={styles.label}>Captured objective</div>
+      <div className={styles.label}>Captured request</div>
       {text ? (
         <div className={styles.text}>{text}</div>
       ) : (

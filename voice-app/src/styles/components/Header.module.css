@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-md);
-  padding: 4px 0 0;
+  padding: var(--space-2xs) 0 0;
 }
 
 .brandBlock {
@@ -15,16 +15,16 @@
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.28em;
+  font-size: var(--text-xs);
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--text-secondary);
 }
 
 .title {
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -0.04em;
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.02em;
   color: var(--text-primary);
 }
 
@@ -46,12 +46,11 @@
   color: var(--text-secondary);
   cursor: pointer;
   transition: color var(--transition-fast), background var(--transition-fast),
-    border-color var(--transition-fast), transform var(--transition-fast);
+    border-color var(--transition-fast);
 }
 
 .settingsBtn:hover {
   color: var(--text-primary);
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
 }

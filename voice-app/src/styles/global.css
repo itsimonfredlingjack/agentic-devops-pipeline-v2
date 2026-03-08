@@ -44,8 +44,8 @@ body,
 
 body {
   font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: var(--text-base);
+  line-height: 1.55;
   color: var(--text-primary);
   background: linear-gradient(135deg, var(--bg-gradient-from), var(--bg-gradient-to));
   -webkit-font-smoothing: antialiased;
@@ -82,7 +82,7 @@ body {
 
 /* ── Selections ── */
 ::selection {
-  background: rgba(233, 69, 96, 0.3);
+  background: rgba(82, 210, 255, 0.28);
   color: var(--text-primary);
 }
 

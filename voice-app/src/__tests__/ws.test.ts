@@ -317,4 +317,32 @@ describe("WebSocket utility", () => {
 
     expect(ws.readyState).toBe(3); // CLOSED
   });
+
+  it("should ignore stale socket close events after a new connection is created", () => {
+    connectWebSocket(
+      getServerUrl,
+      appendLog,
+      setStatus,
+      setProcessingStep,
+      setWsConnected,
+    );
+
+    const staleSocket = MockWebSocket.instances[0];
+
+    connectWebSocket(
+      getServerUrl,
+      appendLog,
+      setStatus,
+      setProcessingStep,
+      setWsConnected,
+    );
+
+    expect(MockWebSocket.instances).toHaveLength(2);
+
+    staleSocket.onclose?.();
+    vi.advanceTimersByTime(60_000);
+
+    expect(MockWebSocket.instances).toHaveLength(2);
+    expect(appendLog).not.toHaveBeenCalledWith("[ws] Disconnected");
+  });
 });

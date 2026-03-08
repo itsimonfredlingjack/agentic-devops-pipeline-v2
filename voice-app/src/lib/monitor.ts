@@ -1,6 +1,9 @@
 import { io, type Socket } from "socket.io-client";
 
 let socket: Socket | null = null;
+let lastConnectErrorMessage: string | null = null;
+let lastConnectErrorAt = 0;
+const CONNECT_ERROR_LOG_THROTTLE_MS = 15_000;
 
 export interface MonitorToolEvent {
   event_id: string;
@@ -91,6 +94,8 @@ export function connectMonitorSocket(
   socket.on("connect", () => {
     handlers.appendLog("[monitor] Connected");
     handlers.onConnectionChange(true);
+    lastConnectErrorMessage = null;
+    lastConnectErrorAt = 0;
   });
 
   socket.on("disconnect", (reason) => {
@@ -99,7 +104,18 @@ export function connectMonitorSocket(
   });
 
   socket.on("connect_error", (error) => {
-    handlers.appendLog(`[monitor] Connection error: ${error.message}`);
+    const message = error.message || "unknown";
+    const now = Date.now();
+    const shouldLog =
+      message !== lastConnectErrorMessage ||
+      now - lastConnectErrorAt > CONNECT_ERROR_LOG_THROTTLE_MS;
+
+    if (shouldLog) {
+      handlers.appendLog(`[monitor] Connection error: ${message}`);
+      lastConnectErrorMessage = message;
+      lastConnectErrorAt = now;
+    }
+
     handlers.onConnectionChange(false);
   });
 

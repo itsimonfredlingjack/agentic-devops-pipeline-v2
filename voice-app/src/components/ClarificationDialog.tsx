@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { GlassCard } from "./GlassCard";
 import styles from "../styles/components/ClarificationDialog.module.css";
 
 interface ClarificationDialogProps {
@@ -40,13 +39,13 @@ export function ClarificationDialog({
   };
 
   return (
-    <GlassCard className={styles.card}>
+    <section className={styles.card} aria-label="Clarification detail">
       <div className={styles.header}>
         <span className={styles.title}>Need one detail</span>
         <span className={styles.round}>Round {round}</span>
       </div>
       <div className={styles.summary}>
-        Add the missing detail so we can create the mission correctly.
+        Add the missing detail so we can continue this run correctly.
       </div>
       <div className={styles.partialSummary}>{partialSummary}</div>
       <ol className={styles.questions}>
@@ -87,6 +86,6 @@ export function ClarificationDialog({
           Send detail
         </button>
       </div>
-    </GlassCard>
+    </section>
   );
 }

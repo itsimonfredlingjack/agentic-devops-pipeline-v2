@@ -1,5 +1,7 @@
 .card {
   width: 100%;
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
   border: 1px solid rgba(82, 210, 255, 0.18);
   background: rgba(82, 210, 255, 0.04);
 }

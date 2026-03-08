@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { usePipelineStore } from "../stores/pipelineStore";
 import { invoke } from "@tauri-apps/api/core";
@@ -22,8 +22,22 @@ vi.mock("@tauri-apps/api/core", () => ({
   invoke: vi.fn(),
 }));
 
+async function renderApp() {
+  const { default: App } = await import("../App");
+  render(<App />);
+  await waitFor(() => {
+    expect(screen.getByLabelText("SEJFA support rail")).toBeInTheDocument();
+  });
+  await waitFor(() => {
+    expect(screen.getByLabelText("SEJFA detail shelf")).toBeInTheDocument();
+  });
+}
+
 describe("App", () => {
+  let queuePayload: Array<{ key: string; summary: string }>;
+
   beforeEach(() => {
+    queuePayload = [];
     usePipelineStore.setState({
       status: "idle",
       appMode: "voice",
@@ -46,6 +60,7 @@ describe("App", () => {
       toasts: [],
       processingStep: "",
       pendingSamples: null,
+      queueItems: [],
       ticketResult: null,
       wsConnected: false,
     });
@@ -53,53 +68,111 @@ describe("App", () => {
     vi.mocked(invoke).mockReset();
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () => ({
-        ok: true,
-        json: async () => ({ ok: true }),
-      })),
+      vi.fn(async (input: string | URL | Request) => {
+        const url = String(input);
+
+        if (url.endsWith("/api/loop/queue")) {
+          return {
+            ok: true,
+            json: async () => queuePayload,
+          };
+        }
+
+        return {
+          ok: true,
+          json: async () => ({ ok: true }),
+        };
+      }),
     );
   });
 
-  it("should render the intake header", async () => {
-    const { default: App } = await import("../App");
-    render(<App />);
-    expect(screen.getByText("Voice Intake")).toBeInTheDocument();
+  it("should render the SEJFA desktop shell", async () => {
+    await renderApp();
+    expect(screen.getByText("SEJFA Desktop")).toBeInTheDocument();
+    expect(
+      screen.getByLabelText("SEJFA transformation canvas"),
+    ).toBeInTheDocument();
   });
 
-  it("should render the redesigned intake screen", async () => {
-    const { default: App } = await import("../App");
-    render(<App />);
-
-    expect(screen.getByText("Say the objective")).toBeInTheDocument();
+  it("should render the center-first idle surface", async () => {
+    await renderApp();
+    expect(screen.getByText("Start with your objective")).toBeInTheDocument();
+    expect(screen.getByText("Delivery pipeline")).toBeInTheDocument();
+    expect(screen.getByText("Pending queue")).toBeInTheDocument();
+    expect(screen.getByText("Activity")).toBeInTheDocument();
+    expect(screen.getByLabelText("SEJFA detail shelf")).toBeInTheDocument();
+    expect(screen.getByText("Objective transcript")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Speak naturally. We will capture it and create the mission.",
+        "Voice input becomes structured task context and then a live run.",
       ),
     ).toBeInTheDocument();
-    expect(screen.queryByText("Mission Briefing")).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Skip to Command Center" }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Objective Console")).not.toBeInTheDocument();
+    expect(screen.queryByText("Ralph Loop Workspace")).not.toBeInTheDocument();
+    expect(screen.queryByText("Voice Intake")).not.toBeInTheDocument();
   });
 
-  it("should render the record button and supporting panels in idle state", async () => {
-    const { default: App } = await import("../App");
-    render(<App />);
+  it("should render the record button inside the transformation canvas", async () => {
+    await renderApp();
 
     expect(
       screen.getByRole("button", { name: "Start recording" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Captured objective")).toBeInTheDocument();
+    expect(screen.getByText("Start with your objective")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Show technical details/i }),
+      screen.getByText("Press record and describe what should happen."),
     ).toBeInTheDocument();
+  });
+
+  it("should render the listening composition while recording", async () => {
+    usePipelineStore.setState({ status: "recording" });
+    await renderApp();
+
+    expect(
+      screen.getByRole("heading", { name: "Listening for the objective" }),
+    ).toBeInTheDocument();
+  });
+
+  it("should keep clarification anchored in the canvas flow", async () => {
+    usePipelineStore.setState({
+      status: "clarifying",
+      clarification: {
+        sessionId: "sess-clarify",
+        questions: ["Which deploy target is failing?"],
+        partialSummary: "The release is blocked in deploy.",
+        round: 2,
+      },
+    });
+
+    await renderApp();
+
+    expect(
+      screen.getByRole("heading", { name: "Waiting for one missing detail" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Need one detail")).toBeInTheDocument();
+    expect(screen.getByText("Which deploy target is failing?")).toBeInTheDocument();
+  });
+
+  it("should render pending queue items from the loop queue endpoint", async () => {
+    queuePayload = [
+      { key: "DEV-10", summary: "Fix CI flakes" },
+      { key: "DEV-11", summary: "Repair deploy hook" },
+    ];
+
+    await renderApp();
+
+    await waitFor(() => {
+      expect(screen.getByText("DEV-10")).toBeInTheDocument();
+    });
+    expect(screen.getByText("Fix CI flakes")).toBeInTheDocument();
+    expect(screen.getByText("DEV-11")).toBeInTheDocument();
   });
 
   it("should show transcription text when store has transcription", async () => {
     usePipelineStore.setState({ transcription: "Hello from voice" });
-    const { default: App } = await import("../App");
-    render(<App />);
-    expect(screen.getByText("Hello from voice")).toBeInTheDocument();
+    await renderApp();
+    const shelf = screen.getByLabelText("SEJFA detail shelf");
+    expect(within(shelf).getByText("Hello from voice")).toBeInTheDocument();
   });
 
   it("should keep success inside the intake surface when status is done with a ticket", async () => {
@@ -113,21 +186,105 @@ describe("App", () => {
         summary: "Test ticket",
       },
     });
-    const { default: App } = await import("../App");
-    render(<App />);
+    await renderApp();
 
     expect(
-      screen.getByRole("heading", { name: "Mission created" }),
+      screen.getByLabelText("SEJFA transformation canvas"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Queued for execution" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Test ticket")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Open ticket" })).toHaveAttribute(
+    const rail = screen.getByLabelText("SEJFA support rail");
+    expect(within(rail).getByRole("link", { name: "Open ticket" })).toHaveAttribute(
       "href",
       "https://jira.example.com/DEV-99",
     );
     expect(
-      screen.getByRole("link", { name: "Open loop monitor" }),
+      within(rail).getByRole("link", { name: "Open loop monitor" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Session sess-99")).toBeInTheDocument();
+    expect(screen.getAllByText("Session sess-99").length).toBeGreaterThan(0);
+  });
+
+  it("should render the active loop stage prominently while running", async () => {
+    usePipelineStore.setState({
+      status: "done",
+      activeStage: "agent",
+      latestSessionId: "sess-run",
+      ticketResult: {
+        key: "DEV-77",
+        url: "https://jira.example.com/DEV-77",
+        summary: "Ship the login refactor",
+      },
+    });
+
+    await renderApp();
+
+    expect(
+      screen.getByRole("heading", { name: "Running agent" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Running");
+    const reactor = screen.getByLabelText("Delivery pipeline map");
+    expect(reactor).toBeInTheDocument();
+    expect(within(reactor).getAllByText("Agent").length).toBeGreaterThan(0);
+  });
+
+  it("should surface blocked state composition when the loop jams", async () => {
+    usePipelineStore.setState({
+      status: "done",
+      activeStage: "deploy",
+      ticketResult: {
+        key: "DEV-88",
+        url: "https://jira.example.com/DEV-88",
+        summary: "Repair deploy step",
+      },
+      stuckAlert: {
+        pattern: "deploy retry",
+        repeat_count: 4,
+        tokens_burned: 1800,
+        since: new Date().toISOString(),
+      },
+    });
+
+    await renderApp();
+
+    expect(
+      screen.getByRole("heading", { name: "Blocked in deploy" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Blocked");
+  });
+
+  it("should settle into a completed run with outcome links in the center flow", async () => {
+    usePipelineStore.setState({
+      status: "done",
+      latestSessionId: "sess-complete",
+      ticketResult: {
+        key: "DEV-100",
+        url: "https://jira.example.com/DEV-100",
+        summary: "Close the release loop",
+      },
+      completion: {
+        session_id: "sess-complete",
+        ticket_id: "DEV-100",
+        outcome: "done",
+        pytest_summary: "15 passed",
+        ruff_summary: "clean",
+        git_diff_summary: "3 files changed",
+        pr_url: "https://github.com/example/repo/pull/100",
+      },
+    });
+
+    await renderApp();
+
+    expect(
+      screen.getByRole("heading", { name: "Run completed" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Done");
+    expect(
+      within(screen.getByLabelText("SEJFA transformation canvas")).getByRole("link", {
+        name: "Open PR",
+      }),
+    ).toHaveAttribute("href", "https://github.com/example/repo/pull/100");
   });
 
   it("should keep a successful send in intake and expose compact handoff link", async () => {
@@ -146,21 +303,24 @@ describe("App", () => {
       pendingSamples: [100, -100, 300, -300],
     });
 
-    const { default: App } = await import("../App");
-    render(<App />);
+    await renderApp();
 
-    await user.click(screen.getByRole("button", { name: "Create mission" }));
+    await user.click(screen.getByRole("button", { name: "Start run" }));
 
     await waitFor(() => {
       expect(
-        screen.getByRole("heading", { name: "Mission created" }),
+        screen.getByRole("heading", { name: "Queued for execution" }),
       ).toBeInTheDocument();
     });
 
     expect(usePipelineStore.getState().appMode).toBe("voice");
     expect(usePipelineStore.getState().latestSessionId).toBe("sess-42");
     expect(
-      screen.getByRole("link", { name: "Open loop monitor" }),
+      screen.getByLabelText("SEJFA transformation canvas"),
+    ).toBeInTheDocument();
+    const rail = screen.getByLabelText("SEJFA support rail");
+    expect(
+      within(rail).getByRole("link", { name: "Open loop monitor" }),
     ).toHaveAttribute("href", "http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42");
   });
 });

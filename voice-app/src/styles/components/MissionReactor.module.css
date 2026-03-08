@@ -1,5 +1,5 @@
 .reactor {
-  --orbit-size: min(420px, 92vw);
+  --orbit-size: min(360px, 100%);
   position: relative;
   width: var(--orbit-size);
   height: var(--orbit-size);
@@ -7,6 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform var(--transition-slow), opacity var(--transition-slow);
 }
 
 .backdropRing,
@@ -172,7 +173,7 @@
 
 @media (max-width: 720px) {
   .reactor {
-    --orbit-size: min(360px, 94vw);
+    --orbit-size: min(320px, 94vw);
   }
 
   .core {

@@ -37,7 +37,7 @@ describe("AudioPreview", () => {
 
   it("should render primary and secondary actions", () => {
     render(<AudioPreview {...defaultProps} />);
-    expect(screen.getByText("Create mission")).toBeInTheDocument();
+    expect(screen.getByText("Start run")).toBeInTheDocument();
     expect(screen.getByText("Discard")).toBeInTheDocument();
   });
 
@@ -46,7 +46,7 @@ describe("AudioPreview", () => {
     const user = userEvent.setup();
     render(<AudioPreview {...defaultProps} onSend={onSend} />);
 
-    await user.click(screen.getByText("Create mission"));
+    await user.click(screen.getByText("Start run"));
     expect(onSend).toHaveBeenCalledOnce();
   });
 

@@ -1,22 +1,29 @@
 import type { PipelineStatus } from "../stores/pipelineStore";
-import { StatusBadge } from "./StatusBadge";
+import { StatusBadge, type StatusBadgeTone } from "./StatusBadge";
 import styles from "../styles/components/Header.module.css";
 
 interface HeaderProps {
   status: PipelineStatus;
+  statusLabel?: string;
+  statusTone?: StatusBadgeTone;
   onSettingsClick: () => void;
 }
 
-export function Header({ status, onSettingsClick }: HeaderProps) {
+export function Header({
+  status,
+  statusLabel,
+  statusTone,
+  onSettingsClick,
+}: HeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.brandBlock}>
         <span className={styles.eyebrow}>SEJFA</span>
-        <span className={styles.title}>Voice Intake</span>
+        <span className={styles.title}>SEJFA Desktop</span>
       </div>
 
       <div className={styles.actions}>
-        <StatusBadge status={status} />
+        <StatusBadge status={status} label={statusLabel} tone={statusTone} />
         <button
           className={styles.settingsBtn}
           onClick={onSettingsClick}

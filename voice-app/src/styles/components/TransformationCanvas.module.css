@@ -1,0 +1,206 @@
+.canvas {
+  width: 100%;
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  overflow: hidden;
+}
+
+.topRail {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.eyebrow,
+.apertureLabel,
+.blockLabel,
+.loopLabel,
+.phaseBadge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.eyebrow,
+.apertureLabel,
+.blockLabel {
+  color: var(--text-secondary);
+}
+
+.loopLabel {
+  margin-top: 6px;
+  color: rgba(226, 248, 255, 0.92);
+}
+
+.connectionSummary,
+.metaRow,
+.errorActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.connectionSummary {
+  justify-content: flex-end;
+}
+
+.connectionChip,
+.metaChip,
+.phaseBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+}
+
+.phaseBadge {
+  width: fit-content;
+  color: rgba(226, 248, 255, 0.92);
+}
+
+.coreGrid {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.78fr) minmax(0, 1.22fr);
+  gap: var(--space-lg);
+  align-items: stretch;
+}
+
+.intakeAperture,
+.workCore,
+.transcriptBlock {
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.intakeAperture {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  min-height: 360px;
+  padding: var(--space-lg);
+  background:
+    radial-gradient(circle at center, rgba(255, 124, 90, 0.12), transparent 52%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.workCore {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  min-height: 360px;
+  padding: var(--space-lg);
+  background:
+    radial-gradient(circle at 70% 30%, rgba(82, 210, 255, 0.12), transparent 28%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.title {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+}
+
+.description,
+.helper {
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.helper {
+  text-align: center;
+  max-width: 28ch;
+}
+
+.transcriptBlock {
+  padding: var(--space-md);
+}
+
+.transcriptText {
+  margin-top: var(--space-sm);
+  line-height: 1.65;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+.reviewTray {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.progressStrip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stepChip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(82, 210, 255, 0.08);
+  border: 1px solid rgba(82, 210, 255, 0.2);
+  color: rgba(226, 248, 255, 0.94);
+}
+
+.primaryButton,
+.secondaryButton,
+.ghostButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.primaryButton {
+  background: rgba(82, 210, 255, 0.12);
+  border: 1px solid rgba(82, 210, 255, 0.24);
+  color: #def8ff;
+}
+
+.secondaryButton {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+}
+
+.ghostButton {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 960px) {
+  .coreGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .topRail {
+    flex-direction: column;
+  }
+
+  .connectionSummary {
+    justify-content: flex-start;
+  }
+}

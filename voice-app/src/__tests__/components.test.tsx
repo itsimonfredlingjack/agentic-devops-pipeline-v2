@@ -37,7 +37,7 @@ describe("GlassCard", () => {
 describe("Header", () => {
   it("should render app title", () => {
     render(<Header status="idle" onSettingsClick={vi.fn()} />);
-    expect(screen.getByText("Voice Intake")).toBeInTheDocument();
+    expect(screen.getByText("SEJFA Desktop")).toBeInTheDocument();
     expect(screen.getByText("SEJFA")).toBeInTheDocument();
   });
 

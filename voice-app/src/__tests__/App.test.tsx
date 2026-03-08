@@ -60,38 +60,39 @@ describe("App", () => {
     );
   });
 
-  it("should render the intake header", async () => {
+  it("should render the SEJFA desktop shell", async () => {
     const { default: App } = await import("../App");
     render(<App />);
-    expect(screen.getByText("Voice Intake")).toBeInTheDocument();
+    expect(screen.getByText("SEJFA Desktop")).toBeInTheDocument();
+    expect(
+      screen.getByLabelText("SEJFA transformation canvas"),
+    ).toBeInTheDocument();
   });
 
-  it("should render the redesigned intake screen", async () => {
+  it("should render the center-first idle surface", async () => {
     const { default: App } = await import("../App");
     render(<App />);
 
-    expect(screen.getByText("Say the objective")).toBeInTheDocument();
+    expect(screen.getByText("Speak the next objective")).toBeInTheDocument();
+    expect(screen.getByText("Ralph Loop")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Speak naturally. We will capture it and create the mission.",
+        "Your objective becomes structured work and then a live run.",
       ),
     ).toBeInTheDocument();
-    expect(screen.queryByText("Mission Briefing")).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Skip to Command Center" }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Voice Intake")).not.toBeInTheDocument();
   });
 
-  it("should render the record button and supporting panels in idle state", async () => {
+  it("should render the record button inside the transformation canvas", async () => {
     const { default: App } = await import("../App");
     render(<App />);
 
     expect(
       screen.getByRole("button", { name: "Start recording" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Captured objective")).toBeInTheDocument();
+    expect(screen.getByText("Speak the next objective")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Show technical details/i }),
+      screen.getByText("Speak the objective to start the SEJFA run."),
     ).toBeInTheDocument();
   });
 
@@ -117,6 +118,9 @@ describe("App", () => {
     render(<App />);
 
     expect(
+      screen.getByLabelText("SEJFA transformation canvas"),
+    ).toBeInTheDocument();
+    expect(
       screen.getByRole("heading", { name: "Mission created" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Test ticket")).toBeInTheDocument();
@@ -127,7 +131,7 @@ describe("App", () => {
     expect(
       screen.getByRole("link", { name: "Open loop monitor" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Session sess-99")).toBeInTheDocument();
+    expect(screen.getAllByText("Session sess-99").length).toBeGreaterThan(0);
   });
 
   it("should keep a successful send in intake and expose compact handoff link", async () => {
@@ -159,6 +163,9 @@ describe("App", () => {
 
     expect(usePipelineStore.getState().appMode).toBe("voice");
     expect(usePipelineStore.getState().latestSessionId).toBe("sess-42");
+    expect(
+      screen.getByLabelText("SEJFA transformation canvas"),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: "Open loop monitor" }),
     ).toHaveAttribute("href", "http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42");

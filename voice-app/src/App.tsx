@@ -21,7 +21,8 @@ import { ClarificationDialog } from "./components/ClarificationDialog";
 import { AudioPreview } from "./components/AudioPreview";
 import { SettingsDrawer } from "./components/SettingsDrawer";
 import { ToastContainer } from "./components/Toast";
-import { LaunchSequenceView } from "./components/LaunchSequenceView";
+import { TransformationCanvas } from "./components/TransformationCanvas";
+import { deriveCanvasState } from "./lib/mission";
 
 function normalizeUrl(url: string): string {
   return url.trim().replace(/\/+$/, "");
@@ -110,6 +111,9 @@ function App() {
     clarification,
     latestSessionId,
     monitorConnected,
+    activeStage,
+    completion,
+    stuckAlert,
     toasts,
     processingStep,
     pendingSamples,
@@ -149,6 +153,13 @@ function App() {
   monitorUrlRef.current = monitorUrl;
 
   const micLevels = useMicLevel(status === "recording");
+  const canvasState = deriveCanvasState({
+    status,
+    ticket: ticketResult,
+    activeStage,
+    completion,
+    stuckAlert,
+  });
 
   useEffect(() => {
     connectWebSocket(
@@ -730,8 +741,9 @@ function App() {
         status={status}
         onSettingsClick={() => setSettingsOpen(true)}
       />
-      <LaunchSequenceView
+      <TransformationCanvas
         status={status}
+        canvasState={canvasState}
         processingStep={processingStep}
         transcription={transcription}
         ticket={ticketResult}
@@ -764,7 +776,7 @@ function App() {
             onSkip={handleClarifySkip}
           />
         ) : null}
-      </LaunchSequenceView>
+      </TransformationCanvas>
 
       <SettingsDrawer
         open={settingsOpen}

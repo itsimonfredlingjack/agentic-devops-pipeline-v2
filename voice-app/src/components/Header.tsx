@@ -12,7 +12,7 @@ export function Header({ status, onSettingsClick }: HeaderProps) {
     <header className={styles.header}>
       <div className={styles.brandBlock}>
         <span className={styles.eyebrow}>SEJFA</span>
-        <span className={styles.title}>Voice Intake</span>
+        <span className={styles.title}>SEJFA Desktop</span>
       </div>
 
       <div className={styles.actions}>

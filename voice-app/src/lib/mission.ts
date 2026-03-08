@@ -31,6 +31,29 @@ export interface MissionState {
   detail: string;
 }
 
+export type CanvasPhase =
+  | "idle"
+  | "listening"
+  | "processing"
+  | "clarifying"
+  | "queued"
+  | "running"
+  | "blocked"
+  | "done";
+
+export type CanvasEmphasis =
+  | "intake"
+  | "formation"
+  | "loop"
+  | "diagnostic"
+  | "outcome";
+
+export interface CanvasState {
+  phase: CanvasPhase;
+  caption: string;
+  emphasis: CanvasEmphasis;
+}
+
 const VERIFY_STAGES = new Set(["verify", "tests", "ci", "pr"]);
 const ACTIVE_STAGES = new Set(["jira", "agent", "actions", "deploy"]);
 
@@ -113,6 +136,84 @@ export function deriveMissionState({
     phase: "idle",
     label: "Idle",
     detail: "Awaiting your next objective",
+  };
+}
+
+export function deriveCanvasState({
+  status,
+  ticket,
+  activeStage,
+  completion,
+  stuckAlert,
+}: MissionStateInput): CanvasState {
+  if (completion?.outcome === "done") {
+    return {
+      phase: "done",
+      caption: "Run completed",
+      emphasis: "outcome",
+    };
+  }
+
+  if (completion?.outcome === "blocked" || stuckAlert) {
+    return {
+      phase: "blocked",
+      caption: `Blocked in ${humanizeStage(activeStage ?? "loop")}`,
+      emphasis: "diagnostic",
+    };
+  }
+
+  if (status === "recording") {
+    return {
+      phase: "listening",
+      caption: "Listening for the objective",
+      emphasis: "intake",
+    };
+  }
+
+  if (status === "clarifying") {
+    return {
+      phase: "clarifying",
+      caption: "Waiting for one missing detail",
+      emphasis: "formation",
+    };
+  }
+
+  if (status === "processing") {
+    return {
+      phase: "processing",
+      caption: "Extracting task context",
+      emphasis: "formation",
+    };
+  }
+
+  if (status === "previewing") {
+    return {
+      phase: "processing",
+      caption: "Review the captured objective",
+      emphasis: "formation",
+    };
+  }
+
+  if (activeStage && (VERIFY_STAGES.has(activeStage) || ACTIVE_STAGES.has(activeStage))) {
+    return {
+      phase: "running",
+      caption: `Running ${humanizeStage(activeStage)}`,
+      emphasis: "loop",
+    };
+  }
+
+  if (ticket) {
+    return {
+      phase: "queued",
+      caption: "Queued for Ralph Loop",
+      emphasis: "loop",
+    };
+  }
+
+  return {
+    phase: "idle",
+    caption: "Speak the next objective",
+    emphasis: "intake",
   };
 }
 

@@ -48,6 +48,16 @@ function formatRequestError(err: unknown, serverUrl: string): string {
     return buildConnectionHelpMessage(serverUrl);
   }
 
+  const normalized = raw.toLowerCase();
+  if (
+    normalized.includes("intent validation failed") &&
+    normalized.includes("summary") &&
+    (normalized.includes("string should have at least 3 characters") ||
+      normalized.includes("string_too_short"))
+  ) {
+    return "Task creation could not continue because the transcript was empty or too short. Check speech-to-text on ai-server2, then record again.";
+  }
+
   return `Request failed: ${raw}`;
 }
 

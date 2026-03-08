@@ -323,4 +323,31 @@ describe("App", () => {
       within(rail).getByRole("link", { name: "Open loop monitor" }),
     ).toHaveAttribute("href", "http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42");
   });
+
+  it("should show a clear message when transcript is too short for intent validation", async () => {
+    const user = userEvent.setup();
+    vi.mocked(invoke).mockRejectedValue(
+      new Error(
+        'Server error 500 Internal Server Error on /api/pipeline/run/audio: {"detail":"Intent validation failed: 1 validation error for JiraTicketIntent\\nsummary\\n String should have at least 3 characters [type=string_too_short, input_value=\'\', input_type=str]"}',
+      ),
+    );
+
+    usePipelineStore.setState({
+      status: "previewing",
+      pendingSamples: [100, -100, 300, -300],
+    });
+
+    await renderApp();
+
+    await user.click(screen.getByRole("button", { name: "Create task" }));
+
+    const canvas = screen.getByLabelText("SEJFA transformation canvas");
+    await waitFor(() => {
+      expect(
+        within(canvas).getByText(
+          "Task creation could not continue because the transcript was empty or too short. Check speech-to-text on ai-server2, then record again.",
+        ),
+      ).toBeInTheDocument();
+    });
+  });
 });

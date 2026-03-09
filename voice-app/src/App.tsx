@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePipelineStore } from "./stores/pipelineStore";
 import { connectWebSocket, disconnectWebSocket } from "./lib/ws";
-import type { LoopEvent } from "./lib/ws";
+import type { LoopEvent, PipelineSnapshot } from "./lib/ws";
 import {
   connectMonitorSocket,
   disconnectMonitorSocket,
@@ -48,6 +48,29 @@ function formatRequestError(err: unknown, serverUrl: string): string {
 
 function defaultMissionError(): string {
   return "Couldn’t create the mission. Check Details and try again.";
+}
+
+function restoreTicketFromSnapshot(snapshot: PipelineSnapshot) {
+  const doneMessage = snapshot.nodes?.done?.message;
+  if (typeof doneMessage !== "string") {
+    return null;
+  }
+
+  const match = /Ticket created:\s+([A-Z][A-Z0-9]+-\d+)\s+—\s+(https?:\/\/\S+)/.exec(
+    doneMessage,
+  );
+  if (!match) {
+    return null;
+  }
+
+  const [, key, url] = match;
+  const summary =
+    typeof snapshot.task_info?.title === "string" &&
+    snapshot.task_info.title !== "Waiting for task..."
+      ? snapshot.task_info.title
+      : key;
+
+  return { key, url, summary };
 }
 
 function buildLoopMonitorUrl(
@@ -211,9 +234,22 @@ function App() {
               ? `Queued ${event.issue_key}`
               : event.type === "loop_started"
                 ? `Loop started for ${event.issue_key}`
-                : `Loop ${event.success ? "completed" : "failed"} for ${event.issue_key}`,
+              : `Loop ${event.success ? "completed" : "failed"} for ${event.issue_key}`,
           detail: event.summary,
         });
+      },
+      (snapshot: PipelineSnapshot) => {
+        const restoredTicket = restoreTicketFromSnapshot(snapshot);
+        if (!restoredTicket) {
+          return;
+        }
+
+        const store = usePipelineStore.getState();
+        if (store.ticketResult?.key === restoredTicket.key) {
+          return;
+        }
+
+        store.setTicketResult(restoredTicket);
       },
     );
 

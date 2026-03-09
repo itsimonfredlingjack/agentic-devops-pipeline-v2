@@ -9,6 +9,7 @@ import { SuccessCard } from "../components/SuccessCard";
 import { ToastContainer } from "../components/Toast";
 import { LogPanel } from "../components/LogPanel";
 import { AppShell } from "../components/AppShell";
+import { LaunchSequenceView } from "../components/LaunchSequenceView";
 
 describe("GlassCard", () => {
   it("should render children", () => {
@@ -257,5 +258,38 @@ describe("AppShell", () => {
     );
     const blobs = container.querySelectorAll("[class*='blob']");
     expect(blobs.length).toBeGreaterThanOrEqual(3);
+  });
+});
+
+describe("LaunchSequenceView", () => {
+  it("should show success copy when a ticket exists", () => {
+    render(
+      <LaunchSequenceView
+        status="done"
+        processingStep=""
+        transcription="Create an Electron migration smoke test."
+        ticket={{
+          key: "DEV-43",
+          url: "https://jira.example.com/browse/DEV-43",
+          summary: "Create electron migration smoke test",
+        }}
+        errorMessage={null}
+        micLevels={[]}
+        wsConnected={true}
+        monitorConnected={false}
+        sessionId="sess-43"
+        loopMonitorUrl={null}
+        detailsEntries={[]}
+        onToggleRecord={vi.fn()}
+        onRetry={vi.fn()}
+        onRecordAnother={vi.fn()}
+        onOpenSettings={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText("DEV-43 is ready for handoff.")).toBeInTheDocument();
+    expect(
+      screen.queryByText("The transcript is ready, but the mission was not created."),
+    ).not.toBeInTheDocument();
   });
 });

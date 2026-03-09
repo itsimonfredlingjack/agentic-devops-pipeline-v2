@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { connectWebSocket, disconnectWebSocket } from "../lib/ws";
+import type { PipelineSnapshot } from "../lib/ws";
 import type { PipelineStatus } from "../stores/pipelineStore";
 
 // Mock WebSocket
@@ -56,6 +57,7 @@ describe("WebSocket utility", () => {
     summary?: string;
     success?: boolean;
   }) => void;
+  let onSnapshot: (snapshot: PipelineSnapshot) => void;
   const getServerUrl = () => "http://localhost:8000";
 
   beforeEach(() => {
@@ -69,6 +71,7 @@ describe("WebSocket utility", () => {
     setWsConnected = vi.fn<(connected: boolean) => void>();
     onClarification = vi.fn();
     onLoopEvent = vi.fn();
+    onSnapshot = vi.fn();
   });
 
   afterEach(() => {
@@ -232,6 +235,9 @@ describe("WebSocket utility", () => {
       setStatus,
       setProcessingStep,
       setWsConnected,
+      undefined,
+      undefined,
+      onSnapshot,
     );
 
     const ws = MockWebSocket.instances[0];
@@ -242,6 +248,9 @@ describe("WebSocket utility", () => {
 
     ws.simulateMessage({ current_node: "done" });
     expect(setStatus).toHaveBeenCalledWith("done");
+    expect(onSnapshot).toHaveBeenCalledWith(
+      expect.objectContaining({ current_node: "done" }),
+    );
   });
 
   it("should handle non-JSON messages gracefully", () => {

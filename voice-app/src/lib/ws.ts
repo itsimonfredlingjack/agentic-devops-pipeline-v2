@@ -15,6 +15,20 @@ export interface LoopEvent {
   success?: boolean;
 }
 
+export interface PipelineSnapshot {
+  current_node?: string;
+  task_info?: {
+    title?: string;
+    status?: string;
+    start_time?: string | null;
+  };
+  nodes?: {
+    done?: {
+      message?: string;
+    };
+  };
+}
+
 const STEP_LABELS: Record<string, string> = {
   transcribing: "Transcribing audio...",
   extracting: "Analyzing intent...",
@@ -46,6 +60,7 @@ export function connectWebSocket(
     round: number;
   }) => void,
   onLoopEvent?: (event: LoopEvent) => void,
+  onSnapshot?: (snapshot: PipelineSnapshot) => void,
 ): void {
   shouldConnect = true;
 
@@ -77,6 +92,8 @@ export function connectWebSocket(
       try {
         const data = JSON.parse(event.data);
         appendLog(`[ws] ${JSON.stringify(data)}`);
+
+        onSnapshot?.(data as PipelineSnapshot);
 
         // Handle clarification_needed WebSocket event
         if (data.type === "clarification_needed" && onClarification) {

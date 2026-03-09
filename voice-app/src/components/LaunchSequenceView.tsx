@@ -68,7 +68,7 @@ function getIntakeCopy(
         title: ticket ? "Mission created" : "Objective captured",
         description: ticket
           ? `${ticket.key} is ready for handoff.`
-          : "The transcript is ready, but the mission was not created.",
+          : "The transcript is ready for review.",
       };
     case "error":
       return {

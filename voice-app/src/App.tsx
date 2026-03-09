@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
 import { usePipelineStore } from "./stores/pipelineStore";
 import { connectWebSocket, disconnectWebSocket } from "./lib/ws";
 import type { LoopEvent } from "./lib/ws";
@@ -22,6 +21,7 @@ import { AudioPreview } from "./components/AudioPreview";
 import { SettingsDrawer } from "./components/SettingsDrawer";
 import { ToastContainer } from "./components/Toast";
 import { LaunchSequenceView } from "./components/LaunchSequenceView";
+import { sendAudio, startRecording, stopRecording } from "./lib/audioCapture";
 
 function normalizeUrl(url: string): string {
   return url.trim().replace(/\/+$/, "");
@@ -372,7 +372,7 @@ function App() {
     if (status === "recording") {
       try {
         appendLog("[client] Stopping mic...");
-        const samples: number[] = await invoke("stop_mic");
+        const samples = await stopRecording();
         appendLog(`[client] Captured ${samples.length} samples`);
         setErrorMessage(null);
         setPendingSamples(samples);
@@ -391,7 +391,7 @@ function App() {
       try {
         resetRunState();
         appendLog("[client] Starting mic...");
-        await invoke("start_mic");
+        await startRecording();
         setStatus("recording");
         appendLog("[client] Recording...");
       } catch (err) {
@@ -429,10 +429,7 @@ function App() {
         return;
       }
 
-      const result = await invoke<Record<string, unknown>>("send_audio", {
-        samples,
-        serverUrl,
-      });
+      const result = await sendAudio(samples, serverUrl);
 
       const endpointUsed =
         typeof result._endpoint_used === "string"

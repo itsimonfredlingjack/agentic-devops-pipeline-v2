@@ -20,7 +20,7 @@ The voice app is not the primary identity of SEJFA. SEJFA remains the loop-first
 ## Topology
 
 ```text
-Tauri app on Mac
+Electron app on Mac
   -> FastAPI backend on Mac
   -> remote Whisper / Ollama on ai-server2 when configured
   -> Jira issue creation and loop queueing
@@ -37,6 +37,7 @@ Desktop interaction layer.
 - audio preview and send flow
 - clarification UI
 - WebSocket status display
+- Electron shell and packaging
 
 ### `src/voice_pipeline/`
 
@@ -59,7 +60,7 @@ Remote inference node.
 
 ### Mac
 
-- runs the Tauri voice app
+- runs the Electron voice app
 - runs the FastAPI backend on `:8000`
 - owns the local orchestration flow and queueing
 
@@ -71,7 +72,7 @@ Remote inference node.
 ## Current Data Flow
 
 ```text
-1. User records audio in the Tauri app
+1. User records audio in the Electron renderer
 2. App sends audio to the configured backend URL
 3. Backend transcribes locally or remotely
 4. Backend extracts Jira intent with Ollama
@@ -93,13 +94,13 @@ Remote inference node.
 | `src/components/ClarificationDialog.tsx` | Clarification rounds |
 | `src/components/SuccessCard.tsx` | Result display |
 
-### Tauri / Rust
+### Electron
 
 | File | Purpose |
 |------|---------|
-| `src-tauri/src/mic.rs` | Microphone capture and mic-level events |
-| `src-tauri/src/api.rs` | WAV encoding and HTTP upload |
-| `src-tauri/src/lib.rs` | Tauri command registration |
+| `electron/main.ts` | BrowserWindow lifecycle and safe desktop integrations |
+| `electron/preload.ts` | Narrow contextBridge API |
+| `src/lib/audioCapture.ts` | Renderer-side mic capture, WAV encoding, and HTTP upload |
 
 ### Backend
 

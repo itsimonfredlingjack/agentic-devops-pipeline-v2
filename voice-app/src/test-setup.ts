@@ -1,38 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { vi } from "vitest";
 
-// CSS modules are handled by vitest.config.ts css.modules configuration.
-// No regex vi.mock needed.
-
-// Mock @tauri-apps/api/core
-vi.mock("@tauri-apps/api/core", () => ({
-  invoke: vi.fn(),
-}));
-
-// Mock @tauri-apps/api/event
-vi.mock("@tauri-apps/api/event", () => ({
-  listen: vi.fn(() => Promise.resolve(() => {})),
-  emit: vi.fn(),
-}));
-
-// Mock @tauri-apps/plugin-shell
-vi.mock("@tauri-apps/plugin-shell", () => ({
-  Command: {
-    create: vi.fn(),
-  },
-  open: vi.fn(),
-}));
-
-// Provide __TAURI_INTERNALS__ as undefined by default (non-Tauri env)
-// Individual tests can override this when needed
-if (!("__TAURI_INTERNALS__" in window)) {
-  Object.defineProperty(window, "__TAURI_INTERNALS__", {
-    value: undefined,
-    writable: true,
-    configurable: true,
-  });
-}
-
 // Mock localStorage for jsdom
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
@@ -58,9 +26,20 @@ Object.defineProperty(window, "localStorage", {
   value: localStorageMock,
 });
 
+Object.defineProperty(window, "sejfaDesktop", {
+  value: {
+    isElectron: true,
+    getAppVersion: vi.fn(async () => "0.1.0"),
+    openExternal: vi.fn(async () => true),
+  },
+  writable: true,
+  configurable: true,
+});
+
 // Mock AudioContext for AudioPreview tests
 class MockAudioContext {
   sampleRate = 16000;
+  state: AudioContextState = "running";
   createBuffer(channels: number, length: number, sampleRate: number) {
     return {
       getChannelData: () => new Float32Array(length),
@@ -79,6 +58,34 @@ class MockAudioContext {
       onended: null as (() => void) | null,
     };
   }
+  createMediaStreamSource() {
+    return {
+      connect: vi.fn(),
+      disconnect: vi.fn(),
+    };
+  }
+  createScriptProcessor() {
+    return {
+      connect: vi.fn(),
+      disconnect: vi.fn(),
+      onaudioprocess: null as ((event: { inputBuffer: { getChannelData: () => Float32Array } }) => void) | null,
+    };
+  }
+  createGain() {
+    return {
+      connect: vi.fn(),
+      disconnect: vi.fn(),
+      gain: {
+        value: 1,
+      },
+    };
+  }
+  resume() {
+    return Promise.resolve();
+  }
+  close() {
+    return Promise.resolve();
+  }
   get destination() {
     return {};
   }
@@ -87,4 +94,18 @@ class MockAudioContext {
 Object.defineProperty(window, "AudioContext", {
   value: MockAudioContext,
   writable: true,
+  configurable: true,
+});
+
+Object.defineProperty(navigator, "mediaDevices", {
+  value: {
+    getUserMedia: vi.fn(async () => ({
+      getTracks: () => [
+        {
+          stop: vi.fn(),
+        },
+      ],
+    })),
+  },
+  configurable: true,
 });

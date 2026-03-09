@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { usePipelineStore } from "../stores/pipelineStore";
-import { invoke } from "@tauri-apps/api/core";
+import * as audioCapture from "../lib/audioCapture";
 
 vi.mock("../lib/ws", () => ({
   connectWebSocket: vi.fn(),
@@ -18,8 +18,11 @@ vi.mock("../hooks/useMicLevel", () => ({
   useMicLevel: () => [],
 }));
 
-vi.mock("@tauri-apps/api/core", () => ({
-  invoke: vi.fn(),
+vi.mock("../lib/audioCapture", () => ({
+  startRecording: vi.fn(),
+  stopRecording: vi.fn(),
+  sendAudio: vi.fn(),
+  subscribeToMicLevels: vi.fn(() => () => {}),
 }));
 
 describe("App", () => {
@@ -50,7 +53,9 @@ describe("App", () => {
       wsConnected: false,
     });
 
-    vi.mocked(invoke).mockReset();
+    vi.mocked(audioCapture.startRecording).mockReset();
+    vi.mocked(audioCapture.stopRecording).mockReset();
+    vi.mocked(audioCapture.sendAudio).mockReset();
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => ({
@@ -132,7 +137,7 @@ describe("App", () => {
 
   it("should keep a successful send in intake and expose compact handoff link", async () => {
     const user = userEvent.setup();
-    vi.mocked(invoke).mockResolvedValue({
+    vi.mocked(audioCapture.sendAudio).mockResolvedValue({
       ticket_key: "DEV-42",
       ticket_url: "https://jira.example.com/DEV-42",
       summary: "Fix the login flow",
@@ -162,5 +167,27 @@ describe("App", () => {
     expect(
       screen.getByRole("link", { name: "Open loop monitor" }),
     ).toHaveAttribute("href", "http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42");
+  });
+
+  it("should show an error toast when mic permission is denied", async () => {
+    const user = userEvent.setup();
+    vi.mocked(audioCapture.startRecording).mockRejectedValue(
+      new Error("Permission denied"),
+    );
+
+    const { default: App } = await import("../App");
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "Start recording" }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert"),
+      ).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Couldn’t start recording. Error: Permission denied",
+    );
   });
 });

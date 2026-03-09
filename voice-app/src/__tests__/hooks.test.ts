@@ -1,6 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useCollapsible } from "../hooks/useCollapsible";
+import * as audioCapture from "../lib/audioCapture";
+
+vi.mock("../lib/audioCapture", () => ({
+  subscribeToMicLevels: vi.fn(() => () => {}),
+}));
 
 describe("useCollapsible", () => {
   it("should start closed by default", () => {
@@ -117,5 +122,40 @@ describe("useKeyboardShortcuts", () => {
 
     expect(onToggleRecord).not.toHaveBeenCalled();
     expect(onEscape).not.toHaveBeenCalled();
+  });
+});
+
+describe("useMicLevel", () => {
+  beforeEach(() => {
+    vi.mocked(audioCapture.subscribeToMicLevels).mockReset();
+  });
+
+  it("should subscribe and normalize RMS levels while active", async () => {
+    let listener: ((rms: number) => void) | null = null;
+    vi.mocked(audioCapture.subscribeToMicLevels).mockImplementation((callback) => {
+      listener = callback;
+      return () => {};
+    });
+
+    const { useMicLevel } = await import("../hooks/useMicLevel");
+    const { result } = renderHook(() => useMicLevel(true));
+
+    act(() => {
+      listener?.(0.05);
+      listener?.(0.1);
+    });
+
+    expect(result.current).toEqual([0.4, 0.8]);
+  });
+
+  it("should clear levels when inactive", async () => {
+    const { useMicLevel } = await import("../hooks/useMicLevel");
+    const { result, rerender } = renderHook(({ active }) => useMicLevel(active), {
+      initialProps: { active: true },
+    });
+
+    rerender({ active: false });
+
+    expect(result.current).toEqual([]);
   });
 });

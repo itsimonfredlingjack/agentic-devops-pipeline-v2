@@ -45,7 +45,7 @@ export function deriveMissionState({
     return {
       phase: "completed",
       label: "Done",
-      detail: "Mission shipped successfully",
+      detail: "Task completed successfully",
     };
   }
 
@@ -81,7 +81,7 @@ export function deriveMissionState({
     return {
       phase: "processing",
       label: "Igniting",
-      detail: "Turning your voice into a mission",
+      detail: "Turning your voice into a task",
     };
   }
 
@@ -105,7 +105,7 @@ export function deriveMissionState({
     return {
       phase: "queued",
       label: "Queued",
-      detail: "Mission accepted and waiting for agent pickup",
+      detail: "Task accepted and waiting for agent pickup",
     };
   }
 

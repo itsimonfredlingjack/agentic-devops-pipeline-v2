@@ -78,7 +78,7 @@ describe("App", () => {
     expect(screen.getByText("Say the objective")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Speak naturally. We will capture it and create the mission.",
+        "Speak naturally. We will capture your request and create the task.",
       ),
     ).toBeInTheDocument();
     expect(screen.queryByText("Mission Briefing")).not.toBeInTheDocument();
@@ -122,7 +122,7 @@ describe("App", () => {
     render(<App />);
 
     expect(
-      screen.getByRole("heading", { name: "Mission created" }),
+      screen.getByRole("heading", { name: "Task created" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Test ticket")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Open ticket" })).toHaveAttribute(
@@ -154,11 +154,11 @@ describe("App", () => {
     const { default: App } = await import("../App");
     render(<App />);
 
-    await user.click(screen.getByRole("button", { name: "Create mission" }));
+    await user.click(screen.getByRole("button", { name: "Create task" }));
 
     await waitFor(() => {
       expect(
-        screen.getByRole("heading", { name: "Mission created" }),
+        screen.getByRole("heading", { name: "Task created" }),
       ).toBeInTheDocument();
     });
 

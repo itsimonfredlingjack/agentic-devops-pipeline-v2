@@ -97,7 +97,7 @@ export function CommandCenterView({
             </span>
             {sessionId ? <span className={styles.railChip}>Session {sessionId}</span> : null}
             <button className={styles.secondaryAction} onClick={onBackToVoice}>
-              New Mission
+              New Task
             </button>
           </div>
         </div>
@@ -161,7 +161,7 @@ export function CommandCenterView({
             </GlassCard>
 
             <GlassCard>
-              <div className={styles.sectionTitle}>Mission Snapshot</div>
+              <div className={styles.sectionTitle}>Task Snapshot</div>
               <div className={styles.snapshotList}>
                 <div className={styles.snapshotRow}>
                   <span>Current stage</span>
@@ -195,7 +195,7 @@ export function CommandCenterView({
         <div className={styles.actionInfo}>
           <div className={styles.sectionTitle}>Guided Controls</div>
           <div className={styles.actionCaption}>
-            Safe actions only. Mission control shows the loop clearly without pretending
+            Safe actions only. This view shows the loop clearly without pretending
             to control systems we have not wired yet.
           </div>
         </div>

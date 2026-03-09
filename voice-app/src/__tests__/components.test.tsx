@@ -113,7 +113,7 @@ describe("SuccessCard", () => {
     summary: "Fix login bug",
   };
 
-  it("should render mission created copy and summary", () => {
+  it("should render task created copy and summary", () => {
     render(
       <SuccessCard
         ticket={ticket}
@@ -123,7 +123,7 @@ describe("SuccessCard", () => {
         onRecordAnother={vi.fn()}
       />,
     );
-    expect(screen.getByText("Mission created")).toBeInTheDocument();
+    expect(screen.getByText("Task created")).toBeInTheDocument();
     expect(screen.getByText("Fix login bug")).toBeInTheDocument();
     expect(screen.getByText("DEV-42 is ready for the loop.")).toBeInTheDocument();
   });
@@ -289,7 +289,7 @@ describe("LaunchSequenceView", () => {
 
     expect(screen.getByText("DEV-43 is ready for handoff.")).toBeInTheDocument();
     expect(
-      screen.queryByText("The transcript is ready, but the mission was not created."),
+      screen.queryByText("The transcript is ready, but the task was not created."),
     ).not.toBeInTheDocument();
   });
 });

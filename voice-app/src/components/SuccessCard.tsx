@@ -17,9 +17,9 @@ export function SuccessCard({
   onRecordAnother,
 }: SuccessCardProps) {
   return (
-    <section className={styles.card} aria-label="Mission created">
+    <section className={styles.card} aria-label="Task created">
       <div className={styles.summary}>
-        <div className={styles.kicker}>Mission created</div>
+        <div className={styles.kicker}>Task created</div>
         <div className={styles.headline}>{ticket.summary}</div>
         <div className={styles.support}>{ticket.key} is ready for the loop.</div>
       </div>

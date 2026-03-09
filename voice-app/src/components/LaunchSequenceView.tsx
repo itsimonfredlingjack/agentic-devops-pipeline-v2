@@ -42,30 +42,30 @@ function getIntakeCopy(
       return {
         eyebrow: "Listening",
         title: "Recording objective",
-        description: "Speak naturally. We will create the mission from your objective.",
+        description: "Speak naturally. We will create the task from your request.",
       };
     case "previewing":
       return {
         eyebrow: "Review",
         title: "Review the capture",
-        description: "Create the mission when it sounds right, or discard and record again.",
+        description: "Create the task when it sounds right, or discard and record again.",
       };
     case "processing":
       return {
         eyebrow: "Working",
-        title: "Creating mission from your objective",
+        title: "Creating task from your request",
         description: "Transcribing, extracting intent, and preparing handoff.",
       };
     case "clarifying":
       return {
         eyebrow: "Needs input",
         title: "Need one detail",
-        description: "Answer the follow-up so we can create the mission correctly.",
+        description: "Answer the follow-up so we can create the task correctly.",
       };
     case "done":
       return {
         eyebrow: ticket ? "Created" : "Captured",
-        title: ticket ? "Mission created" : "Objective captured",
+        title: ticket ? "Task created" : "Request captured",
         description: ticket
           ? `${ticket.key} is ready for handoff.`
           : "The transcript is ready for review.",
@@ -73,7 +73,7 @@ function getIntakeCopy(
     case "error":
       return {
         eyebrow: "Issue",
-        title: "Couldn’t create the mission",
+        title: "Couldn’t create the task",
         description:
           errorMessage ??
           "Review the technical details, then retry or record again.",
@@ -83,29 +83,29 @@ function getIntakeCopy(
       return {
         eyebrow: "Voice intake",
         title: "Say the objective",
-        description: "Speak naturally. We will capture it and create the mission.",
+        description: "Speak naturally. We will capture your request and create the task.",
       };
   }
 }
 
 function getProgressLabel(status: PipelineStatus, processingStep: string): string {
   if (status === "processing") {
-    return processingStep || "Creating mission from your objective…";
+    return processingStep || "Creating task from your request…";
   }
   if (status === "recording") {
     return "Listening…";
   }
   if (status === "clarifying") {
-    return "Waiting for one clarification before mission creation.";
+    return "Waiting for one clarification before task creation.";
   }
   if (status === "previewing") {
-    return "Reviewing your capture before mission creation.";
+    return "Reviewing your capture before task creation.";
   }
   if (status === "done") {
-    return "Mission created successfully.";
+    return "Task created successfully.";
   }
   if (status === "error") {
-    return "Mission creation is blocked until retry.";
+    return "Task creation is blocked until retry.";
   }
   return "Ready for your next objective.";
 }

@@ -47,7 +47,7 @@ function formatRequestError(err: unknown, serverUrl: string): string {
 }
 
 function defaultMissionError(): string {
-  return "Couldn’t create the mission. Check Details and try again.";
+  return "Couldn’t create the task. Check Details and try again.";
 }
 
 function restoreTicketFromSnapshot(snapshot: PipelineSnapshot) {
@@ -184,7 +184,7 @@ function App() {
         if (nextStatus === "done") {
           store.setErrorMessage(null);
           if (!store.ticketResult) {
-            store.addToast("success", "Mission processing completed");
+            store.addToast("success", "Task processing completed");
           }
         } else if (nextStatus === "error") {
           if (!store.errorMessage) {
@@ -496,7 +496,7 @@ function App() {
 
         if (!sessionId || questions.length === 0) {
           const message =
-            "Couldn’t continue this mission. The clarification response was invalid.";
+            "Couldn’t continue task creation. The clarification response was invalid.";
           appendLog(
             `[client] Invalid clarification payload (${endpointUsed}): ${JSON.stringify(result)}`,
           );
@@ -548,13 +548,13 @@ function App() {
         });
         appendLog(`[client] Ticket created: ${ticketKey} — ${ticketUrl}`);
         setStatus("done");
-        addToast("success", `Mission created: ${ticketKey}`);
+        addToast("success", `Task created: ${ticketKey}`);
         return;
       }
 
       if (typeof result.text === "string") {
         const message =
-          "The objective was transcribed, but the mission was not created.";
+          "The request was transcribed, but the task was not created.";
         appendLog(`[client] Transcription received (${endpointUsed})`);
         setProcessingStep("");
         setErrorMessage(message);
@@ -564,7 +564,7 @@ function App() {
       }
 
       const message =
-        "Couldn’t create the mission. The server returned an unexpected response.";
+        "Couldn’t create the task. The server returned an unexpected response.";
       appendLog(
         `[client] Unexpected response payload (${endpointUsed}): ${JSON.stringify(result)}`,
       );
@@ -682,12 +682,12 @@ function App() {
             `[client] Ticket created: ${data.ticket_key} — ${data.ticket_url}`,
           );
           setStatus("done");
-          addToast("success", `Mission created: ${data.ticket_key}`);
+          addToast("success", `Task created: ${data.ticket_key}`);
           return;
         }
 
         const message =
-          "Couldn’t create the mission. The clarification response was incomplete.";
+          "Couldn’t create the task. The clarification response was incomplete.";
         setErrorMessage(message);
         setStatus("error");
         addToast("error", message);

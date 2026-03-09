@@ -288,6 +288,11 @@ function App() {
       onConnectionChange: (connected) => {
         setMonitorConnected(connected);
       },
+      onResolvedUrl: (resolvedUrl) => {
+        if (resolvedUrl !== monitorUrlRef.current) {
+          setMonitorUrl(resolvedUrl);
+        }
+      },
       onToolEvent: (event: MonitorToolEvent) => {
         if (!monitorMatchesSession(event.session_id, event.ticket_id)) return;
         pushMonitorEvent(
@@ -356,6 +361,7 @@ function App() {
     setCompletion,
     setCost,
     setMonitorConnected,
+    setMonitorUrl,
     setStuckAlert,
     upsertGate,
   ]);

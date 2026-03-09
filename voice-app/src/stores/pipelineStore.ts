@@ -160,7 +160,7 @@ interface PipelineState {
 const DEFAULT_SERVER_URL =
   import.meta.env.VITE_SERVER_URL || "http://localhost:8000";
 const DEFAULT_MONITOR_URL =
-  import.meta.env.VITE_MONITOR_URL || "http://localhost:8100";
+  import.meta.env.VITE_MONITOR_URL || "http://localhost:8110";
 
 function loadServerUrl(): string {
   try {

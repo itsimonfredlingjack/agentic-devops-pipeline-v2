@@ -12,7 +12,7 @@ function resetStore() {
     errorMessage: null,
     log: [],
     serverUrl: "http://localhost:8000",
-    monitorUrl: "http://localhost:8100",
+    monitorUrl: "http://localhost:8110",
     clarification: null,
     loopEvents: [],
     commandCenterEvents: [],
@@ -71,6 +71,11 @@ describe("pipelineStore", () => {
     it("should start with wsConnected false", () => {
       const state = usePipelineStore.getState();
       expect(state.wsConnected).toBe(false);
+    });
+
+    it("should start with the local monitor default", () => {
+      const state = usePipelineStore.getState();
+      expect(state.monitorUrl).toBe("http://localhost:8110");
     });
   });
 

@@ -10,6 +10,7 @@ import { ToastContainer } from "../components/Toast";
 import { LogPanel } from "../components/LogPanel";
 import { AppShell } from "../components/AppShell";
 import { LaunchSequenceView } from "../components/LaunchSequenceView";
+import { SettingsDrawer } from "../components/SettingsDrawer";
 
 describe("GlassCard", () => {
   it("should render children", () => {
@@ -258,6 +259,26 @@ describe("AppShell", () => {
     );
     const blobs = container.querySelectorAll("[class*='blob']");
     expect(blobs.length).toBeGreaterThanOrEqual(3);
+  });
+});
+
+describe("SettingsDrawer", () => {
+  it("should show the local monitor placeholder", () => {
+    render(
+      <SettingsDrawer
+        open={true}
+        serverUrl="http://localhost:8000"
+        monitorUrl=""
+        onServerUrlChange={vi.fn()}
+        onMonitorUrlChange={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByLabelText("Loop view URL")).toHaveAttribute(
+      "placeholder",
+      "http://localhost:8110",
+    );
   });
 });
 

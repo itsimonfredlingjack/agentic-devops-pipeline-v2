@@ -105,7 +105,7 @@ export function SettingsDrawer({
             type="text"
             value={monitorUrl}
             onChange={(e) => onMonitorUrlChange(e.target.value)}
-            placeholder="http://localhost:8100"
+            placeholder="http://localhost:8110"
           />
         </div>
       </div>

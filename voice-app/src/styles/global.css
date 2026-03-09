@@ -44,8 +44,8 @@ body,
 
 body {
   font-family: var(--font-sans);
-  font-size: var(--text-base);
-  line-height: 1.55;
+  font-size: 14px;
+  line-height: 1.5;
   color: var(--text-primary);
   background: linear-gradient(135deg, var(--bg-gradient-from), var(--bg-gradient-to));
   -webkit-font-smoothing: antialiased;
@@ -82,7 +82,7 @@ body {
 
 /* ── Selections ── */
 ::selection {
-  background: rgba(82, 210, 255, 0.28);
+  background: rgba(233, 69, 96, 0.3);
   color: var(--text-primary);
 }
 
@@ -101,6 +101,22 @@ a {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes blob-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  50% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  75% {
+    transform: translate(40px, 30px) scale(1.05);
   }
 }
 

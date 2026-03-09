@@ -6,8 +6,6 @@ import { Header } from "../components/Header";
 import { StatusBadge } from "../components/StatusBadge";
 import { TranscriptionCard } from "../components/TranscriptionCard";
 import { SuccessCard } from "../components/SuccessCard";
-import { SupportRail } from "../components/SupportRail";
-import { DetailShelf } from "../components/DetailShelf";
 import { ToastContainer } from "../components/Toast";
 import { LogPanel } from "../components/LogPanel";
 import { AppShell } from "../components/AppShell";
@@ -39,20 +37,13 @@ describe("GlassCard", () => {
 describe("Header", () => {
   it("should render app title", () => {
     render(<Header status="idle" onSettingsClick={vi.fn()} />);
-    expect(screen.getByText("SEJFA Desktop")).toBeInTheDocument();
+    expect(screen.getByText("Voice Intake")).toBeInTheDocument();
     expect(screen.getByText("SEJFA")).toBeInTheDocument();
   });
 
   it("should render status badge and settings button", () => {
-    render(
-      <Header
-        status="processing"
-        statusLabel="Running"
-        statusTone="running"
-        onSettingsClick={vi.fn()}
-      />,
-    );
-    expect(screen.getByText("Running")).toBeInTheDocument();
+    render(<Header status="processing" onSettingsClick={vi.fn()} />);
+    expect(screen.getByText("Processing")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Settings" }),
     ).toBeInTheDocument();
@@ -74,19 +65,14 @@ describe("StatusBadge", () => {
     expect(screen.getByText("Ready")).toBeInTheDocument();
   });
 
-  it("should render Needs detail for clarifying status", () => {
+  it("should render Need detail for clarifying status", () => {
     render(<StatusBadge status="clarifying" />);
-    expect(screen.getByText("Needs detail")).toBeInTheDocument();
+    expect(screen.getByText("Need detail")).toBeInTheDocument();
   });
 
-  it("should render Done for done status", () => {
+  it("should render Created for done status", () => {
     render(<StatusBadge status="done" />);
-    expect(screen.getByText("Done")).toBeInTheDocument();
-  });
-
-  it("should render a custom label and tone when provided", () => {
-    render(<StatusBadge status="idle" label="Running" tone="running" />);
-    expect(screen.getByText("Running")).toBeInTheDocument();
+    expect(screen.getByText("Created")).toBeInTheDocument();
   });
 
   it("should render Issue for error status", () => {
@@ -104,7 +90,7 @@ describe("TranscriptionCard", () => {
   it("should show placeholder when no text", () => {
     render(<TranscriptionCard status="idle" text="" />);
     expect(
-      screen.getByText("Your captured request will appear here."),
+      screen.getByText("Your captured objective will appear here."),
     ).toBeInTheDocument();
   });
 
@@ -115,7 +101,7 @@ describe("TranscriptionCard", () => {
 
   it("should show captured objective label", () => {
     render(<TranscriptionCard status="idle" text="" />);
-    expect(screen.getByText("Captured request")).toBeInTheDocument();
+    expect(screen.getByText("Captured objective")).toBeInTheDocument();
   });
 });
 
@@ -126,7 +112,7 @@ describe("SuccessCard", () => {
     summary: "Fix login bug",
   };
 
-  it("should render queued run copy and summary", () => {
+  it("should render mission created copy and summary", () => {
     render(
       <SuccessCard
         ticket={ticket}
@@ -136,12 +122,12 @@ describe("SuccessCard", () => {
         onRecordAnother={vi.fn()}
       />,
     );
-    expect(screen.getByText("Task queued")).toBeInTheDocument();
+    expect(screen.getByText("Mission created")).toBeInTheDocument();
     expect(screen.getByText("Fix login bug")).toBeInTheDocument();
-    expect(screen.getByText("DEV-42 queued for execution.")).toBeInTheDocument();
+    expect(screen.getByText("DEV-42 is ready for the loop.")).toBeInTheDocument();
   });
 
-  it("should render session context without artifact links", () => {
+  it("should render ticket link with correct href", () => {
     render(
       <SuccessCard
         ticket={ticket}
@@ -151,11 +137,16 @@ describe("SuccessCard", () => {
         onRecordAnother={vi.fn()}
       />,
     );
-    expect(screen.queryByRole("link", { name: "Open ticket" })).not.toBeInTheDocument();
-    expect(screen.getByText("Loop monitor unavailable")).toBeInTheDocument();
+    const link = screen.getByRole("link", { name: "Open ticket" });
+    expect(link).toHaveAttribute(
+      "href",
+      "https://jira.example.com/browse/DEV-42",
+    );
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
-  it("should call record another action and render the session handoff meta", async () => {
+  it("should call record another action and render loop monitor handoff link", async () => {
     const onRecordAnother = vi.fn();
     const user = userEvent.setup();
     render(
@@ -168,102 +159,15 @@ describe("SuccessCard", () => {
       />,
     );
 
-    expect(screen.getByText("Loop monitor available")).toBeInTheDocument();
-    expect(screen.getByText("Session sess-42")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Record another" }));
-
-    expect(onRecordAnother).toHaveBeenCalledOnce();
-  });
-});
-
-describe("SupportRail", () => {
-  const ticket = {
-    key: "DEV-42",
-    url: "https://jira.example.com/browse/DEV-42",
-    summary: "Fix login bug",
-  };
-
-  it("should render queue, activity, and artifact sections", () => {
-    render(
-      <SupportRail
-        queueItems={[{ key: "DEV-10", summary: "Fix CI flakes" }]}
-        events={[
-          {
-            id: "event-1",
-            timestamp: "12:00:00",
-            kind: "voice",
-            severity: "info",
-            title: "Ticket created: DEV-42",
-            detail: "Session sess-42",
-          },
-        ]}
-        ticket={ticket}
-        completion={null}
-        loopMonitorUrl="http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42"
-      />,
-    );
-
-    expect(screen.getByLabelText("SEJFA support panel")).toBeInTheDocument();
-    expect(screen.getByText("Queue")).toBeInTheDocument();
-    expect(screen.getByText("Recent activity")).toBeInTheDocument();
-    expect(screen.getByText("Artifacts")).toBeInTheDocument();
-    expect(screen.getByText("DEV-10")).toBeInTheDocument();
-    expect(screen.getByText("Ticket created: DEV-42")).toBeInTheDocument();
-  });
-
-  it("should render artifact links when run outputs are available", () => {
-    render(
-      <SupportRail
-        queueItems={[]}
-        events={[]}
-        ticket={ticket}
-        completion={{
-          session_id: "sess-42",
-          ticket_id: "DEV-42",
-          outcome: "done",
-          pytest_summary: "12 passed",
-          ruff_summary: "clean",
-          git_diff_summary: "2 files changed",
-          pr_url: "https://github.com/example/repo/pull/42",
-        }}
-        loopMonitorUrl="http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42"
-      />,
-    );
-
-    expect(screen.getByRole("link", { name: "Open ticket" })).toHaveAttribute(
-      "href",
-      "https://jira.example.com/browse/DEV-42",
-    );
     expect(
       screen.getByRole("link", { name: "Open loop monitor" }),
     ).toHaveAttribute(
       "href",
       "http://localhost:8100/?session_id=sess-42&ticket_key=DEV-42",
     );
-    expect(screen.getByRole("link", { name: "Open PR" })).toHaveAttribute(
-      "href",
-      "https://github.com/example/repo/pull/42",
-    );
-  });
-});
+    await user.click(screen.getByRole("button", { name: "Record another" }));
 
-describe("DetailShelf", () => {
-  it("should render the transcript and technical details inside the shelf", async () => {
-    const user = userEvent.setup();
-    render(
-      <DetailShelf
-        transcription="Fix the login flow"
-        detailsEntries={["[12:00:00] Queue refreshed"]}
-      />,
-    );
-
-    expect(screen.getByLabelText("SEJFA detail shelf")).toBeInTheDocument();
-    expect(screen.getByText("Captured request")).toBeInTheDocument();
-    expect(screen.getByText("Fix the login flow")).toBeInTheDocument();
-
-    const toggle = screen.getByRole("button", { name: /Show technical details/i });
-    await user.click(toggle);
-    expect(screen.getByText("[12:00:00] Queue refreshed")).toBeInTheDocument();
+    expect(onRecordAnother).toHaveBeenCalledOnce();
   });
 });
 
@@ -345,13 +249,13 @@ describe("AppShell", () => {
     expect(screen.getByTestId("child")).toBeInTheDocument();
   });
 
-  it("should render a simplified shell without decorative blobs", () => {
+  it("should render decorative blobs", () => {
     const { container } = render(
       <AppShell>
         <span>Content</span>
       </AppShell>,
     );
     const blobs = container.querySelectorAll("[class*='blob']");
-    expect(blobs.length).toBe(0);
+    expect(blobs.length).toBeGreaterThanOrEqual(3);
   });
 });

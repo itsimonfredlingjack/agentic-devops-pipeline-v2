@@ -1,15 +1,15 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-sm);
-  min-height: 36px;
-  padding: 0 12px;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 14px;
   border-radius: 999px;
-  font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
-  letter-spacing: 0.02em;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-primary);
 }
 
@@ -33,9 +33,7 @@
 }
 
 .processing .dot,
-.previewing .dot,
-.queued .dot,
-.running .dot {
+.previewing .dot {
   background: var(--blue);
 }
 
@@ -48,9 +46,5 @@
 }
 
 .error .dot {
-  background: var(--red);
-}
-
-.blocked .dot {
   background: var(--red);
 }

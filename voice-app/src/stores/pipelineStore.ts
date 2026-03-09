@@ -25,11 +25,6 @@ export interface TicketResult {
   summary: string;
 }
 
-export interface QueueItem {
-  key: string;
-  summary: string;
-}
-
 interface ClarificationState {
   sessionId: string;
   questions: string[];
@@ -129,7 +124,6 @@ interface PipelineState {
 
   // Fas 3: audio preview
   pendingSamples: number[] | null;
-  queueItems: QueueItem[];
 
   // Fas 4: ticket result + WS status
   ticketResult: TicketResult | null;
@@ -158,7 +152,6 @@ interface PipelineState {
   removeToast: (id: string) => void;
   setProcessingStep: (step: string) => void;
   setPendingSamples: (samples: number[] | null) => void;
-  setQueueItems: (items: QueueItem[]) => void;
   setTicketResult: (result: TicketResult | null) => void;
   setWsConnected: (connected: boolean) => void;
   resetRunState: () => void;
@@ -209,7 +202,6 @@ export const usePipelineStore = create<PipelineState>((set) => ({
   toasts: [],
   processingStep: "",
   pendingSamples: null,
-  queueItems: [],
   ticketResult: null,
   wsConnected: false,
 
@@ -301,8 +293,6 @@ export const usePipelineStore = create<PipelineState>((set) => ({
   setProcessingStep: (step) => set({ processingStep: step }),
 
   setPendingSamples: (samples) => set({ pendingSamples: samples }),
-
-  setQueueItems: (items) => set({ queueItems: items }),
 
   setTicketResult: (result) => set({ ticketResult: result }),
 

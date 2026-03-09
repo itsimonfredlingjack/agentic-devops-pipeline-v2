@@ -21,12 +21,7 @@ import { ClarificationDialog } from "./components/ClarificationDialog";
 import { AudioPreview } from "./components/AudioPreview";
 import { SettingsDrawer } from "./components/SettingsDrawer";
 import { ToastContainer } from "./components/Toast";
-import { TransformationCanvas } from "./components/TransformationCanvas";
-import { SupportRail } from "./components/SupportRail";
-import { DetailShelf } from "./components/DetailShelf";
-import { deriveCanvasState } from "./lib/mission";
-import type { QueueItem } from "./stores/pipelineStore";
-import railStyles from "./styles/components/SupportRail.module.css";
+import { LaunchSequenceView } from "./components/LaunchSequenceView";
 
 function normalizeUrl(url: string): string {
   return url.trim().replace(/\/+$/, "");
@@ -48,21 +43,11 @@ function formatRequestError(err: unknown, serverUrl: string): string {
     return buildConnectionHelpMessage(serverUrl);
   }
 
-  const normalized = raw.toLowerCase();
-  if (
-    normalized.includes("intent validation failed") &&
-    normalized.includes("summary") &&
-    (normalized.includes("string should have at least 3 characters") ||
-      normalized.includes("string_too_short"))
-  ) {
-    return "Task creation could not continue because the transcript was empty or too short. Check speech-to-text on ai-server2, then record again.";
-  }
-
   return `Request failed: ${raw}`;
 }
 
 function defaultMissionError(): string {
-  return "Couldn’t start task creation. Check details and try again.";
+  return "Couldn’t create the mission. Check Details and try again.";
 }
 
 function buildLoopMonitorUrl(
@@ -114,35 +99,6 @@ async function checkBackendHealth(
   }
 }
 
-function normalizeQueueItems(payload: unknown): QueueItem[] {
-  if (!Array.isArray(payload)) return [];
-
-  return payload.flatMap((entry) => {
-    if (
-      entry &&
-      typeof entry === "object" &&
-      typeof entry.key === "string" &&
-      typeof entry.summary === "string"
-    ) {
-      return [{ key: entry.key, summary: entry.summary }];
-    }
-
-    return [];
-  });
-}
-
-async function fetchLoopQueue(serverUrl: string): Promise<QueueItem[]> {
-  const base = normalizeUrl(serverUrl);
-  if (!base) return [];
-
-  const resp = await fetch(`${base}/api/loop/queue`);
-  if (!resp.ok) {
-    throw new Error(`Queue returned HTTP ${resp.status}`);
-  }
-
-  return normalizeQueueItems(await resp.json());
-}
-
 function App() {
   const {
     status,
@@ -154,13 +110,6 @@ function App() {
     clarification,
     latestSessionId,
     monitorConnected,
-    activeStage,
-    gates,
-    completion,
-    commandCenterEvents,
-    loopEvents,
-    queueItems,
-    stuckAlert,
     toasts,
     processingStep,
     pendingSamples,
@@ -186,7 +135,6 @@ function App() {
     removeToast,
     setProcessingStep,
     setPendingSamples,
-    setQueueItems,
     setTicketResult,
     resetRunState,
   } = usePipelineStore();
@@ -201,45 +149,6 @@ function App() {
   monitorUrlRef.current = monitorUrl;
 
   const micLevels = useMicLevel(status === "recording");
-  const canvasState = deriveCanvasState({
-    status,
-    ticket: ticketResult,
-    activeStage,
-    completion,
-    stuckAlert,
-  });
-  const headerBadge = (() => {
-    switch (canvasState.phase) {
-      case "listening":
-        return { label: "Listening", tone: "recording" as const };
-      case "processing":
-        return {
-          label: status === "previewing" ? "Review" : "Preparing",
-          tone: status === "previewing" ? ("previewing" as const) : ("processing" as const),
-        };
-      case "clarifying":
-        return { label: "Needs detail", tone: "clarifying" as const };
-      case "queued":
-        return { label: "Queued", tone: "queued" as const };
-      case "running":
-        return { label: "Running", tone: "running" as const };
-      case "blocked":
-        return { label: "Blocked", tone: "blocked" as const };
-      case "done":
-        return { label: "Done", tone: "done" as const };
-      default:
-        return { label: "Ready", tone: "idle" as const };
-    }
-  })();
-
-  const refreshQueue = useCallback(async () => {
-    try {
-      const items = await fetchLoopQueue(serverUrlRef.current);
-      setQueueItems(items);
-    } catch (err) {
-      appendLog(`[client] Queue refresh failed: ${String(err)}`);
-    }
-  }, [appendLog, setQueueItems]);
 
   useEffect(() => {
     connectWebSocket(
@@ -252,7 +161,7 @@ function App() {
         if (nextStatus === "done") {
           store.setErrorMessage(null);
           if (!store.ticketResult) {
-            store.addToast("success", "Task processing completed");
+            store.addToast("success", "Mission processing completed");
           }
         } else if (nextStatus === "error") {
           if (!store.errorMessage) {
@@ -416,20 +325,6 @@ function App() {
   ]);
 
   useEffect(() => {
-    void refreshQueue();
-    const intervalId = window.setInterval(() => {
-      void refreshQueue();
-    }, 10_000);
-
-    return () => window.clearInterval(intervalId);
-  }, [refreshQueue]);
-
-  useEffect(() => {
-    if (!ticketResult && !completion && loopEvents.length === 0) return;
-    void refreshQueue();
-  }, [ticketResult, completion, loopEvents.length, refreshQueue]);
-
-  useEffect(() => {
     if (settingsOpen) return;
     const normalized = normalizeUrl(serverUrl);
     if (!normalized || normalized === lastHealthCheckUrlRef.current) return;
@@ -568,7 +463,7 @@ function App() {
 
         if (!sessionId || questions.length === 0) {
           const message =
-            "Couldn’t continue task creation. The clarification response was invalid.";
+            "Couldn’t continue this mission. The clarification response was invalid.";
           appendLog(
             `[client] Invalid clarification payload (${endpointUsed}): ${JSON.stringify(result)}`,
           );
@@ -620,13 +515,13 @@ function App() {
         });
         appendLog(`[client] Ticket created: ${ticketKey} — ${ticketUrl}`);
         setStatus("done");
-        addToast("success", `Task created: ${ticketKey}`);
+        addToast("success", `Mission created: ${ticketKey}`);
         return;
       }
 
       if (typeof result.text === "string") {
         const message =
-          "The request was transcribed, but no task was created.";
+          "The objective was transcribed, but the mission was not created.";
         appendLog(`[client] Transcription received (${endpointUsed})`);
         setProcessingStep("");
         setErrorMessage(message);
@@ -636,7 +531,7 @@ function App() {
       }
 
       const message =
-        "Couldn’t start task creation. The server returned an unexpected response.";
+        "Couldn’t create the mission. The server returned an unexpected response.";
       appendLog(
         `[client] Unexpected response payload (${endpointUsed}): ${JSON.stringify(result)}`,
       );
@@ -754,12 +649,12 @@ function App() {
             `[client] Ticket created: ${data.ticket_key} — ${data.ticket_url}`,
           );
           setStatus("done");
-          addToast("success", `Task created: ${data.ticket_key}`);
+          addToast("success", `Mission created: ${data.ticket_key}`);
           return;
         }
 
         const message =
-          "Couldn’t start task creation. The clarification response was incomplete.";
+          "Couldn’t create the mission. The clarification response was incomplete.";
         setErrorMessage(message);
         setStatus("error");
         addToast("error", message);
@@ -794,7 +689,7 @@ function App() {
     setProcessingStep("");
     setStatus("idle");
     appendLog("[client] Clarification skipped");
-    addToast("info", "Clarification skipped for now");
+    addToast("info", "Clarification skipped");
   }, [
     clearClarification,
     setErrorMessage,
@@ -833,63 +728,43 @@ function App() {
     <AppShell>
       <Header
         status={status}
-        statusLabel={headerBadge.label}
-        statusTone={headerBadge.tone}
         onSettingsClick={() => setSettingsOpen(true)}
       />
-      <div className={railStyles.surface}>
-        <TransformationCanvas
-          status={status}
-          canvasState={canvasState}
-          processingStep={processingStep}
-          ticket={ticketResult}
-          errorMessage={errorMessage}
-          micLevels={micLevels}
-          wsConnected={wsConnected}
-          monitorConnected={monitorConnected}
-          sessionId={latestSessionId}
-          activeStage={activeStage}
-          gates={gates}
-          completion={completion}
-          stuckAlert={stuckAlert}
-          loopMonitorUrl={loopMonitorUrl}
-          onToggleRecord={handleToggle}
-          onRetry={handleRetry}
-          onRecordAnother={handleRecordAnother}
-          onOpenSettings={() => setSettingsOpen(true)}
-        >
-          {status === "previewing" && pendingSamples ? (
-            <AudioPreview
-              samples={pendingSamples}
-              onSend={handleSendAudio}
-              onDiscard={handleDiscardAudio}
-            />
-          ) : null}
-          {clarification ? (
-            <ClarificationDialog
-              questions={clarification.questions}
-              partialSummary={clarification.partialSummary}
-              round={clarification.round}
-              disabled={status === "processing"}
-              onSubmit={handleClarifySubmit}
-              onSkip={handleClarifySkip}
-            />
-          ) : null}
-        </TransformationCanvas>
-
-        <SupportRail
-          queueItems={queueItems}
-          events={commandCenterEvents}
-          ticket={ticketResult}
-          completion={completion}
-          loopMonitorUrl={loopMonitorUrl}
-        />
-      </div>
-
-      <DetailShelf
+      <LaunchSequenceView
+        status={status}
+        processingStep={processingStep}
         transcription={transcription}
+        ticket={ticketResult}
+        errorMessage={errorMessage}
+        micLevels={micLevels}
+        wsConnected={wsConnected}
+        monitorConnected={monitorConnected}
+        sessionId={latestSessionId}
+        loopMonitorUrl={loopMonitorUrl}
         detailsEntries={log}
-      />
+        onToggleRecord={handleToggle}
+        onRetry={handleRetry}
+        onRecordAnother={handleRecordAnother}
+        onOpenSettings={() => setSettingsOpen(true)}
+      >
+        {status === "previewing" && pendingSamples ? (
+          <AudioPreview
+            samples={pendingSamples}
+            onSend={handleSendAudio}
+            onDiscard={handleDiscardAudio}
+          />
+        ) : null}
+        {clarification ? (
+          <ClarificationDialog
+            questions={clarification.questions}
+            partialSummary={clarification.partialSummary}
+            round={clarification.round}
+            disabled={status === "processing"}
+            onSubmit={handleClarifySubmit}
+            onSkip={handleClarifySkip}
+          />
+        ) : null}
+      </LaunchSequenceView>
 
       <SettingsDrawer
         open={settingsOpen}

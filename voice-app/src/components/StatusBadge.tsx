@@ -1,55 +1,40 @@
 import type { PipelineStatus } from "../stores/pipelineStore";
 import styles from "../styles/components/StatusBadge.module.css";
 
-export type StatusBadgeTone =
-  | PipelineStatus
-  | "queued"
-  | "running"
-  | "blocked";
-
 interface StatusBadgeProps {
-  status?: PipelineStatus;
-  label?: string;
-  tone?: StatusBadgeTone;
+  status: PipelineStatus;
 }
 
 const LABEL: Record<PipelineStatus, string> = {
   idle: "Ready",
-  recording: "Listening",
-  processing: "Preparing",
-  clarifying: "Needs detail",
+  recording: "Recording",
+  processing: "Processing",
+  clarifying: "Need detail",
   previewing: "Review",
-  done: "Done",
+  done: "Created",
   error: "Issue",
 };
 
-const PULSING: Set<StatusBadgeTone> = new Set([
+const PULSING: Set<PipelineStatus> = new Set([
   "recording",
   "processing",
   "clarifying",
   "previewing",
-  "running",
 ]);
 
-export function StatusBadge({
-  status = "idle",
-  label,
-  tone,
-}: StatusBadgeProps) {
-  const resolvedTone = tone ?? status;
-  const resolvedLabel = label ?? LABEL[status];
-  const dotClass = [styles.dot, PULSING.has(resolvedTone) && styles.dotPulse]
+export function StatusBadge({ status }: StatusBadgeProps) {
+  const dotClass = [styles.dot, PULSING.has(status) && styles.dotPulse]
     .filter(Boolean)
     .join(" ");
 
   return (
     <span
-      className={`${styles.badge} ${styles[resolvedTone]}`}
+      className={`${styles.badge} ${styles[status]}`}
       role="status"
       aria-live="polite"
     >
       <span className={dotClass} aria-hidden="true" />
-      {resolvedLabel}
+      {LABEL[status]}
     </span>
   );
 }

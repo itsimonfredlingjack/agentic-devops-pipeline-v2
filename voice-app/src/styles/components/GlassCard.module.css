@@ -4,7 +4,7 @@
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
-  padding: var(--space-lg);
+  padding: var(--space-md);
   box-shadow: var(--glass-shadow);
   animation: fade-in 400ms ease both;
 }
@@ -16,7 +16,7 @@
 }
 
 .compact {
-  padding: var(--space-sm) var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
 }
 
 .noPadding {

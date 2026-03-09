@@ -74,10 +74,7 @@ export function MissionReactor({
   });
 
   return (
-    <section
-      aria-label="Execution pipeline map"
-      className={`${styles.reactor} ${phaseClass(mission)}`}
-    >
+    <div className={`${styles.reactor} ${phaseClass(mission)}`}>
       <div className={styles.backdropRing} aria-hidden="true" />
       <div className={styles.orbitRing} aria-hidden="true" />
       <div className={styles.core}>
@@ -100,6 +97,6 @@ export function MissionReactor({
           </div>
         );
       })}
-    </section>
+    </div>
   );
 }

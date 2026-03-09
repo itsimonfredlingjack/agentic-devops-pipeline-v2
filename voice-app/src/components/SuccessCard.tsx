@@ -5,7 +5,7 @@ interface SuccessCardProps {
   ticket: TicketResult;
   sessionId: string | null;
   monitorConnected: boolean;
-  loopMonitorUrl?: string | null;
+  loopMonitorUrl: string | null;
   onRecordAnother: () => void;
 }
 
@@ -13,17 +13,36 @@ export function SuccessCard({
   ticket,
   sessionId,
   monitorConnected,
+  loopMonitorUrl,
   onRecordAnother,
 }: SuccessCardProps) {
   return (
-    <section className={styles.card} aria-label="Task queued">
+    <section className={styles.card} aria-label="Mission created">
       <div className={styles.summary}>
-        <div className={styles.kicker}>Task queued</div>
+        <div className={styles.kicker}>Mission created</div>
         <div className={styles.headline}>{ticket.summary}</div>
-        <div className={styles.support}>{ticket.key} queued for execution.</div>
+        <div className={styles.support}>{ticket.key} is ready for the loop.</div>
       </div>
 
       <div className={styles.actions}>
+        <a
+          className={styles.primaryAction}
+          href={ticket.url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open ticket
+        </a>
+        {loopMonitorUrl ? (
+          <a
+            className={styles.secondaryAction}
+            href={loopMonitorUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open loop monitor
+          </a>
+        ) : null}
         <button
           type="button"
           className={styles.tertiaryAction}

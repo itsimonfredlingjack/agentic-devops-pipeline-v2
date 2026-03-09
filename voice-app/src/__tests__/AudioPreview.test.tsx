@@ -16,7 +16,7 @@ describe("AudioPreview", () => {
 
   it("should render the review title", () => {
     render(<AudioPreview {...defaultProps} />);
-    expect(screen.getByText("Review recording")).toBeInTheDocument();
+    expect(screen.getByText("Review Capture")).toBeInTheDocument();
   });
 
   it("should display formatted duration", () => {
@@ -37,7 +37,7 @@ describe("AudioPreview", () => {
 
   it("should render primary and secondary actions", () => {
     render(<AudioPreview {...defaultProps} />);
-    expect(screen.getByText("Create task")).toBeInTheDocument();
+    expect(screen.getByText("Create mission")).toBeInTheDocument();
     expect(screen.getByText("Discard")).toBeInTheDocument();
   });
 
@@ -46,7 +46,7 @@ describe("AudioPreview", () => {
     const user = userEvent.setup();
     render(<AudioPreview {...defaultProps} onSend={onSend} />);
 
-    await user.click(screen.getByText("Create task"));
+    await user.click(screen.getByText("Create mission"));
     expect(onSend).toHaveBeenCalledOnce();
   });
 
@@ -68,6 +68,6 @@ describe("AudioPreview", () => {
   it("should handle empty samples array", () => {
     render(<AudioPreview {...defaultProps} samples={[]} />);
     expect(screen.getByText("00:00")).toBeInTheDocument();
-    expect(screen.getByText("Review recording")).toBeInTheDocument();
+    expect(screen.getByText("Review Capture")).toBeInTheDocument();
   });
 });

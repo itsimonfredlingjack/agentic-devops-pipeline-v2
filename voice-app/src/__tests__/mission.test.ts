@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { deriveCanvasState, deriveMissionState } from "../lib/mission";
+import { deriveMissionState } from "../lib/mission";
 
 describe("deriveMissionState", () => {
   it("should return idle when there is no mission activity", () => {
@@ -12,7 +12,7 @@ describe("deriveMissionState", () => {
     });
 
     expect(mission.phase).toBe("idle");
-    expect(mission.label).toBe("Ready");
+    expect(mission.label).toBe("Idle");
   });
 
   it("should treat recording as capturing", () => {
@@ -25,7 +25,7 @@ describe("deriveMissionState", () => {
     });
 
     expect(mission.phase).toBe("capturing");
-    expect(mission.label).toBe("Listening");
+    expect(mission.label).toBe("Recording");
   });
 
   it("should treat a created ticket without active loop stages as queued", () => {
@@ -101,170 +101,5 @@ describe("deriveMissionState", () => {
 
     expect(completed.phase).toBe("completed");
     expect(blocked.phase).toBe("blocked");
-  });
-});
-
-describe("deriveCanvasState", () => {
-  it("should describe idle intake as an invitation to speak", () => {
-    expect(
-      deriveCanvasState({
-        status: "idle",
-        ticket: null,
-        activeStage: null,
-        completion: null,
-        stuckAlert: null,
-      }),
-    ).toEqual({
-      phase: "idle",
-      caption: "Start with a request",
-      emphasis: "intake",
-    });
-  });
-
-  it("should treat recording as a listening state", () => {
-    expect(
-      deriveCanvasState({
-        status: "recording",
-        ticket: null,
-        activeStage: null,
-        completion: null,
-        stuckAlert: null,
-      }),
-    ).toEqual({
-      phase: "listening",
-      caption: "Listening for your request",
-      emphasis: "intake",
-    });
-  });
-
-  it("should describe processing and preview states as work formation", () => {
-    expect(
-      deriveCanvasState({
-        status: "processing",
-        ticket: null,
-        activeStage: null,
-        completion: null,
-        stuckAlert: null,
-      }),
-    ).toEqual({
-      phase: "processing",
-      caption: "Preparing task details",
-      emphasis: "formation",
-    });
-
-    expect(
-      deriveCanvasState({
-        status: "previewing",
-        ticket: null,
-        activeStage: null,
-        completion: null,
-        stuckAlert: null,
-      }),
-    ).toEqual({
-      phase: "processing",
-      caption: "Review your recording",
-      emphasis: "formation",
-    });
-  });
-
-  it("should surface clarification as an incomplete work core", () => {
-    expect(
-      deriveCanvasState({
-        status: "clarifying",
-        ticket: null,
-        activeStage: null,
-        completion: null,
-        stuckAlert: null,
-      }),
-    ).toEqual({
-      phase: "clarifying",
-      caption: "Need one more detail",
-      emphasis: "formation",
-    });
-  });
-
-  it("should distinguish queued and running loop states", () => {
-    const ticket = {
-      key: "DEV-42",
-      url: "https://jira.example.com/DEV-42",
-      summary: "Fix login flow",
-    };
-
-    expect(
-      deriveCanvasState({
-        status: "done",
-        ticket,
-        activeStage: null,
-        completion: null,
-        stuckAlert: null,
-      }),
-    ).toEqual({
-      phase: "queued",
-      caption: "Task queued",
-      emphasis: "loop",
-    });
-
-    expect(
-      deriveCanvasState({
-        status: "done",
-        ticket,
-        activeStage: "agent",
-        completion: null,
-        stuckAlert: null,
-      }),
-    ).toEqual({
-      phase: "running",
-      caption: "Running Agent",
-      emphasis: "loop",
-    });
-  });
-
-  it("should prefer blocked and done outcomes over pipeline status", () => {
-    const ticket = {
-      key: "DEV-42",
-      url: "https://jira.example.com/DEV-42",
-      summary: "Fix login flow",
-    };
-
-    expect(
-      deriveCanvasState({
-        status: "processing",
-        ticket,
-        activeStage: "deploy",
-        completion: null,
-        stuckAlert: {
-          pattern: "same tool",
-          repeat_count: 3,
-          tokens_burned: 1200,
-          since: "2026-03-07T09:00:00Z",
-        },
-      }),
-    ).toEqual({
-      phase: "blocked",
-      caption: "Blocked in Deploy",
-      emphasis: "diagnostic",
-    });
-
-    expect(
-      deriveCanvasState({
-        status: "done",
-        ticket,
-        activeStage: "verify",
-        completion: {
-          session_id: "sess-1",
-          ticket_id: "DEV-42",
-          outcome: "done",
-          pytest_summary: null,
-          ruff_summary: null,
-          git_diff_summary: null,
-          pr_url: null,
-        },
-        stuckAlert: null,
-      }),
-    ).toEqual({
-      phase: "done",
-      caption: "Task completed",
-      emphasis: "outcome",
-    });
   });
 });

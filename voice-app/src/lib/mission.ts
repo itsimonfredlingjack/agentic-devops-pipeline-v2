@@ -31,29 +31,6 @@ export interface MissionState {
   detail: string;
 }
 
-export type CanvasPhase =
-  | "idle"
-  | "listening"
-  | "processing"
-  | "clarifying"
-  | "queued"
-  | "running"
-  | "blocked"
-  | "done";
-
-export type CanvasEmphasis =
-  | "intake"
-  | "formation"
-  | "loop"
-  | "diagnostic"
-  | "outcome";
-
-export interface CanvasState {
-  phase: CanvasPhase;
-  caption: string;
-  emphasis: CanvasEmphasis;
-}
-
 const VERIFY_STAGES = new Set(["verify", "tests", "ci", "pr"]);
 const ACTIVE_STAGES = new Set(["jira", "agent", "actions", "deploy"]);
 
@@ -68,7 +45,7 @@ export function deriveMissionState({
     return {
       phase: "completed",
       label: "Done",
-      detail: "Task completed successfully",
+      detail: "Mission shipped successfully",
     };
   }
 
@@ -76,7 +53,7 @@ export function deriveMissionState({
     return {
       phase: "blocked",
       label: "Blocked",
-      detail: "Manual review needed",
+      detail: "Operator attention requested",
     };
   }
 
@@ -84,15 +61,15 @@ export function deriveMissionState({
     return {
       phase: "failed",
       label: "Failed",
-      detail: "Task failed in the current stage",
+      detail: "The loop hit an unrecovered error",
     };
   }
 
   if (status === "recording") {
     return {
       phase: "capturing",
-      label: "Listening",
-      detail: "Capturing your request",
+      label: "Recording",
+      detail: "Listening for your objective",
     };
   }
 
@@ -103,8 +80,8 @@ export function deriveMissionState({
   ) {
     return {
       phase: "processing",
-      label: "Preparing",
-      detail: "Converting voice input into task details",
+      label: "Igniting",
+      detail: "Turning your voice into a mission",
     };
   }
 
@@ -119,8 +96,8 @@ export function deriveMissionState({
   if (activeStage && ACTIVE_STAGES.has(activeStage)) {
     return {
       phase: "agent_active",
-      label: "Running",
-      detail: `${humanizeStage(activeStage)} is active`,
+      label: "Agent Running",
+      detail: `${humanizeStage(activeStage)} is live`,
     };
   }
 
@@ -128,92 +105,14 @@ export function deriveMissionState({
     return {
       phase: "queued",
       label: "Queued",
-      detail: "Task queued for agent pickup",
+      detail: "Mission accepted and waiting for agent pickup",
     };
   }
 
   return {
     phase: "idle",
-    label: "Ready",
-    detail: "Ready for your next request",
-  };
-}
-
-export function deriveCanvasState({
-  status,
-  ticket,
-  activeStage,
-  completion,
-  stuckAlert,
-}: MissionStateInput): CanvasState {
-  if (completion?.outcome === "done") {
-    return {
-      phase: "done",
-      caption: "Task completed",
-      emphasis: "outcome",
-    };
-  }
-
-  if (completion?.outcome === "blocked" || stuckAlert) {
-    return {
-      phase: "blocked",
-      caption: `Blocked in ${humanizeStage(activeStage ?? "loop")}`,
-      emphasis: "diagnostic",
-    };
-  }
-
-  if (status === "recording") {
-    return {
-      phase: "listening",
-      caption: "Listening for your request",
-      emphasis: "intake",
-    };
-  }
-
-  if (status === "clarifying") {
-    return {
-      phase: "clarifying",
-      caption: "Need one more detail",
-      emphasis: "formation",
-    };
-  }
-
-  if (status === "processing") {
-    return {
-      phase: "processing",
-      caption: "Preparing task details",
-      emphasis: "formation",
-    };
-  }
-
-  if (status === "previewing") {
-    return {
-      phase: "processing",
-      caption: "Review your recording",
-      emphasis: "formation",
-    };
-  }
-
-  if (activeStage && (VERIFY_STAGES.has(activeStage) || ACTIVE_STAGES.has(activeStage))) {
-    return {
-      phase: "running",
-      caption: `Running ${humanizeStage(activeStage)}`,
-      emphasis: "loop",
-    };
-  }
-
-  if (ticket) {
-    return {
-      phase: "queued",
-      caption: "Task queued",
-      emphasis: "loop",
-    };
-  }
-
-  return {
-    phase: "idle",
-    caption: "Start with a request",
-    emphasis: "intake",
+    label: "Idle",
+    detail: "Awaiting your next objective",
   };
 }
 

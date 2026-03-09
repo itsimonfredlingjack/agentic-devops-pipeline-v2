@@ -1,8 +1,7 @@
 .card {
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(82, 210, 255, 0.16);
-  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(82, 210, 255, 0.18);
+  background: rgba(255, 255, 255, 0.03);
   box-shadow: none;
 }
 
@@ -14,15 +13,16 @@
 }
 
 .title {
-  font-size: var(--text-sm);
-  font-weight: var(--weight-semibold);
-  letter-spacing: 0.01em;
-  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
 }
 
 .duration {
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
+  font-size: 12px;
   color: var(--text-tertiary);
 }
 
@@ -47,12 +47,14 @@
   cursor: pointer;
   transition:
     background var(--transition-fast),
+    transform var(--transition-fast),
     border-color var(--transition-fast);
 }
 
 .playBtn:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
 }
 
 .waveform {
@@ -72,10 +74,10 @@
   padding: 9px 16px;
   border-radius: 999px;
   font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background var(--transition-fast),
+  transition: transform var(--transition-fast), background var(--transition-fast),
     border-color var(--transition-fast), color var(--transition-fast);
 }
 
@@ -93,27 +95,5 @@
 
 .sendBtn:hover,
 .discardBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-@media (max-width: 640px) {
-  .waveformRow {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .playBtn {
-    width: 100%;
-    border-radius: var(--radius-md);
-  }
-
-  .actions {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .sendBtn,
-  .discardBtn {
-    width: 100%;
-  }
+  transform: translateY(-1px);
 }

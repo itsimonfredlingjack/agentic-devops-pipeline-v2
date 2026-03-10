@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  padding: 20px;
+  padding: 16px;
   border-radius: var(--radius-lg);
   border: 1px solid rgba(113, 140, 114, 0.32);
   background: linear-gradient(
@@ -20,16 +20,16 @@
 }
 
 .kicker {
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.16em;
   color: #5f775f;
 }
 
 .headline {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.3;
 }
 
 .support {
@@ -48,13 +48,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 42px;
-  padding: 10px 16px;
-  border-radius: 999px;
+  min-height: 38px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
   text-decoration: none;
   cursor: pointer;
-  transition: transform var(--transition-fast), background var(--transition-fast),
-    border-color var(--transition-fast), color var(--transition-fast);
+  transition: background var(--transition-fast), border-color var(--transition-fast),
+    color var(--transition-fast);
+  font-size: 13px;
 }
 
 .primaryAction {
@@ -78,7 +79,7 @@
 .primaryAction:hover,
 .secondaryAction:hover,
 .tertiaryAction:hover {
-  transform: translateY(-1px);
+  border-color: var(--border-strong);
 }
 
 .metaRow {

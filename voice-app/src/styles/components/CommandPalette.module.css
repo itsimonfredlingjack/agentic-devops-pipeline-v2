@@ -12,12 +12,12 @@
 
 .panel {
   position: relative;
-  margin: 8vh auto 0;
-  width: min(680px, calc(100vw - 28px));
-  max-height: 72vh;
+  margin: 7vh auto 0;
+  width: min(620px, calc(100vw - 24px));
+  max-height: 70vh;
   display: flex;
   flex-direction: column;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-strong);
   background: var(--bg-surface);
   box-shadow: 0 22px 46px rgba(59, 52, 44, 0.2);
@@ -28,13 +28,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px 10px;
+  padding: 12px 14px 8px;
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .title {
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  font-size: 11px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-secondary);
   font-weight: 600;
@@ -47,15 +47,15 @@
 }
 
 .search {
-  margin: 12px 16px;
-  width: calc(100% - 32px);
-  min-height: 40px;
+  margin: 10px 14px;
+  width: calc(100% - 28px);
+  min-height: 36px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-subtle);
   background: var(--bg-surface-strong);
   color: var(--text-primary);
-  padding: 9px 12px;
-  font-size: 14px;
+  padding: 8px 10px;
+  font-size: 13px;
   outline: none;
 }
 
@@ -65,7 +65,7 @@
 }
 
 .list {
-  padding: 0 10px 10px;
+  padding: 0 8px 8px;
   overflow-y: auto;
 }
 
@@ -74,8 +74,8 @@
   text-align: left;
   border: 1px solid transparent;
   background: transparent;
-  border-radius: var(--radius-md);
-  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -100,7 +100,7 @@
 }
 
 .itemLabel {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
 }
 

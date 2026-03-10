@@ -13,7 +13,9 @@ export function AppShell({ children }: AppShellProps) {
         <div className={`${styles.blob} ${styles.blob2}`} />
         <div className={`${styles.blob} ${styles.blob3}`} />
       </div>
-      <div className={styles.content}>{children}</div>
+      <div className={styles.content}>
+        <div className={styles.stack}>{children}</div>
+      </div>
     </div>
   );
 }

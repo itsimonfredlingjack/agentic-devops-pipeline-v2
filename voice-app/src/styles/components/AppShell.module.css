@@ -5,23 +5,26 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background: linear-gradient(
-    180deg,
-    var(--bg-gradient-from) 0%,
-    var(--bg-gradient-mid) 52%,
-    var(--bg-gradient-to) 100%
-  );
+  background: linear-gradient(180deg, var(--bg-gradient-from) 0%, var(--bg-gradient-to) 100%);
 }
 
 .content {
   position: relative;
   z-index: 1;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   height: 100%;
   overflow-y: auto;
-  padding: clamp(16px, 2vw, 24px);
-  gap: var(--space-lg);
+  padding: clamp(12px, 1.4vw, 18px);
+}
+
+.stack {
+  width: min(1420px, 100%);
+  min-height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
 }
 
 .shell::before {
@@ -31,9 +34,9 @@
   background-image:
     linear-gradient(to right, var(--bg-grid) 1px, transparent 1px),
     linear-gradient(to bottom, var(--bg-grid) 1px, transparent 1px);
-  background-size: 88px 88px;
-  opacity: 0.24;
-  mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.78), transparent 92%);
+  background-size: 116px 116px;
+  opacity: 0.12;
+  mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.62), transparent 94%);
   pointer-events: none;
 }
 
@@ -48,8 +51,8 @@
 .blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(96px);
-  opacity: 0.02;
+  filter: blur(120px);
+  opacity: 0.014;
   animation: blob-drift 24s ease-in-out infinite;
 }
 
@@ -79,4 +82,14 @@
   left: 52%;
   transform: translate(-50%, -50%);
   animation-delay: -14s;
+}
+
+@media (max-width: 768px) {
+  .shell::before {
+    opacity: 0.07;
+  }
+
+  .blobs {
+    display: none;
+  }
 }

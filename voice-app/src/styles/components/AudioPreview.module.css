@@ -1,7 +1,7 @@
 .card {
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(82, 210, 255, 0.18);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(110, 124, 140, 0.28);
+  background: var(--bg-surface);
   box-shadow: none;
 }
 
@@ -38,8 +38,8 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-soft);
   color: var(--text-primary);
   display: flex;
   align-items: center;
@@ -52,8 +52,8 @@
 }
 
 .playBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--bg-surface-strong);
+  border-color: var(--border-strong);
   transform: translateY(-1px);
 }
 
@@ -82,13 +82,13 @@
 }
 
 .sendBtn {
-  border: 1px solid rgba(82, 210, 255, 0.28);
-  background: rgba(82, 210, 255, 0.12);
-  color: #e4faff;
+  border: 1px solid rgba(110, 124, 140, 0.34);
+  background: var(--accent-100);
+  color: var(--accent-700);
 }
 
 .discardBtn {
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--border-subtle);
   background: transparent;
   color: var(--text-secondary);
 }

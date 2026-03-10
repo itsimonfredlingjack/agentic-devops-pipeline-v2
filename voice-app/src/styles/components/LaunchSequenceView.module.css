@@ -20,7 +20,7 @@
   position: absolute;
   inset: auto -12% -30% 45%;
   height: 220px;
-  background: radial-gradient(circle, rgba(82, 210, 255, 0.1), transparent 70%);
+  background: radial-gradient(circle, rgba(110, 124, 140, 0.12), transparent 70%);
   pointer-events: none;
 }
 
@@ -50,8 +50,8 @@
 .connectionChip {
   padding: 7px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-soft);
   color: var(--text-secondary);
   font-size: 11px;
   letter-spacing: 0.06em;
@@ -80,9 +80,9 @@
   min-height: 38px;
   padding: 8px 12px;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(82, 210, 255, 0.2);
-  background: rgba(82, 210, 255, 0.08);
-  color: rgba(226, 248, 255, 0.94);
+  border: 1px solid rgba(110, 124, 140, 0.28);
+  background: var(--accent-100);
+  color: var(--accent-700);
   font-size: 13px;
   line-height: 1.4;
 }
@@ -120,8 +120,8 @@
   justify-content: center;
   padding: 11px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-soft);
   color: var(--text-primary);
   cursor: pointer;
   transition: transform var(--transition-fast), background var(--transition-fast),
@@ -129,9 +129,9 @@
 }
 
 .primaryButton {
-  border: 1px solid rgba(82, 210, 255, 0.26);
-  background: rgba(82, 210, 255, 0.12);
-  color: #e6f9ff;
+  border: 1px solid rgba(110, 124, 140, 0.34);
+  background: var(--accent-100);
+  color: var(--accent-700);
 }
 
 .ghostButton {
@@ -140,7 +140,7 @@
   justify-content: center;
   padding: 11px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
   background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
@@ -151,21 +151,21 @@
 .primaryButton:hover,
 .secondaryButton:hover {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--bg-surface-strong);
+  border-color: var(--border-strong);
 }
 
 .ghostButton:hover {
   transform: translateY(-1px);
   color: var(--text-primary);
-  border-color: rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--border-strong);
+  background: var(--bg-surface-soft);
 }
 
 .progressStrip {
   margin-top: auto;
   padding-top: var(--space-md);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);

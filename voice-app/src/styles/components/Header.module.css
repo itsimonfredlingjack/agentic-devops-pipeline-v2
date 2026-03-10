@@ -41,8 +41,8 @@
   width: 38px;
   height: 38px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-soft);
   color: var(--text-secondary);
   cursor: pointer;
   transition: color var(--transition-fast), background var(--transition-fast),
@@ -50,8 +50,8 @@
 }
 
 .settingsBtn:hover {
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--accent-700);
+  background: var(--accent-100);
+  border-color: rgba(110, 124, 140, 0.32);
   transform: translateY(-1px);
 }

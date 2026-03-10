@@ -1,7 +1,7 @@
 .card {
   width: 100%;
-  border: 1px solid rgba(82, 210, 255, 0.18);
-  background: rgba(82, 210, 255, 0.04);
+  border: 1px solid rgba(110, 124, 140, 0.28);
+  background: var(--accent-100);
 }
 
 .header {
@@ -34,7 +34,7 @@
 .partialSummary {
   padding: 10px 12px;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-surface-soft);
   color: var(--text-primary);
   font-size: 13px;
   line-height: 1.5;
@@ -64,7 +64,7 @@
   content: counter(question) ".";
   position: absolute;
   left: 0;
-  color: var(--blue);
+  color: var(--accent-700);
   font-weight: 600;
   font-size: 12px;
 }
@@ -76,9 +76,9 @@
 .textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-surface-soft);
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-size: 13px;
@@ -89,8 +89,8 @@
 }
 
 .textarea:focus {
-  border-color: rgba(82, 210, 255, 0.28);
-  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(110, 124, 140, 0.36);
+  background: var(--bg-surface-strong);
   outline: none;
 }
 
@@ -121,13 +121,13 @@
 }
 
 .submitBtn {
-  border: 1px solid rgba(82, 210, 255, 0.24);
-  background: rgba(82, 210, 255, 0.12);
-  color: #e9fbff;
+  border: 1px solid rgba(110, 124, 140, 0.34);
+  background: var(--accent-100);
+  color: var(--accent-700);
 }
 
 .skipBtn {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-subtle);
   background: transparent;
   color: var(--text-secondary);
 }

@@ -15,34 +15,28 @@
   gap: var(--space-sm);
   padding: 10px 14px;
   border-radius: var(--radius-sm);
-  background: rgba(30, 30, 60, 0.85);
+  background: var(--bg-surface);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 10px 24px rgba(59, 52, 44, 0.14);
   min-width: 260px;
   max-width: 360px;
   pointer-events: auto;
   animation: toast-enter 300ms ease both;
-  border-left: 3px solid var(--blue);
-}
-
-@supports not (backdrop-filter: blur(1px)) {
-  .toast {
-    background: rgba(30, 30, 60, 0.95);
-  }
+  border-left: 3px solid var(--state-info);
 }
 
 .success {
-  border-left-color: var(--green);
+  border-left-color: var(--state-success);
 }
 
 .error {
-  border-left-color: var(--red);
+  border-left-color: var(--state-error);
 }
 
 .info {
-  border-left-color: var(--blue);
+  border-left-color: var(--state-info);
 }
 
 .exit {
@@ -59,19 +53,19 @@
   border-radius: 50%;
   font-size: 11px;
   font-weight: 700;
-  color: white;
+  color: #ffffff;
 }
 
 .success .icon {
-  background: var(--green);
+  background: var(--state-success);
 }
 
 .error .icon {
-  background: var(--red);
+  background: var(--state-error);
 }
 
 .info .icon {
-  background: var(--blue);
+  background: var(--state-info);
 }
 
 .message {

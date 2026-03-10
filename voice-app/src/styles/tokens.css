@@ -1,31 +1,53 @@
 :root {
-  /* Background */
-  --bg-gradient-from: #070b16;
-  --bg-gradient-mid: #0b1327;
-  --bg-gradient-to: #121934;
-  --bg-grid: rgba(116, 150, 255, 0.08);
+  /* Light-first warm clinical palette */
+  --bg-app: #eae6de;
+  --bg-surface: #efece5;
+  --bg-surface-soft: #f4f1eb;
+  --bg-surface-strong: #f8f5ef;
+  --bg-overlay: rgba(54, 49, 42, 0.28);
 
-  /* Glass surfaces */
-  --glass-bg: rgba(11, 17, 36, 0.62);
-  --glass-bg-hover: rgba(18, 26, 52, 0.78);
-  --glass-border: rgba(151, 180, 255, 0.14);
-  --glass-shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
-  --glass-blur: blur(16px);
+  --border-subtle: #cbc4b8;
+  --border-strong: #bdb5a8;
 
-  /* Linux fallback (no backdrop-filter) */
-  --glass-bg-solid: rgba(10, 14, 28, 0.92);
+  --text-primary: #343632;
+  --text-secondary: #6a655e;
+  --text-tertiary: #8b857b;
 
-  /* Accent colors */
-  --coral: #ff7c5a;
-  --blue: #52d2ff;
-  --green: #68df92;
-  --yellow: #ffd166;
-  --red: #ff6b6b;
+  --accent-100: #e7ecf1;
+  --accent-500: #6e7c8c;
+  --accent-700: #5b6978;
+  --accent-ring: rgba(91, 105, 120, 0.38);
 
-  /* Text */
-  --text-primary: rgba(245, 247, 255, 0.95);
-  --text-secondary: rgba(210, 219, 244, 0.68);
-  --text-tertiary: rgba(188, 199, 232, 0.42);
+  --state-info: #6e7c8c;
+  --state-success: #718c72;
+  --state-warning: #9b8457;
+  --state-error: #9e6761;
+  --state-info-soft: rgba(110, 124, 140, 0.16);
+  --state-success-soft: rgba(113, 140, 114, 0.18);
+  --state-warning-soft: rgba(155, 132, 87, 0.18);
+  --state-error-soft: rgba(158, 103, 97, 0.18);
+
+  --shadow-soft: 0 10px 28px rgba(59, 52, 44, 0.1);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+
+  /* Legacy aliases used by existing CSS modules */
+  --bg-gradient-from: var(--bg-app);
+  --bg-gradient-mid: #ece8e0;
+  --bg-gradient-to: #e5e1d8;
+  --bg-grid: rgba(110, 124, 140, 0.14);
+
+  --glass-bg: var(--bg-surface);
+  --glass-bg-hover: var(--bg-surface-soft);
+  --glass-border: var(--border-subtle);
+  --glass-shadow: var(--shadow-soft);
+  --glass-blur: blur(0px);
+  --glass-bg-solid: var(--bg-surface);
+
+  --coral: #b7766b;
+  --blue: var(--accent-500);
+  --green: var(--state-success);
+  --yellow: var(--state-warning);
+  --red: var(--state-error);
 
   /* Font */
   --font-sans: "Inter", "Avenir Next", "Segoe UI", sans-serif;

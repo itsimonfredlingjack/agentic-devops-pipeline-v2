@@ -9,12 +9,6 @@
   animation: fade-in 400ms ease both;
 }
 
-@supports not (backdrop-filter: blur(1px)) {
-  .card {
-    background: var(--glass-bg-solid);
-  }
-}
-
 .compact {
   padding: var(--space-sm) var(--space-md);
 }

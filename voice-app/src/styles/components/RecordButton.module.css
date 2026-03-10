@@ -17,7 +17,7 @@
   width: 108px;
   height: 108px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 124, 90, 0.32);
+  border: 1px solid rgba(183, 118, 107, 0.3);
   animation: pulse-ring 2.2s ease-out infinite;
   pointer-events: none;
 }
@@ -31,8 +31,8 @@
   width: 88px;
   height: 88px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-soft);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   color: var(--text-primary);
@@ -45,19 +45,13 @@
     background var(--transition-fast),
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
-}
-
-@supports not (backdrop-filter: blur(1px)) {
-  .button {
-    background: var(--glass-bg-solid);
-  }
+  box-shadow: 0 10px 20px rgba(59, 52, 44, 0.1);
 }
 
 .button:hover:not(:disabled) {
   transform: translateY(-2px) scale(1.01);
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.22);
+  background: var(--bg-surface-strong);
+  border-color: var(--border-strong);
 }
 
 .button:active:not(:disabled) {
@@ -70,13 +64,13 @@
 }
 
 .recording {
-  background: rgba(255, 124, 90, 0.22);
-  border-color: rgba(255, 124, 90, 0.4);
-  box-shadow: 0 18px 40px rgba(255, 124, 90, 0.12);
+  background: rgba(183, 118, 107, 0.22);
+  border-color: rgba(183, 118, 107, 0.4);
+  box-shadow: 0 14px 30px rgba(183, 118, 107, 0.14);
 }
 
 .recording:hover:not(:disabled) {
-  background: rgba(255, 124, 90, 0.28);
+  background: rgba(183, 118, 107, 0.3);
 }
 
 .waveform {
@@ -89,7 +83,7 @@
 .bar {
   width: 4px;
   height: 100%;
-  background: white;
+  background: var(--accent-700);
   border-radius: 999px;
   animation: waveform-bar 0.8s ease-in-out infinite;
 }
@@ -119,7 +113,7 @@
   font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 500;
-  color: rgba(255, 198, 186, 0.96);
+  color: #96655d;
   letter-spacing: 0.08em;
 }
 

@@ -23,7 +23,7 @@
   top: 4px;
   bottom: 4px;
   width: 1px;
-  background: var(--glass-border);
+  background: var(--border-subtle);
 }
 
 .event {
@@ -44,7 +44,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  border: 2px solid var(--bg-gradient-from);
+  border: 2px solid var(--bg-surface);
 }
 
 .dotQueued {

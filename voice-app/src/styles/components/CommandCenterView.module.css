@@ -15,7 +15,7 @@
   inset: -40% -10% auto auto;
   width: 320px;
   height: 180px;
-  background: radial-gradient(circle, rgba(255, 124, 90, 0.14), transparent 75%);
+  background: radial-gradient(circle, rgba(110, 124, 140, 0.14), transparent 75%);
   pointer-events: none;
 }
 
@@ -38,8 +38,8 @@
 .stateBadge {
   padding: 10px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-soft);
   font-family: var(--font-mono);
   font-size: 13px;
   letter-spacing: 0.12em;
@@ -81,8 +81,8 @@
 .railChip {
   border-radius: 999px;
   padding: 7px 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-surface-soft);
+  border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
   font-family: var(--font-mono);
   font-size: 12px;
@@ -140,23 +140,23 @@
 }
 
 .eventInfo {
-  background: var(--blue);
-  box-shadow: 0 0 14px rgba(82, 210, 255, 0.28);
+  background: var(--state-info);
+  box-shadow: none;
 }
 
 .eventSuccess {
-  background: var(--green);
-  box-shadow: 0 0 14px rgba(104, 223, 146, 0.28);
+  background: var(--state-success);
+  box-shadow: none;
 }
 
 .eventWarning {
-  background: var(--yellow);
-  box-shadow: 0 0 14px rgba(255, 209, 102, 0.28);
+  background: var(--state-warning);
+  box-shadow: none;
 }
 
 .eventError {
-  background: var(--red);
-  box-shadow: 0 0 14px rgba(255, 107, 107, 0.28);
+  background: var(--state-error);
+  box-shadow: none;
 }
 
 .eventBody {
@@ -201,8 +201,8 @@
 .sentinelCard {
   padding: 14px 12px;
   border-radius: var(--radius-md);
-  border: 1px dashed rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed var(--border-subtle);
+  background: var(--bg-surface-soft);
 }
 
 .sentinelLabel {
@@ -230,11 +230,12 @@
   gap: var(--space-sm);
   padding: 10px 12px;
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-surface-soft);
 }
 
 .alertCard {
-  border-color: rgba(255, 107, 107, 0.24);
+  border-color: rgba(158, 103, 97, 0.38);
+  background: var(--state-error-soft);
 }
 
 .alertText,
@@ -268,7 +269,7 @@
   justify-content: center;
   padding: 11px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--border-subtle);
   text-decoration: none;
   cursor: pointer;
   transition: transform var(--transition-fast), background var(--transition-fast),
@@ -276,19 +277,21 @@
 }
 
 .primaryAction {
-  background: rgba(82, 210, 255, 0.12);
-  border-color: rgba(82, 210, 255, 0.32);
-  color: #d4f6ff;
+  background: var(--accent-100);
+  border-color: rgba(110, 124, 140, 0.32);
+  color: var(--accent-700);
 }
 
 .secondaryAction {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-surface-soft);
   color: var(--text-primary);
 }
 
 .primaryAction:hover,
 .secondaryAction:hover {
   transform: translateY(-1px);
+  border-color: var(--border-strong);
+  background: var(--bg-surface-strong);
 }
 
 @media (max-width: 1100px) {

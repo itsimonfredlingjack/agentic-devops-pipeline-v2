@@ -57,12 +57,12 @@
   max-height: 240px;
   overflow-y: auto;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-soft);
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.7;
-  color: rgba(217, 238, 255, 0.78);
+  color: var(--text-secondary);
   white-space: pre-wrap;
   word-break: break-word;
 }

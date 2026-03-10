@@ -1,0 +1,131 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(52, 54, 50, 0.25);
+}
+
+.panel {
+  position: relative;
+  margin: 8vh auto 0;
+  width: min(680px, calc(100vw - 28px));
+  max-height: 72vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  box-shadow: 0 22px 46px rgba(59, 52, 44, 0.2);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.title {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.hint {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}
+
+.search {
+  margin: 12px 16px;
+  width: calc(100% - 32px);
+  min-height: 40px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-strong);
+  color: var(--text-primary);
+  padding: 9px 12px;
+  font-size: 14px;
+  outline: none;
+}
+
+.search:focus {
+  border-color: var(--accent-500);
+  box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.list {
+  padding: 0 10px 10px;
+  overflow-y: auto;
+}
+
+.item {
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.item:hover {
+  border-color: var(--border-subtle);
+  background: var(--bg-surface-soft);
+}
+
+.itemActive {
+  border-color: rgba(110, 124, 140, 0.34);
+  background: var(--accent-100);
+}
+
+.item:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.itemLabel {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.itemHint {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.empty {
+  padding: 12px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .panel {
+    margin-top: 4vh;
+    max-height: 84vh;
+  }
+
+  .itemHint {
+    white-space: normal;
+    text-align: right;
+  }
+}

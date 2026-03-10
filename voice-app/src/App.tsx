@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePipelineStore } from "./stores/pipelineStore";
 import { connectWebSocket, disconnectWebSocket } from "./lib/ws";
 import type { LoopEvent, PipelineSnapshot } from "./lib/ws";
@@ -16,6 +16,7 @@ import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useMicLevel } from "./hooks/useMicLevel";
 import { AppShell } from "./components/AppShell";
 import { Header } from "./components/Header";
+import { CommandPalette, type CommandAction } from "./components/CommandPalette";
 import { ClarificationDialog } from "./components/ClarificationDialog";
 import { AudioPreview } from "./components/AudioPreview";
 import { SettingsDrawer } from "./components/SettingsDrawer";
@@ -163,6 +164,7 @@ function App() {
   } = usePipelineStore();
 
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const serverUrlRef = useRef(serverUrl);
   const monitorUrlRef = useRef(monitorUrl);
   const wasBackendReachableRef = useRef<boolean | null>(null);
@@ -752,10 +754,119 @@ function App() {
     ticketResult?.key ?? null,
   );
 
+  const commandActions = useMemo<CommandAction[]>(() => {
+    const canToggleRecord =
+      status === "idle" ||
+      status === "recording" ||
+      status === "done" ||
+      status === "error";
+    const canSubmitCapture = status === "previewing" && Boolean(pendingSamples);
+    const canRetry = status === "error";
+    const canRecordAnother = status === "done" || status === "error";
+    const canSkipClarification = Boolean(clarification);
+
+    return [
+      {
+        id: "toggle-record",
+        label: status === "recording" ? "Stop recording" : "Start recording",
+        hint: "Space",
+        keywords: ["record", "microphone", "voice"],
+        enabled: canToggleRecord,
+      },
+      {
+        id: "submit-capture",
+        label: "Submit capture",
+        hint: "Cmd/Ctrl+Enter",
+        keywords: ["submit", "create", "task", "send"],
+        enabled: canSubmitCapture,
+      },
+      {
+        id: "retry-task",
+        label: "Retry failed task",
+        hint: "Error only",
+        keywords: ["retry", "failed", "error"],
+        enabled: canRetry,
+      },
+      {
+        id: "record-another",
+        label: "Record another request",
+        hint: "Done/Error",
+        keywords: ["reset", "another", "new"],
+        enabled: canRecordAnother,
+      },
+      {
+        id: "open-settings",
+        label: "Open settings",
+        hint: "Backend and monitor URLs",
+        keywords: ["settings", "url", "backend", "monitor"],
+        enabled: true,
+      },
+      {
+        id: "skip-clarification",
+        label: "Skip clarification",
+        hint: "Esc fallback",
+        keywords: ["clarification", "skip"],
+        enabled: canSkipClarification,
+      },
+    ];
+  }, [status, pendingSamples, clarification]);
+
+  const handleRunCommand = useCallback(
+    (actionId: string) => {
+      setCommandPaletteOpen(false);
+
+      if (actionId === "toggle-record") {
+        void handleToggle();
+        return;
+      }
+      if (actionId === "submit-capture") {
+        void handleSendAudio();
+        return;
+      }
+      if (actionId === "retry-task") {
+        handleRetry();
+        return;
+      }
+      if (actionId === "record-another") {
+        handleRecordAnother();
+        return;
+      }
+      if (actionId === "open-settings") {
+        setSettingsOpen(true);
+        return;
+      }
+      if (actionId === "skip-clarification") {
+        handleClarifySkip();
+      }
+    },
+    [
+      handleToggle,
+      handleSendAudio,
+      handleRetry,
+      handleRecordAnother,
+      handleClarifySkip,
+    ],
+  );
+
+  const handlePrimarySubmitShortcut = useCallback(() => {
+    if (status === "previewing" && pendingSamples) {
+      void handleSendAudio();
+      return;
+    }
+
+    if (status === "error") {
+      handleRetry();
+    }
+  }, [status, pendingSamples, handleSendAudio, handleRetry]);
+
   useKeyboardShortcuts({
     onToggleRecord: handleToggle,
+    onToggleCommandPalette: () => setCommandPaletteOpen((prev) => !prev),
+    onSubmitPrimary: handlePrimarySubmitShortcut,
     onEscape: () => {
-      if (settingsOpen) {
+      if (commandPaletteOpen) {
+        setCommandPaletteOpen(false);
+      } else if (settingsOpen) {
         setSettingsOpen(false);
       } else if (clarification) {
         handleClarifySkip();
@@ -812,6 +923,13 @@ function App() {
         onServerUrlChange={setServerUrl}
         onMonitorUrlChange={setMonitorUrl}
         onClose={() => setSettingsOpen(false)}
+      />
+
+      <CommandPalette
+        open={commandPaletteOpen}
+        actions={commandActions}
+        onClose={() => setCommandPaletteOpen(false)}
+        onRunAction={handleRunCommand}
       />
 
       <ToastContainer toasts={toasts} onDismiss={removeToast} />

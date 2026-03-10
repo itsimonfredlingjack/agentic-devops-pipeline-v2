@@ -52,6 +52,8 @@ describe("useKeyboardShortcuts", () => {
   it("should call onToggleRecord on Space keydown", async () => {
     const onToggleRecord = vi.fn();
     const onEscape = vi.fn();
+    const onToggleCommandPalette = vi.fn();
+    const onSubmitPrimary = vi.fn();
 
     // Dynamically import to avoid module caching issues
     const { useKeyboardShortcuts } =
@@ -61,6 +63,8 @@ describe("useKeyboardShortcuts", () => {
       useKeyboardShortcuts({
         onToggleRecord,
         onEscape,
+        onToggleCommandPalette,
+        onSubmitPrimary,
       }),
     );
 
@@ -72,11 +76,15 @@ describe("useKeyboardShortcuts", () => {
 
     expect(onToggleRecord).toHaveBeenCalledOnce();
     expect(onEscape).not.toHaveBeenCalled();
+    expect(onToggleCommandPalette).not.toHaveBeenCalled();
+    expect(onSubmitPrimary).not.toHaveBeenCalled();
   });
 
   it("should call onEscape on Escape keydown", async () => {
     const onToggleRecord = vi.fn();
     const onEscape = vi.fn();
+    const onToggleCommandPalette = vi.fn();
+    const onSubmitPrimary = vi.fn();
 
     const { useKeyboardShortcuts } =
       await import("../hooks/useKeyboardShortcuts");
@@ -85,6 +93,8 @@ describe("useKeyboardShortcuts", () => {
       useKeyboardShortcuts({
         onToggleRecord,
         onEscape,
+        onToggleCommandPalette,
+        onSubmitPrimary,
       }),
     );
 
@@ -96,11 +106,15 @@ describe("useKeyboardShortcuts", () => {
 
     expect(onEscape).toHaveBeenCalledOnce();
     expect(onToggleRecord).not.toHaveBeenCalled();
+    expect(onToggleCommandPalette).not.toHaveBeenCalled();
+    expect(onSubmitPrimary).not.toHaveBeenCalled();
   });
 
   it("should not fire when disabled", async () => {
     const onToggleRecord = vi.fn();
     const onEscape = vi.fn();
+    const onToggleCommandPalette = vi.fn();
+    const onSubmitPrimary = vi.fn();
 
     const { useKeyboardShortcuts } =
       await import("../hooks/useKeyboardShortcuts");
@@ -109,6 +123,8 @@ describe("useKeyboardShortcuts", () => {
       useKeyboardShortcuts({
         onToggleRecord,
         onEscape,
+        onToggleCommandPalette,
+        onSubmitPrimary,
         disabled: true,
       }),
     );
@@ -119,9 +135,107 @@ describe("useKeyboardShortcuts", () => {
     window.dispatchEvent(
       new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
     );
+    window.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true }),
+    );
+    window.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Enter", ctrlKey: true, bubbles: true }),
+    );
 
     expect(onToggleRecord).not.toHaveBeenCalled();
     expect(onEscape).not.toHaveBeenCalled();
+    expect(onToggleCommandPalette).not.toHaveBeenCalled();
+    expect(onSubmitPrimary).not.toHaveBeenCalled();
+  });
+
+  it("should call onToggleCommandPalette on Cmd/Ctrl+K", async () => {
+    const onToggleRecord = vi.fn();
+    const onEscape = vi.fn();
+    const onToggleCommandPalette = vi.fn();
+    const onSubmitPrimary = vi.fn();
+
+    const { useKeyboardShortcuts } =
+      await import("../hooks/useKeyboardShortcuts");
+
+    renderHook(() =>
+      useKeyboardShortcuts({
+        onToggleRecord,
+        onEscape,
+        onToggleCommandPalette,
+        onSubmitPrimary,
+      }),
+    );
+
+    window.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true }),
+    );
+    window.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }),
+    );
+
+    expect(onToggleCommandPalette).toHaveBeenCalledTimes(2);
+    expect(onToggleRecord).not.toHaveBeenCalled();
+    expect(onEscape).not.toHaveBeenCalled();
+    expect(onSubmitPrimary).not.toHaveBeenCalled();
+  });
+
+  it("should call onSubmitPrimary on Cmd/Ctrl+Enter", async () => {
+    const onToggleRecord = vi.fn();
+    const onEscape = vi.fn();
+    const onToggleCommandPalette = vi.fn();
+    const onSubmitPrimary = vi.fn();
+
+    const { useKeyboardShortcuts } =
+      await import("../hooks/useKeyboardShortcuts");
+
+    renderHook(() =>
+      useKeyboardShortcuts({
+        onToggleRecord,
+        onEscape,
+        onToggleCommandPalette,
+        onSubmitPrimary,
+      }),
+    );
+
+    window.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Enter", metaKey: true, bubbles: true }),
+    );
+    window.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Enter", ctrlKey: true, bubbles: true }),
+    );
+
+    expect(onSubmitPrimary).toHaveBeenCalledTimes(2);
+    expect(onToggleRecord).not.toHaveBeenCalled();
+    expect(onEscape).not.toHaveBeenCalled();
+    expect(onToggleCommandPalette).not.toHaveBeenCalled();
+  });
+
+  it("should ignore Space when focused in text inputs", async () => {
+    const onToggleRecord = vi.fn();
+    const onEscape = vi.fn();
+    const onToggleCommandPalette = vi.fn();
+    const onSubmitPrimary = vi.fn();
+
+    const { useKeyboardShortcuts } =
+      await import("../hooks/useKeyboardShortcuts");
+
+    const input = document.createElement("input");
+    document.body.appendChild(input);
+    input.focus();
+
+    renderHook(() =>
+      useKeyboardShortcuts({
+        onToggleRecord,
+        onEscape,
+        onToggleCommandPalette,
+        onSubmitPrimary,
+      }),
+    );
+
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: " ", bubbles: true }));
+
+    expect(onToggleRecord).not.toHaveBeenCalled();
+    document.body.removeChild(input);
   });
 });
 

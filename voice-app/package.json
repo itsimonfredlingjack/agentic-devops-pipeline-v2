@@ -11,6 +11,8 @@
     "electron:smoke": "ELECTRON_SMOKE_TEST=1 electron .",
     "package": "npm run build && electron-builder --mac",
     "test": "vitest run",
+    "test:visual": "playwright test",
+    "test:visual:update": "playwright test --update-snapshots",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src electron vite.config.ts"
@@ -36,6 +38,7 @@
     "eslint": "^9.39.3",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.0",
+    "@playwright/test": "^1.55.0",
     "jsdom": "^28.1.0",
     "typescript": "^5.6.0",
     "typescript-eslint": "^8.56.0",

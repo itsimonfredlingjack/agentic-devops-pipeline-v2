@@ -1,1 +1,0 @@
-# Voice Pipeline test suite

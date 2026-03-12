@@ -98,6 +98,11 @@ export interface StuckAlertEntry {
   since: string;
 }
 
+export interface QueueItem {
+  key: string;
+  summary: string;
+}
+
 interface PipelineState {
   appMode: AppMode;
   previousAppMode: Exclude<AppMode, "clarification_overlay">;

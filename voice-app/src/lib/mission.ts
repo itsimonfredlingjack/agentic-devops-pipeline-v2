@@ -31,6 +31,12 @@ export interface MissionState {
   detail: string;
 }
 
+export interface SurfaceStatus {
+  label: string;
+  phase: MissionPhase;
+  detail: string;
+}
+
 const VERIFY_STAGES = new Set(["verify", "tests", "ci", "pr"]);
 const ACTIVE_STAGES = new Set(["jira", "agent", "actions", "deploy"]);
 

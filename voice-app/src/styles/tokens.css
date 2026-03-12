@@ -27,7 +27,9 @@
   --state-warning-soft: rgba(155, 132, 87, 0.18);
   --state-error-soft: rgba(158, 103, 97, 0.18);
 
-  --shadow-soft: 0 10px 28px rgba(59, 52, 44, 0.1);
+  --shadow-sm: 0 1px 3px rgba(59, 52, 44, 0.06), 0 1px 2px rgba(59, 52, 44, 0.04);
+  --shadow-soft: 0 4px 14px rgba(59, 52, 44, 0.08);
+  --shadow-elevated: 0 10px 28px rgba(59, 52, 44, 0.12), 0 4px 10px rgba(59, 52, 44, 0.06);
   --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 
   /* Legacy aliases used by existing CSS modules */
@@ -36,11 +38,11 @@
   --bg-gradient-to: #e5e1d8;
   --bg-grid: rgba(110, 124, 140, 0.14);
 
-  --glass-bg: var(--bg-surface);
-  --glass-bg-hover: var(--bg-surface-soft);
-  --glass-border: var(--border-subtle);
+  --glass-bg: rgba(239, 236, 229, 0.72);
+  --glass-bg-hover: rgba(244, 241, 235, 0.80);
+  --glass-border: rgba(203, 196, 184, 0.55);
   --glass-shadow: var(--shadow-soft);
-  --glass-blur: blur(0px);
+  --glass-blur: blur(12px);
   --glass-bg-solid: var(--bg-surface);
 
   --coral: #b7766b;
@@ -48,6 +50,10 @@
   --green: var(--state-success);
   --yellow: var(--state-warning);
   --red: var(--state-error);
+
+  /* Semantic text aliases for DesktopSurfaceView */
+  --text-warm: #9e8b7e;
+  --text-accent: var(--accent-700);
 
   /* Font */
   --font-sans: "Inter", "Avenir Next", "Segoe UI", sans-serif;

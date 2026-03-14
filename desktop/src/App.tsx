@@ -1,10 +1,14 @@
 import { useEffect } from "react";
 import { VoiceRail } from "./components/VoiceRail";
+import { LoopCanvas } from "./components/LoopCanvas";
+import { EventStream } from "./components/EventStream";
 import { useConnections } from "./hooks/useConnections";
+import { useElapsedTimer } from "./hooks/useElapsedTimer";
 import { useMicrophone } from "./hooks/useMicrophone";
 
 export default function App() {
   useConnections();
+  useElapsedTimer();
   const { recording, toggleRecording } = useMicrophone();
 
   useEffect(() => {
@@ -36,16 +40,12 @@ export default function App() {
       </aside>
 
       <div style={{ display: "grid", gridTemplateRows: "1fr auto", gap: 12, paddingTop: 36 }}>
-        <main className="glass-panel" style={{ padding: 24, display: "grid", placeContent: "center", textAlign: "center" }}>
-          <div style={{ color: "var(--text-muted)", fontSize: 14 }}>
-            Idle — speak the next objective
-          </div>
+        <main className="glass-panel">
+          <LoopCanvas />
         </main>
 
-        <section className="glass-panel" style={{ padding: 18, minHeight: 160 }}>
-          <div style={{ color: "var(--text-muted)", fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase" }}>
-            Event Stream
-          </div>
+        <section className="glass-panel">
+          <EventStream />
         </section>
       </div>
     </div>

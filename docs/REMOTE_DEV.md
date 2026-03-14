@@ -6,7 +6,7 @@ This document describes the current remote-development story for SEJFA.
 
 The current canonical topology is:
 
-- the **Mac** runs the SEJFA backend, voice client, and Ralph Loop
+- the **Mac** runs the SEJFA backend, monitor API, and Ralph Loop
 - **ai-server2** provides remote inference for Whisper and Ollama
 - remote development scripts exist to help you reach `ai-server2`, but they do not redefine `ai-server2` as the home of the whole system
 
@@ -15,7 +15,7 @@ The current canonical topology is:
 ### 1. Run the SEJFA backend on the Mac
 
 ```bash
-uvicorn src.voice_pipeline.main:app --host 0.0.0.0 --port 8000 --reload
+PYTHONPATH=services/voice-pipeline/src uvicorn voice_pipeline.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### 2. Point inference to ai-server2
@@ -30,14 +30,9 @@ OLLAMA_URL=http://<ai-server2>:11434
 
 This keeps the loop and orchestration local while offloading heavy inference work.
 
-### 3. Use the voice app locally
+### 3. Exercise the backend locally
 
-```bash
-cd voice-app
-npm run tauri dev
-```
-
-The voice client defaults to talking to `http://localhost:8000`.
+Use API calls or the ChatGPT companion when you want to inspect or drive the local system surface. There is no canonical desktop app checked into this repo right now.
 
 ## What ai-server2 Is For
 
@@ -91,4 +86,3 @@ That older topology is now archive context only:
 
 - [`/Users/coffeedev/Projects/03_AGENTIC-DEVOPS/agentic-devops-pipeline-v2/README.md`](../README.md)
 - [`/Users/coffeedev/Projects/03_AGENTIC-DEVOPS/agentic-devops-pipeline-v2/docs/ARCHITECTURE.md`](ARCHITECTURE.md)
-- [`/Users/coffeedev/Projects/03_AGENTIC-DEVOPS/agentic-devops-pipeline-v2/voice-app/ARCHITECTURE.md`](../voice-app/ARCHITECTURE.md)

@@ -208,7 +208,7 @@ def fetch_workspace_file(
     title="Get project context",
     description=(
         "Use this when you want canonical SEJFA project context such as overview, "
-        "architecture, workflow, voice subsystem, or mission-control source context."
+        "architecture, workflow, voice pipeline context, or monitor API context."
     ),
     annotations=_readonly_annotations(),
 )

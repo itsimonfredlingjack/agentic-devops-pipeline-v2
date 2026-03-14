@@ -1,0 +1,13 @@
+{
+  "name": "@sejfa/ui-system",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.tsx"
+  },
+  "dependencies": {
+    "@sejfa/shared-types": "file:../shared-types",
+    "react": "^18.3.1"
+  }
+}

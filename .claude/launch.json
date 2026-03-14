@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "voice-pipeline-backend",
+      "runtimeExecutable": "uvicorn",
+      "runtimeArgs": ["src.voice_pipeline.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"],
+      "port": 8000
+    },
+    {
+      "name": "monitor-api",
+      "runtimeExecutable": "uvicorn",
+      "runtimeArgs": ["src.monitor.api:app", "--host", "0.0.0.0", "--port", "8100"],
+      "port": 8100
+    },
+    {
+      "name": "vite-frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "voice-app"],
+      "port": 5173
+    }
+  ]
+}

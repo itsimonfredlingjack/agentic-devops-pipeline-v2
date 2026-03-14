@@ -11,7 +11,7 @@ Environment=LOOP_RUNNER_BACKEND_URL=http://localhost:8000
 Environment=LOOP_RUNNER_REPO_DIR=/home/ai-server2/04-voice-mode-4-loop/agentic-devops-loop
 Environment=LOOP_RUNNER_POLL_INTERVAL=10
 Environment=PATH=/home/ai-server2/.local/bin:/usr/local/bin:/usr/bin:/bin
-ExecStart=/bin/bash /home/ai-server2/04-voice-mode-4-loop/agentic-devops-loop/scripts/loop-runner.sh
+ExecStart=/bin/bash /home/ai-server2/04-voice-mode-4-loop/agentic-devops-loop/services/loop-engine/scripts/loop-runner.sh
 Restart=on-failure
 RestartSec=10
 StandardOutput=journal

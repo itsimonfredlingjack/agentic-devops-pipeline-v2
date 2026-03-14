@@ -26,9 +26,10 @@ SEJFA is the loop-first system built around these ideas:
 
 The repository currently contains:
 
-- the loop-facing backend in `src/`
-- a voice start layer in `voice-app/`
-- a monitor API in `src/monitor/`
+- the loop-facing backend split across `services/` and `src/`
+- a voice pipeline backend in `services/voice-pipeline/src/voice_pipeline/`
+- a monitor API in `services/monitor-api/src/monitor/`
+- shared frontend packages in `packages/`
 - helper scripts for Jira, Jules, queueing, and loop operations in `scripts/`
 
 The repository does not currently contain root GitHub Actions workflows. Old documents that describe those workflows as already present are kept as archive material only.
@@ -49,8 +50,7 @@ The voice layer is a subsystem that helps start or feed the loop.
 
 In the current repo it includes:
 
-- a Tauri desktop app in `voice-app/`
-- a FastAPI backend in `src/voice_pipeline/`
+- a FastAPI backend in `services/voice-pipeline/src/voice_pipeline/`
 - Whisper transcription and Ollama intent extraction
 - Jira ticket creation and loop queueing
 
@@ -62,7 +62,7 @@ Monitoring is a companion observability and control surface around the loop.
 
 In the current repo it includes:
 
-- the monitor API in `src/monitor/`
+- the monitor API in `services/monitor-api/src/monitor/`
 - Claude hook event forwarding in `.claude/hooks/`
 
 `ELECTRON-sejfa/` is a separate companion app with its own nested `.git` repository. It is not the root identity of this repo.
@@ -101,9 +101,11 @@ Hetzner is a demo/deployment host, not the loop core.
 - [docs/GUIDELINES.md](docs/GUIDELINES.md)
 - [docs/REMOTE_DEV.md](docs/REMOTE_DEV.md)
 
-### Subsystem docs
+### Service surfaces
 
-- [voice-app/ARCHITECTURE.md](voice-app/ARCHITECTURE.md)
+- `services/voice-pipeline/` is the voice start backend
+- `services/monitor-api/` is the observability and session API
+- `services/loop-engine/` is the execution-layer boundary, not a UI
 
 ### Archive / speculative / companion references
 
@@ -118,12 +120,14 @@ Hetzner is a demo/deployment host, not the loop core.
 .
 ├── .claude/hooks/          # Hook-to-monitor bridge in the root repo
 ├── docs/                   # Canonical docs plus archive references
+├── packages/               # Shared UI, contracts, and frontend data clients
+├── services/
+│   ├── loop-engine/        # Execution-layer boundary and loop runner home
+│   ├── monitor-api/        # Monitor API source
+│   └── voice-pipeline/     # Voice pipeline source
 ├── scripts/                # Queue, Jira, Jules, systemd, loop helpers
-├── src/monitor/            # Monitor API and analysis helpers
 ├── src/sejfa/              # Shared utilities
-├── src/voice_pipeline/     # Voice start layer backend
 ├── tests/                  # Python test suites
-├── voice-app/              # Tauri voice start layer
 └── ELECTRON-sejfa/         # Separate nested companion repo
 ```
 
@@ -133,21 +137,13 @@ Hetzner is a demo/deployment host, not the loop core.
 
 ```bash
 pip install -r requirements.txt
-uvicorn src.voice_pipeline.main:app --host 0.0.0.0 --port 8000 --reload
+PYTHONPATH=services/voice-pipeline/src uvicorn voice_pipeline.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### Monitor API
 
 ```bash
-uvicorn src.monitor.api:app --host 0.0.0.0 --port 8100
-```
-
-### Voice app
-
-```bash
-cd voice-app
-npm install
-npm run tauri dev
+PYTHONPATH=services/monitor-api/src uvicorn monitor.api:app --host 0.0.0.0 --port 8100
 ```
 
 ### Tests

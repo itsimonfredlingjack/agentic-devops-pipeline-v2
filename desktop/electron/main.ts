@@ -1,5 +1,9 @@
 import { app, BrowserWindow, globalShortcut } from "electron";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -16,7 +20,7 @@ function createWindow() {
     vibrancy: "under-window",
     visualEffectState: "active",
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, "../electron/preload.cjs"),
       contextIsolation: true,
       nodeIntegration: false,
     },

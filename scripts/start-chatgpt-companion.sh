@@ -4,6 +4,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 STATE_DIR="${TMPDIR:-/tmp}/sejfa-chatgpt-companion"
+COMPANION_PORT="${SEJFA_CHATGPT_COMPANION_PORT:-8787}"
+PORT_FILE="${STATE_DIR}/port"
 UVICORN_PID_FILE="${STATE_DIR}/uvicorn.pid"
 CLOUDFLARED_PID_FILE="${STATE_DIR}/cloudflared.pid"
 UVICORN_LOG_FILE="${STATE_DIR}/uvicorn.log"
@@ -13,6 +15,61 @@ mkdir -p "${STATE_DIR}"
 
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
+}
+
+wait_for_exit() {
+  local pid="$1"
+  local attempts="${2:-50}"
+
+  while (( attempts > 0 )); do
+    if ! kill -0 "${pid}" 2>/dev/null; then
+      return 0
+    fi
+    sleep 0.1
+    attempts=$((attempts - 1))
+  done
+
+  return 1
+}
+
+ingress_port() {
+  local config_file="${HOME}/.cloudflared/config.yml"
+
+  [[ -f "${config_file}" ]] || return 1
+
+  awk '
+    $1 == "-" && $2 == "hostname:" && $3 == "sejfa-chat.fredlingautomation.dev" {
+      found = 1
+      next
+    }
+    found && $1 == "service:" {
+      port = $2
+      sub(/^http:\/\/localhost:/, "", port)
+      print port
+      exit
+    }
+  ' "${config_file}"
+}
+
+current_port() {
+  if [[ -n "${SEJFA_CHATGPT_COMPANION_PORT:-}" ]]; then
+    printf '%s\n' "${SEJFA_CHATGPT_COMPANION_PORT}"
+    return
+  fi
+
+  if [[ -f "${PORT_FILE}" ]]; then
+    cat "${PORT_FILE}"
+    return
+  fi
+
+  local port_from_ingress
+  port_from_ingress="$(ingress_port || true)"
+  if [[ -n "${port_from_ingress}" ]]; then
+    printf '%s\n' "${port_from_ingress}"
+    return
+  fi
+
+  printf '%s\n' "${COMPANION_PORT}"
 }
 
 find_existing_pid() {
@@ -42,7 +99,7 @@ is_running() {
 
 start_uvicorn() {
   local existing_pid
-  existing_pid="$(find_existing_pid 'uvicorn src.chatgpt_companion.mcp_server:app --host 0.0.0.0 --port 8787')"
+  existing_pid="$(find_existing_pid "uvicorn src.chatgpt_companion.mcp_server:app --host 0.0.0.0 --port ${COMPANION_PORT}")"
   if [[ -n "${existing_pid}" ]]; then
     echo "${existing_pid}" > "${UVICORN_PID_FILE}"
     log "Companion server already running (pid ${existing_pid})"
@@ -56,9 +113,10 @@ start_uvicorn() {
 
   (
     cd "${REPO_ROOT}"
-    exec uvicorn src.chatgpt_companion.mcp_server:app --host 0.0.0.0 --port 8787
+    exec uvicorn src.chatgpt_companion.mcp_server:app --host 0.0.0.0 --port "${COMPANION_PORT}"
   ) >"${UVICORN_LOG_FILE}" 2>&1 &
   echo "$!" > "${UVICORN_PID_FILE}"
+  echo "${COMPANION_PORT}" > "${PORT_FILE}"
   log "Started companion server (pid $(cat "${UVICORN_PID_FILE}"))"
 }
 
@@ -94,11 +152,18 @@ stop_process() {
   local pid
   pid="$(cat "${pid_file}")"
   kill "${pid}" 2>/dev/null || true
+  wait_for_exit "${pid}" || true
   rm -f "${pid_file}"
+  if [[ "${name}" == "companion server" ]]; then
+    rm -f "${PORT_FILE}"
+  fi
   log "Stopped ${name}"
 }
 
 show_status() {
+  local port
+  port="$(current_port)"
+
   if is_running "${UVICORN_PID_FILE}"; then
     log "Companion server running (pid $(cat "${UVICORN_PID_FILE}"))"
   else
@@ -111,7 +176,7 @@ show_status() {
     log "Cloudflare tunnel stopped"
   fi
 
-  log "Local health:  http://127.0.0.1:8787/health"
+  log "Local health:  http://127.0.0.1:${port}/health"
   log "Public health: https://sejfa-chat.fredlingautomation.dev/health"
   log "MCP URL:       https://sejfa-chat.fredlingautomation.dev/mcp"
 }
@@ -119,6 +184,13 @@ show_status() {
 show_logs() {
   log "Uvicorn log:     ${UVICORN_LOG_FILE}"
   log "Cloudflared log: ${CLOUDFLARED_LOG_FILE}"
+}
+
+warn_if_tunnel_port_mismatch() {
+  if [[ "$(ingress_port || true)" != "${COMPANION_PORT}" ]]; then
+    log "Custom companion port ${COMPANION_PORT} selected"
+    log "Update ~/.cloudflared/config.yml ingress for sejfa-chat.fredlingautomation.dev if you need the public URL to work"
+  fi
 }
 
 start_all() {
@@ -134,6 +206,7 @@ start_all() {
   start_uvicorn
   start_tunnel
   sleep 1
+  warn_if_tunnel_port_mismatch
   show_status
   show_logs
 }

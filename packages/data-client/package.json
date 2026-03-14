@@ -1,0 +1,13 @@
+{
+  "name": "@sejfa/data-client",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@sejfa/shared-types": "file:../shared-types",
+    "socket.io-client": "^4.8.3"
+  }
+}

@@ -4,7 +4,7 @@
 
 This repository follows a modular structure separating the voice pipeline application from shared utilities and agent infrastructure.
 
-### `src/voice_pipeline/`
+### `services/voice-pipeline/src/voice_pipeline/`
 The FastAPI voice-to-Jira pipeline application.
 - `main.py` - FastAPI app entry point
 - `config.py` - Pipeline configuration (Whisper, Ollama, Jira settings)
@@ -28,7 +28,7 @@ Monitor service for real-time loop observation.
 ## Testing
 
 Mirror the source structure in `tests/`.
-- `tests/voice_pipeline/` - Tests for `src/voice_pipeline/` (64 tests)
+- `tests/voice_pipeline/` - Tests for `services/voice-pipeline/src/voice_pipeline/` (64 tests)
 - `tests/integrations/` - Tests for `src/sejfa/integrations/`
 - `tests/utils/` - Tests for `src/sejfa/utils/`
 - `tests/agent/` - Tests for agent scripts and hooks.

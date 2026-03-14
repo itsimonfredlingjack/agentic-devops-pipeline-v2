@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { VoiceRail } from "./components/VoiceRail";
 import { LoopCanvas } from "./components/LoopCanvas";
 import { EventStream } from "./components/EventStream";
+import { ClarificationDialog } from "./components/ClarificationDialog";
 import { useConnections } from "./hooks/useConnections";
 import { useElapsedTimer } from "./hooks/useElapsedTimer";
 import { useMicrophone } from "./hooks/useMicrophone";
@@ -48,6 +49,8 @@ export default function App() {
           <EventStream />
         </section>
       </div>
+
+      <ClarificationDialog />
     </div>
   );
 }

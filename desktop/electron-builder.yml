@@ -1,0 +1,14 @@
+appId: dev.sejfa.desktop
+productName: SEJFA
+directories:
+  output: release
+  buildResources: build
+files:
+  - dist/**/*
+  - dist-electron/**/*
+mac:
+  category: public.app-category.developer-tools
+  target:
+    - target: dmg
+      arch:
+        - arm64

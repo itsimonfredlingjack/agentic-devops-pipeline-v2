@@ -52,8 +52,7 @@ The voice start layer is a subsystem that helps start or feed the loop.
 
 In this repo it consists of:
 
-- `voice-app/` for desktop audio capture and user interaction
-- `src/voice_pipeline/` for transcription, intent extraction, Jira issue creation, and queueing
+- `services/voice-pipeline/src/voice_pipeline/` for transcription, intent extraction, Jira issue creation, and queueing
 
 This layer is important, but it does not redefine SEJFA as "the voice app."
 
@@ -65,7 +64,7 @@ In this repo it consists of:
 
 - `.claude/hooks/monitor_hook.py`
 - `.claude/hooks/monitor_client.py`
-- `src/monitor/`
+- `services/monitor-api/src/monitor/`
 
 `ELECTRON-sejfa/` is a separate companion project embedded as a nested git repository. It is not the root identity of this repo.
 
@@ -75,15 +74,15 @@ In this repo it consists of:
 
 | Path | Role |
 |------|------|
-| `src/voice_pipeline/` | Voice start layer backend |
-| `src/monitor/` | Monitor API companion |
+| `services/voice-pipeline/src/voice_pipeline/` | Voice start layer backend |
+| `services/monitor-api/src/monitor/` | Monitor API companion |
 | `src/sejfa/` | Shared utilities |
 
-### Apps
+### Companion surfaces
 
 | Path | Role |
 |------|------|
-| `voice-app/` | Tauri voice start client |
+| `chatgpt-companion/` | Private ChatGPT Apps SDK companion assets |
 | `ELECTRON-sejfa/` | Separate companion command center with its own `.git` |
 
 ### Root Hooks
@@ -115,7 +114,6 @@ Primary SEJFA runtime and orchestration environment.
 - runs the voice backend on `:8000`
 - runs Claude Code and the Ralph Loop
 - can run the monitor API on `:8100`
-- hosts the Tauri client in local development
 
 ### ai-server2
 
@@ -145,7 +143,7 @@ incoming work
 ### Current voice-path flow
 
 ```text
-voice-app on Mac
+voice input or task text on Mac
   -> FastAPI backend on Mac
   -> remote Whisper / Ollama on ai-server2 when configured
   -> Jira issue creation
@@ -180,10 +178,6 @@ These facts are important when reading older documents:
 - `docs/ARCHITECTURE.md`
 - `docs/GUIDELINES.md`
 - `docs/REMOTE_DEV.md`
-
-### Subsystem
-
-- `voice-app/ARCHITECTURE.md`
 
 ### Archive / speculative / companion
 

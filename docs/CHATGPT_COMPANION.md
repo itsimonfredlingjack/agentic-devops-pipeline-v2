@@ -28,6 +28,17 @@ cd /Users/coffeedev/Projects/03_AGENTIC-DEVOPS/agentic-devops-pipeline-v2
 ./scripts/start-chatgpt-companion.sh start
 ```
 
+If `8787` is already in use, set a different local port before starting:
+
+```bash
+cd /Users/coffeedev/Projects/03_AGENTIC-DEVOPS/agentic-devops-pipeline-v2
+SEJFA_CHATGPT_COMPANION_PORT=8788 ./scripts/start-chatgpt-companion.sh start
+```
+
+If you use a custom port and still want the public hostname to work, update
+`~/.cloudflared/config.yml` so the `sejfa-chat.fredlingautomation.dev` ingress
+points to the same local port.
+
 Useful companion commands:
 
 ```bash
@@ -40,7 +51,7 @@ Useful companion commands:
 3. Validate with MCP Inspector:
 
 ```bash
-npx @modelcontextprotocol/inspector@latest --server-url http://localhost:8787/mcp --transport http
+npx @modelcontextprotocol/inspector@latest --server-url http://localhost:${SEJFA_CHATGPT_COMPANION_PORT:-8787}/mcp --transport http
 ```
 
 ## Current tool surface

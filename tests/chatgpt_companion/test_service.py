@@ -89,8 +89,10 @@ def test_workspace_search_and_context(tmp_path: Path) -> None:
     write_text(repo_root / "README.md", "# SEJFA\nVoice mission")
     write_text(repo_root / "docs" / "ARCHITECTURE.md", "Agentic loop architecture")
     write_text(repo_root / "CLAUDE.md", "workflow guidance")
-    write_text(repo_root / "voice-app" / "ARCHITECTURE.md", "voice subsystem")
-    write_text(repo_root / "voice-app" / "src" / "App.tsx", "const mission = deriveMissionState();")
+    write_text(
+        repo_root / "services" / "monitor-api" / "src" / "monitor" / "api.py",
+        "def mission_overview():\n    return {'status': 'ok'}\n",
+    )
 
     workspace = WorkspaceService(repo_root)
     result = workspace.search("mission", source="all")
@@ -98,9 +100,9 @@ def test_workspace_search_and_context(tmp_path: Path) -> None:
     assert result["hits"]
     assert any(hit["path"] == "README.md" for hit in result["hits"])
 
-    context = workspace.project_context("mission_control")
-    assert context["path"] == "voice-app/src/App.tsx"
-    assert context["topic"] == "mission_control"
+    context = workspace.project_context("monitor")
+    assert context["path"] == "services/monitor-api/src/monitor/api.py"
+    assert context["topic"] == "monitor"
 
 
 def test_workspace_search_blocks_parent_escape(tmp_path: Path) -> None:
@@ -137,8 +139,14 @@ def test_mission_service_derives_queued_phase(tmp_path: Path, monkeypatch: pytes
     write_text(repo_root / "README.md", "# SEJFA")
     write_text(repo_root / "docs" / "ARCHITECTURE.md", "Agentic loop")
     write_text(repo_root / "CLAUDE.md", "workflow")
-    write_text(repo_root / "voice-app" / "ARCHITECTURE.md", "voice")
-    write_text(repo_root / "voice-app" / "src" / "App.tsx", "mission control")
+    write_text(
+        repo_root / "services" / "voice-pipeline" / "src" / "voice_pipeline" / "main.py",
+        "def health():\n    return {'status': 'ok'}\n",
+    )
+    write_text(
+        repo_root / "services" / "monitor-api" / "src" / "monitor" / "api.py",
+        "def mission_overview():\n    return {'status': 'ok'}\n",
+    )
     monitor_db = repo_root / "data" / "monitor.db"
     queue_db = repo_root / "loop_queue.db"
     create_monitor_db(monitor_db)
@@ -183,8 +191,14 @@ def test_mission_service_derives_agent_phase_from_active_session(
     write_text(repo_root / "README.md", "# SEJFA")
     write_text(repo_root / "docs" / "ARCHITECTURE.md", "Agentic loop")
     write_text(repo_root / "CLAUDE.md", "workflow")
-    write_text(repo_root / "voice-app" / "ARCHITECTURE.md", "voice")
-    write_text(repo_root / "voice-app" / "src" / "App.tsx", "mission control")
+    write_text(
+        repo_root / "services" / "voice-pipeline" / "src" / "voice_pipeline" / "main.py",
+        "def health():\n    return {'status': 'ok'}\n",
+    )
+    write_text(
+        repo_root / "services" / "monitor-api" / "src" / "monitor" / "api.py",
+        "def mission_overview():\n    return {'status': 'ok'}\n",
+    )
     monitor_db = repo_root / "data" / "monitor.db"
     queue_db = repo_root / "loop_queue.db"
     create_monitor_db(monitor_db)

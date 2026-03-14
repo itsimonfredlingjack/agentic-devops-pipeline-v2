@@ -1,0 +1,120 @@
+.canvas {
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  min-height: 300px;
+}
+
+.canvas::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(var(--active-phase-rgb, 142, 142, 147), 0.08) 0%,
+    transparent 70%
+  );
+  transition: background 600ms ease;
+  pointer-events: none;
+  animation: breathe 4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.phaseLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  transition: color 400ms ease;
+}
+
+.caption {
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1.3;
+  max-width: 400px;
+  margin-bottom: 16px;
+  transition: color 400ms ease;
+}
+
+.ticket {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  padding: 4px 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.metrics {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+}
+
+.metric {
+  text-align: center;
+}
+
+.metricValue {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: block;
+  color: rgb(var(--active-phase-rgb, 255, 255, 255));
+  transition: color 400ms ease;
+}
+
+.metricLabel {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-top: 4px;
+}
+
+.step {
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.accent {
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--active-phase-rgb, 142, 142, 147), 0.5),
+    transparent
+  );
+  transition: background 600ms ease;
+}
+
+.stuck {
+  margin-top: 16px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: rgba(255, 55, 95, 0.1);
+  border: 1px solid rgba(255, 55, 95, 0.2);
+  font-size: 13px;
+  color: var(--phase-error);
+  max-width: 400px;
+}
+
+.stuckPattern {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}

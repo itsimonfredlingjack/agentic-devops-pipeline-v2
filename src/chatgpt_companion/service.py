@@ -28,7 +28,7 @@ ContextTopic = Literal[
     "architecture",
     "workflow",
     "voice",
-    "mission_control",
+    "monitor",
 ]
 
 WorkspaceSource = Literal["all", "code", "docs", "config"]
@@ -74,9 +74,6 @@ class WorkspaceService:
     BLOCKED_PREFIXES = {
         "ELECTRON-sejfa/",
         "data/",
-        "voice-app/dist/",
-        "voice-app/node_modules/",
-        "voice-app/src-tauri/target/",
     }
     BLOCKED_SUFFIXES = {
         ".db",
@@ -258,8 +255,16 @@ class WorkspaceService:
             "overview": (self.repo_root / "README.md", 1, 180),
             "architecture": (self.repo_root / "docs" / "ARCHITECTURE.md", 1, 220),
             "workflow": (self.repo_root / "CLAUDE.md", 1, 220),
-            "voice": (self.repo_root / "voice-app" / "ARCHITECTURE.md", 1, 220),
-            "mission_control": (self.repo_root / "voice-app" / "src" / "App.tsx", 1, 220),
+            "voice": (
+                self.repo_root / "services" / "voice-pipeline" / "src" / "voice_pipeline" / "main.py",
+                1,
+                220,
+            ),
+            "monitor": (
+                self.repo_root / "services" / "monitor-api" / "src" / "monitor" / "api.py",
+                1,
+                220,
+            ),
         }
         path, start, end = topic_map[topic]
         relative = path.relative_to(self.repo_root).as_posix()
@@ -456,7 +461,8 @@ class MissionService:
         mission["project_context"] = {
             "overview_path": "README.md",
             "architecture_path": "docs/ARCHITECTURE.md",
-            "voice_path": "voice-app/ARCHITECTURE.md",
+            "voice_path": "services/voice-pipeline/src/voice_pipeline/main.py",
+            "monitor_path": "services/monitor-api/src/monitor/api.py",
         }
         return mission
 
@@ -663,12 +669,14 @@ class MissionService:
         return source  # type: ignore[return-value]
 
     def _validate_topic(self, topic: str) -> ContextTopic:
+        if topic == "mission_control":
+            topic = "monitor"
         allowed: set[ContextTopic] = {
             "overview",
             "architecture",
             "workflow",
             "voice",
-            "mission_control",
+            "monitor",
         }
         if topic not in allowed:
             raise ValueError(f"Unsupported project context topic: {topic}")

@@ -1,12 +1,10 @@
 # CLAUDE.md
 
-This file gives working guidance for agents operating in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Identity
 
-SEJFA is an agentic software-delivery loop.
-
-Treat this as the canonical model:
+SEJFA is an agentic software-delivery loop. The loop is the product — voice and monitoring are layers around it.
 
 ```text
 voice start or Jira context
@@ -17,243 +15,270 @@ voice start or Jira context
   -> deploy / close the loop
 ```
 
-Important boundaries:
+Key terms:
 
-- **SEJFA** = the loop-first system
-- **Ralph Loop** = the autonomous execution cycle inside SEJFA
-- **Voice start layer** = the audio and intent subsystem that starts or feeds the loop
-- **ai-server2** = the remote inference machine
-- **Monitor / command center** = companion observability and control tooling
+| Term | Meaning |
+|------|---------|
+| **SEJFA** | The loop-first system |
+| **Ralph Loop** | The autonomous execution cycle inside SEJFA |
+| **Voice start layer** | Audio/transcription/intent subsystem that feeds the loop |
+| **Monitor companion** | Observability and control tooling around the loop |
 
-Do not redefine the repo as primarily a voice app or primarily a monitor product.
+Do not redefine the repo as primarily a voice app or a monitor product.
 
-## Repo Truth
+## Repo Layout
 
-Current repo contents that matter:
+```text
+services/
+  voice-pipeline/src/voice_pipeline/   # FastAPI voice-to-Jira backend (:8000)
+  monitor-api/src/monitor/             # Monitor API companion (:8100)
+  loop-engine/                         # Execution-layer boundary, loop runner home
+src/
+  sejfa/                               # Shared Python utilities (integrations, monitor, utils)
+  chatgpt_companion/                   # ChatGPT Developer Mode MCP companion
+chatgpt-companion/web/                 # React widget UI for the ChatGPT companion
+packages/
+  data-client/                         # TS API client for voice backend
+  shared-types/                        # Shared TS interfaces
+  ui-system/                           # Shared UI component library
+scripts/                               # Loop, Jira, Jules, systemd, deployment helpers
+tests/                                 # pytest suites mirroring source structure
+.claude/hooks/                         # Monitor hook bridge (fire-and-forget)
+docs/                                  # Canonical + archive documentation
+```
 
-- `src/voice_pipeline/` implements the voice start layer backend
-- `src/monitor/` implements the monitor API companion
-- `src/sejfa/` contains shared utilities
-- `voice-app/` contains the Tauri voice client
-- `ELECTRON-sejfa/` is a separate nested git repo for a companion command center
-- `.claude/hooks/` in the root repo contains the monitor hook bridge
-- `scripts/` contains loop, Jira, Jules, and deployment helper scripts
+What does NOT exist in this repo:
 
-Current repo limitations:
+- No `.github/workflows/` directory
+- No `.claude/skills/` or `.claude/commands/`
+- No `voice-app/` (deleted Tauri desktop app)
+- No `ELECTRON-sejfa/` in the working tree
 
-- there is no root `.github/workflows/` directory in this repo
-- there is no root `.claude/skills/` or `.claude/commands/`
-- archive docs may describe planned or historical workflows that are not present here
+Archive docs may describe planned or historical workflows not present here.
 
-Use the canonical docs first:
+## Machine Topology
 
-- `README.md`
-- `docs/README.md`
-- `docs/ARCHITECTURE.md`
-- `docs/GUIDELINES.md`
-- `docs/REMOTE_DEV.md`
-
-## Machine Roles
-
-### Mac
-
-The Mac is the primary SEJFA machine.
+### Mac (primary)
 
 - FastAPI voice backend on `:8000`
-- Tauri voice client in `voice-app/`
 - Claude Code / Ralph Loop execution
-- optional monitor API on `:8100`
+- Optional monitor API on `:8100`
+- ChatGPT companion on `:8787`
 
-### ai-server2
+### ai-server2 (inference node)
 
-`ai-server2` is the remote inference node.
+- Remote Whisper transcription (`WHISPER_BACKEND=remote`)
+- Remote Ollama intent extraction
+- Accessed over Tailscale
+- RTX 2060 with 6GB VRAM — Whisper small and Ollama 7B cannot coexist in VRAM simultaneously
 
-- remote Whisper execution
-- remote Ollama execution
-- accessed over Tailscale
-
-Do not treat `ai-server2` as the place where the whole SEJFA system lives unless a task explicitly says the topology changed.
+Do not treat ai-server2 as the home of the whole system.
 
 ### Hetzner
 
-Hetzner is deployment or demo infrastructure, not the loop core.
+Demo/deployment infrastructure, not the loop core.
 
-## Build And Run
+## Build and Run
 
 ### Python environment
 
 ```bash
 pip install -r requirements.txt
+# or with dev deps:
+pip install -e ".[dev]"
 ```
 
 ### Voice start layer backend
 
 ```bash
-uvicorn src.voice_pipeline.main:app --host 0.0.0.0 --port 8000 --reload
+PYTHONPATH=services/voice-pipeline/src uvicorn voice_pipeline.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### Monitor API companion
 
 ```bash
-uvicorn src.monitor.api:app --host 0.0.0.0 --port 8100
+PYTHONPATH=services/monitor-api/src uvicorn monitor.api:app --host 0.0.0.0 --port 8100
 ```
 
-### Voice app
+### ChatGPT companion
 
 ```bash
-cd voice-app
-npm install
-npm run tauri dev
-npm run build
-npm test
-npm run lint
+# Build widget first:
+cd chatgpt-companion/web && npm install && npm run build && cd ../..
+
+# Start server + Cloudflare tunnel:
+./scripts/start-chatgpt-companion.sh start
+./scripts/start-chatgpt-companion.sh status|stop|restart|logs
 ```
 
-### Companion command center
+The companion runs via `uvicorn src.chatgpt_companion.mcp_server:app` on port `${SEJFA_CHATGPT_COMPANION_PORT:-8787}`.
 
-Only work here when the task explicitly targets the companion app.
+### Loop runner
 
 ```bash
-cd ELECTRON-sejfa
-npm install
-npm start
-npm run verify
+bash scripts/loop-runner.sh
+# or directly:
+bash services/loop-engine/scripts/loop-runner.sh
 ```
 
-### Verification
+Polls `/api/loop/queue` for pending tickets, runs `claude --print "/start-task $ticket_key"` for each. Env vars: `LOOP_RUNNER_BACKEND_URL`, `LOOP_RUNNER_REPO_DIR`, `LOOP_RUNNER_POLL_INTERVAL`.
+
+## Verification
 
 ```bash
+# All tests
 pytest tests/ -xvs
-pytest tests/monitor/ -xvs
+
+# Subsystem tests
 pytest tests/voice_pipeline/ -xvs
+pytest tests/monitor/ -xvs
+pytest tests/chatgpt_companion/ -xvs
+pytest tests/agent/ -xvs
+pytest tests/integrations/ -xvs
+
+# Single test file
+pytest tests/voice_pipeline/test_pipeline.py -xvs
+
+# Lint and format
 ruff check .
 ruff format --check .
 ```
 
-## Architecture Overview
+pytest is configured with `asyncio_mode = "auto"` in pyproject.toml. Markers: `unit`, `integration`, `e2e`, `slow`.
 
-### `src/voice_pipeline/`
+## Architecture
 
-The voice start layer backend.
+### Voice Pipeline (`services/voice-pipeline/src/voice_pipeline/`)
 
-- `main.py` exposes HTTP and WebSocket endpoints
-- `config.py` reads environment-based settings
-- `transcriber/` contains local and remote transcription backends
-- `intent/` handles Ollama-based intent extraction
-- `jira/` handles Jira issue creation
-- `pipeline/` orchestrates intake, ambiguity handling, and queueing
-- `loop_queue.py` and `persistent_loop_queue.py` support task dispatch into the loop
+FastAPI app that converts voice/text input into Jira tickets and queues work for the Ralph Loop.
 
-### `src/monitor/`
+- `main.py` — HTTP/WS endpoints
+- `config.py` — Pydantic Settings from env vars
+- `transcriber/` — pluggable backends: `whisper_local.py` (CPU/GPU), `remote.py` (ai-server2), `openai_api.py`
+- `intent/` — Ollama-based intent extraction with structured prompts
+- `jira/` — Jira issue creation from extracted intent
+- `pipeline/` — orchestrator that chains transcription → extraction → ticket creation, with ambiguity clarification loop
+- `loop_queue.py` / `persistent_loop_queue.py` — SQLite-backed queue for dispatching work to the Ralph Loop
+- `security/sanitizer.py` — input sanitization (prompt injection defense)
 
-The monitoring companion backend.
+### Monitor API (`services/monitor-api/src/monitor/`)
 
-- `api.py` receives hook events and exposes monitor endpoints
-- `models.py` persists monitor sessions and events
-- `cost_tracker.py` and `stuck_detector.py` derive monitoring signals
-- `ws_manager.py` broadcasts status updates
+Companion service that receives Claude Code hook events and provides session observability.
 
-### `src/sejfa/`
+- `api.py` — receives `/events`, exposes `/sessions`, `/status`
+- `models.py` — SQLite-backed session and event persistence
+- `cost_tracker.py` — derives cost signals from events
+- `stuck_detector.py` — detects stalled execution
+- `ws_manager.py` — WebSocket broadcasting
 
-Shared utilities used across loop-related components.
+### Hook Bridge (`.claude/hooks/`)
 
-### `voice-app/`
+`hooks.json` registers `monitor_hook.py` for PreToolUse, PostToolUse, and Stop events (3s timeout). Hooks are fire-and-forget — they send events to the monitor API but cannot block Claude Code execution.
 
-The Tauri voice start client. It captures audio locally and sends requests to the backend configured by the user, which defaults to `http://localhost:8000`.
+### ChatGPT Companion (`src/chatgpt_companion/`)
 
-### `ELECTRON-sejfa/`
+Read-only MCP server for inspecting SEJFA from ChatGPT Developer Mode. Provides tools: `search`, `fetch`, `get_active_mission`, `list_recent_sessions`, `get_session_events`, `get_jira_issue`, `search_workspace`, `fetch_workspace_file`, `get_project_context`, `render_mission_dashboard`. No file mutation, no shell execution, no Jira writes.
 
-A companion command center with its own `.git` directory. Do not assume changes in this repo automatically belong there.
+### Shared Utilities (`src/sejfa/`)
 
-## Data Flow
+- `integrations/jira_client.py` — Jira API client
+- `monitor/monitor_service.py` — monitor service client
+- `utils/health_check.py`, `utils/security.py` — health checks and security helpers
 
-Canonical flow:
+### Loop Engine (`services/loop-engine/`)
 
-```text
-voice or Jira context
-  -> SEJFA intake
-  -> task queued for Ralph Loop
-  -> implementation and verification
-  -> review and follow-up work
-```
+Execution-layer boundary. Currently owns the loop-runner script that polls for pending tickets and dispatches them to Claude Code.
 
-Current voice-path implementation:
+### Agent Scripts (`scripts/`)
 
-```text
-voice-app on Mac
-  -> FastAPI backend on Mac
-  -> remote Whisper / Ollama on ai-server2 when configured
-  -> Jira issue creation
-  -> loop queue / status updates
-```
+- `loop-runner.sh` — delegates to `services/loop-engine/scripts/loop-runner.sh`
+- `classify_failure.py` — classifies CI failures into a taxonomy (AUTH, TEST_FAIL, LINT_FAIL, etc.) for self-healing
+- `jules_payload.py`, `jules_review_api.py`, `jules_to_jira.py` — Jules (Google) code review integration
+- `create-branch.sh`, `create-pr.sh` — git workflow helpers
+- `preflight.sh`, `ci_check.sh` — pre-flight and CI validation
+- `systemd/` — service definitions for loop-runner and voice-pipeline
 
-## Important Commands And APIs
+## API Surface
 
-### Voice backend endpoints
+### Voice backend (`:8000`)
 
-- `GET /health`
-- `POST /api/transcribe`
-- `POST /api/extract`
-- `POST /api/pipeline/run`
-- `POST /api/pipeline/clarify`
-- `POST /api/webhook/jira`
-- `GET /api/loop/queue`
-- `POST /api/loop/started`
-- `POST /api/loop/completed`
-- `WS /ws/status`
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/health` | GET | Health check |
+| `/api/transcribe` | POST | Audio to text |
+| `/api/extract` | POST | Text to Jira intent |
+| `/api/pipeline/run` | POST | Full voice intake pipeline |
+| `/api/pipeline/clarify` | POST | Ambiguity clarification follow-up |
+| `/api/loop/queue` | GET | Pending loop work |
+| `/api/loop/started` | POST | Mark work as started |
+| `/api/loop/completed` | POST | Mark work as completed |
+| `/ws/status` | WS | Pipeline status updates |
 
-### Monitor endpoints
+### Monitor (`:8100`)
 
-- `POST /events`
-- `GET /events`
-- `GET /sessions`
-- `GET /sessions/{session_id}`
-- `GET /status`
-- `POST /reset`
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/events` | POST | Receive hook events |
+| `/events` | GET | Query stored events |
+| `/sessions` | GET | List monitor sessions |
+| `/sessions/{id}` | GET | Inspect one session |
+| `/status` | GET | Current monitor status |
+| `/reset` | POST | Reset in-memory analyzers |
 
 ## Conventions
 
 ### Python
 
-- use type hints
-- use `ruff` for linting and formatting
-- target Python 3.11+
-- keep tests in `tests/`
+- Type hints required
+- `ruff` for linting and formatting (line-length 100, target py311)
+- Lint rules: E, F, W, I, N, UP, B, C4 (E501 ignored)
+- Tests in `tests/` mirroring source structure
 
 ### Git
 
-- branch format: `{type}/{JIRA-ID}-{slug}`
-- commit format: `DEV-42: Add OAuth login endpoint`
-- stage with `git add -u`
+- Branch: `{type}/{JIRA-ID}-{slug}` (e.g. `feature/DEV-42-oauth-login`)
+- Commit: `DEV-42: Add OAuth login endpoint`
+- Stage with `git add -u`
 
-### Documentation
+### TDD (Ralph Loop)
 
-- root docs must stay loop-first
-- subsystem docs must clearly identify themselves as subsystem docs
-- archive docs must be clearly labeled as archive or speculative reference
+```text
+RED    -> write a failing test
+GREEN  -> smallest change that passes
+REFACTOR -> clean up without breaking behavior
+```
 
-## Protected Or Sensitive Areas
+### Documentation priority when docs disagree
+
+1. `README.md` / `CLAUDE.md`
+2. `docs/README.md` / `docs/ARCHITECTURE.md`
+3. Subsystem docs
+4. Archive docs (historical context only)
+
+## Protected Areas
+
+Do not modify without explicit instruction:
 
 - `.claude/hooks/`
 - `.env` files
-- `Dockerfile`
-- `docker-compose.yml`
+- `Dockerfile` / `docker-compose.yml`
 - `scripts/systemd/`
-
-There is no root `.github/` directory today. Do not document or edit it as if it already exists unless you are explicitly creating it.
 
 ## Environment Variables
 
 | Variable | Purpose |
 |----------|---------|
 | `OLLAMA_URL` | Remote or local Ollama endpoint |
-| `OLLAMA_MODEL` | Intent model name |
+| `OLLAMA_MODEL` | Intent extraction model name |
 | `WHISPER_BACKEND` | `local` or `remote` |
 | `WHISPER_REMOTE_URL` | Remote transcription base URL |
 | `WHISPER_MODEL` | Whisper model size |
-| `WHISPER_DEVICE` | Whisper device selection |
+| `WHISPER_DEVICE` | Whisper device (`cpu` or `cuda`) |
 | `JIRA_URL` | Jira base URL |
 | `JIRA_EMAIL` | Jira account email |
 | `JIRA_API_TOKEN` | Jira API token |
 | `JIRA_PROJECT_KEY` | Default Jira project |
-| `APP_PORT` | Backend port, default `8000` |
+| `APP_PORT` | Backend port (default `8000`) |
+| `SEJFA_CHATGPT_COMPANION_PORT` | Companion port (default `8787`) |
+| `LOOP_RUNNER_BACKEND_URL` | Loop runner backend URL (default `http://localhost:8000`) |
+| `LOOP_RUNNER_POLL_INTERVAL` | Loop runner poll interval in seconds (default `10`) |

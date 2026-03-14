@@ -68,7 +68,9 @@ class CompanionConfig:
             ],
         )
     )
-    companion_port: int = 8787
+    companion_port: int = field(
+        default_factory=lambda: int(os.getenv("SEJFA_CHATGPT_COMPANION_PORT", "8787"))
+    )
     max_workspace_hits: int = 30
     max_file_excerpt_lines: int = 220
     max_event_results: int = 50

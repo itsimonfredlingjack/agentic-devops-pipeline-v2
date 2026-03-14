@@ -1,0 +1,49 @@
+.mic {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--glass-border);
+  background: var(--glass-bg-strong);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.mic:hover {
+  border-color: var(--glass-border-hover);
+  color: var(--text-primary);
+  background: var(--glass-bg-hover);
+}
+
+.mic:focus-visible {
+  box-shadow: 0 0 0 3px rgba(88, 86, 214, 0.4);
+  outline: none;
+}
+
+.mic.recording {
+  border-color: var(--phase-listening);
+  color: var(--phase-listening);
+  box-shadow:
+    0 0 24px rgba(48, 176, 199, 0.3),
+    inset 0 0 12px rgba(48, 176, 199, 0.1);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 24px rgba(48, 176, 199, 0.3), inset 0 0 12px rgba(48, 176, 199, 0.1); }
+  50% { box-shadow: 0 0 40px rgba(48, 176, 199, 0.5), inset 0 0 20px rgba(48, 176, 199, 0.15); }
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mic.recording {
+    animation: none;
+  }
+}

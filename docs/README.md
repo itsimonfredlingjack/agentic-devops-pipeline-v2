@@ -1,6 +1,6 @@
 # SEJFA Docs Map
 
-This directory contains three kinds of documents: canonical docs, subsystem docs, and archive references.
+This directory contains two kinds of documents: canonical docs and archive references.
 
 ## Canonical / Current
 
@@ -19,12 +19,6 @@ These documents define the official story:
 - voice is a start or intake layer into the loop
 - monitoring is a companion surface around the loop
 
-## Subsystem Docs
-
-These documents explain parts of the system without redefining the whole project.
-
-- [`/Users/coffeedev/Projects/03_AGENTIC-DEVOPS/agentic-devops-pipeline-v2/voice-app/ARCHITECTURE.md`](../voice-app/ARCHITECTURE.md) - voice start layer
-
 ## Archive / Speculative / Companion References
 
 These documents are preserved for history, planning, or companion-project context. They are not the source of truth for the root repo.
@@ -39,5 +33,4 @@ These documents are preserved for history, planning, or companion-project contex
 1. Start with the root README.
 2. Read the architecture doc for boundaries and terminology.
 3. Read the guidelines doc for Ralph Loop behavior.
-4. Read subsystem docs only when you are working inside that subsystem.
-5. Treat archive docs as reference material, not current implementation truth.
+4. Treat archive docs as reference material, not current implementation truth.

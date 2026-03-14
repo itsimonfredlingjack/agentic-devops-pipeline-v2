@@ -55,9 +55,26 @@
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.04);
+  border-left: 2px solid transparent;
   margin-bottom: 6px;
   font-size: 12px;
   line-height: 1.4;
+  transition: all var(--transition-normal);
+}
+
+.queueItem:hover {
+  background: rgba(88, 86, 214, 0.06);
+  border-color: rgba(88, 86, 214, 0.12);
+  border-left-color: rgba(88, 86, 214, 0.4);
+}
+
+.queueEmpty {
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
 .queueItemKey {

@@ -26,12 +26,16 @@ export function VoiceRail({ recording, onToggle }: VoiceRailProps) {
 
       <div className={styles.queueSection}>
         <div className={styles.queueTitle}>Queue ({queue.length})</div>
-        {queue.map((item) => (
-          <div key={item.key} className={styles.queueItem}>
-            <div className={styles.queueItemKey}>{item.key}</div>
-            <div className={styles.queueItemSummary}>{item.summary}</div>
-          </div>
-        ))}
+        {queue.length === 0 ? (
+          <div className={styles.queueEmpty}>No tasks queued</div>
+        ) : (
+          queue.map((item) => (
+            <div key={item.key} className={styles.queueItem}>
+              <div className={styles.queueItemKey}>{item.key}</div>
+              <div className={styles.queueItemSummary}>{item.summary}</div>
+            </div>
+          ))
+        )}
       </div>
 
       <div className={styles.connections}>

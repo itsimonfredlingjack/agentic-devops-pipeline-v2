@@ -3,19 +3,24 @@
   height: 64px;
   border-radius: 50%;
   border: 2px solid var(--glass-border);
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
+  background: var(--glass-bg-strong);
   color: var(--text-secondary);
   cursor: pointer;
   display: grid;
   place-content: center;
-  transition: all 200ms ease;
+  transition: all var(--transition-normal);
   position: relative;
 }
 
 .mic:hover {
   border-color: var(--glass-border-hover);
   color: var(--text-primary);
+  background: var(--glass-bg-hover);
+}
+
+.mic:focus-visible {
+  box-shadow: 0 0 0 3px rgba(88, 86, 214, 0.4);
+  outline: none;
 }
 
 .mic.recording {

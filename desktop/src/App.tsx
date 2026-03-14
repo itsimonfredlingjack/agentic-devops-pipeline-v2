@@ -6,6 +6,7 @@ import { ClarificationDialog } from "./components/ClarificationDialog";
 import { useConnections } from "./hooks/useConnections";
 import { useElapsedTimer } from "./hooks/useElapsedTimer";
 import { useMicrophone } from "./hooks/useMicrophone";
+import styles from "./App.module.css";
 
 export default function App() {
   useConnections();
@@ -21,26 +22,14 @@ export default function App() {
   }, [toggleRecording]);
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        display: "grid",
-        gridTemplateColumns: "200px 1fr",
-        gap: 12,
-        padding: 12,
-        background: "var(--canvas-bg)",
-      }}
-    >
-      <div
-        className="drag-region"
-        style={{ position: "fixed", top: 0, left: 0, right: 0, height: 40, zIndex: 100 }}
-      />
+    <div className={styles.shell}>
+      <div className={styles.dragRegion} />
 
       <aside className="glass-panel">
         <VoiceRail recording={recording} onToggle={toggleRecording} />
       </aside>
 
-      <div style={{ display: "grid", gridTemplateRows: "1fr auto", gap: 12, paddingTop: 36 }}>
+      <div className={styles.workspace}>
         <main className="glass-panel">
           <LoopCanvas />
         </main>

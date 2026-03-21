@@ -24,6 +24,12 @@ type MissionPayload = {
   mission_phase?: string;
   phase_label?: string;
   ticket?: { key?: string; summary?: string; status?: string } | null;
+  share?: {
+    id?: string;
+    url?: string;
+    text?: string;
+    metrics?: Record<string, number>;
+  } | null;
   active_session?: {
     session_id?: string;
     ticket_id?: string;
@@ -196,6 +202,7 @@ function statusTone(status?: string) {
 export default function App() {
   const { payload, status, callTool, sendFollowUpMessage } = useMcpBridge();
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
+  const [shareStatus, setShareStatus] = useState<string | null>(null);
 
   const latestSession = payload?.active_session ?? payload?.latest_session ?? null;
   const headline = useMemo(() => {
@@ -217,11 +224,41 @@ export default function App() {
     }
   }
 
+  useEffect(() => {
+    if (!shareStatus) return;
+    const timeout = window.setTimeout(() => setShareStatus(null), 3500);
+    return () => window.clearTimeout(timeout);
+  }, [shareStatus]);
+
   async function handleLoadEvents() {
     if (!latestSession?.session_id) return;
     setLoadingAction("events");
     try {
       await callTool("get_session_events", { session_id: latestSession.session_id, limit: 16 });
+    } finally {
+      setLoadingAction(null);
+    }
+  }
+
+  async function handleShareMission() {
+    setLoadingAction("share");
+    setShareStatus(null);
+    try {
+      const result = await callTool("get_mission_share", {
+        session_id: latestSession?.session_id,
+        ticket_id: payload?.ticket?.key,
+      });
+      const share = result?.structuredContent?.share ?? payload?.share;
+      const shareText = share?.text;
+      if (!shareText) {
+        setShareStatus("Share link unavailable right now.");
+        return;
+      }
+      await navigator.clipboard.writeText(shareText);
+      setShareStatus("Share brief copied. Paste it into Slack, Jira, or chat.");
+    } catch (error) {
+      console.error("Share copy failed", error);
+      setShareStatus("Couldn’t copy the share brief.");
     } finally {
       setLoadingAction(null);
     }
@@ -346,9 +383,22 @@ export default function App() {
 
           <article className="card actionDock">
             <div className="sectionTitle">Read-only Actions</div>
+            {payload?.share?.url && (
+              <div className="shareCallout">
+                <strong>Shareable snapshot</strong>
+                <p>{payload.share.url}</p>
+                <span>
+                  Opens tracked: {payload.share.metrics?.mission_share_opened ?? 0}
+                </span>
+              </div>
+            )}
+            {shareStatus && <div className="shareStatus">{shareStatus}</div>}
             <div className="buttonRow">
               <button onClick={handleRefresh} disabled={loadingAction !== null}>
                 {loadingAction === "refresh" ? "Refreshing…" : "Refresh Mission"}
+              </button>
+              <button onClick={handleShareMission} disabled={loadingAction !== null}>
+                {loadingAction === "share" ? "Copying…" : "Share Mission Link"}
               </button>
               <button
                 onClick={handleLoadEvents}

@@ -67,6 +67,22 @@ interface AppState {
   reset: () => void;
 }
 
+export function getDefaultServiceUrls() {
+  const bridgeConfig =
+    typeof window !== "undefined" ? window.sejfa?.config : undefined;
+
+  return {
+    voiceUrl:
+      bridgeConfig?.voiceUrl ??
+      import.meta.env.VITE_SEJFA_VOICE_URL ??
+      "http://localhost:8000",
+    monitorUrl:
+      bridgeConfig?.monitorUrl ??
+      import.meta.env.VITE_SEJFA_MONITOR_URL ??
+      "http://localhost:8100",
+  };
+}
+
 const MAX_EVENTS = 200;
 
 function derivePhase(state: {
@@ -97,8 +113,7 @@ const initialState = {
   phase: "idle" as LoopPhase,
   voiceConnected: false,
   monitorConnected: false,
-  voiceUrl: "http://localhost:8000",
-  monitorUrl: "http://localhost:8100",
+  ...getDefaultServiceUrls(),
   pipelineStatus: "idle" as PipelineStatus,
   processingStep: "",
   clarification: null,

@@ -48,6 +48,18 @@ Useful companion commands:
 ./scripts/start-chatgpt-companion.sh restart
 ```
 
+If you want the full local SEJFA stack on conflict-free ports, prefer:
+
+```bash
+./scripts/start-sejfa-local.sh start
+```
+
+That uses these local defaults:
+
+- voice pipeline: `8000`
+- monitor API: `8110`
+- ChatGPT companion: `8788`
+
 3. Validate with MCP Inspector:
 
 ```bash

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import os
 from pathlib import Path
 
 
@@ -26,8 +27,10 @@ class StuckConfig:
 
 @dataclass(frozen=True)
 class MonitorConfig:
-    port: int = 8100
-    db_path: Path = field(default_factory=lambda: Path("data/monitor.db"))
+    port: int = field(default_factory=lambda: int(os.getenv("SEJFA_MONITOR_PORT", "8100")))
+    db_path: Path = field(
+        default_factory=lambda: Path(os.getenv("SEJFA_MONITOR_DB_PATH", "data/monitor.db"))
+    )
     cors_origins: list[str] = field(
         default_factory=lambda: ["http://localhost:*", "file://"]
     )

@@ -188,6 +188,31 @@ body {
   margin-top: 12px;
 }
 
+.shareCallout,
+.shareStatus {
+  margin-top: 12px;
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.shareCallout strong,
+.shareCallout span {
+  display: block;
+}
+
+.shareCallout p,
+.shareCallout span,
+.shareStatus {
+  color: rgba(218, 226, 248, 0.72);
+}
+
+.shareCallout p {
+  margin: 8px 0 4px;
+  word-break: break-word;
+}
+
 button {
   border: 1px solid rgba(82, 210, 255, 0.22);
   background: rgba(82, 210, 255, 0.12);

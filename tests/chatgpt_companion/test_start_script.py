@@ -13,3 +13,4 @@ def test_start_script_exists_with_required_commands() -> None:
     assert content.startswith("#!/usr/bin/env bash")
     assert "uvicorn src.chatgpt_companion.mcp_server:app" in content
     assert "cloudflared tunnel run macos-mcp" in content
+    assert "from monitor.models import init_db" in content

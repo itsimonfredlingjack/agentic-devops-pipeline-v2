@@ -2,15 +2,23 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
-import os
 
 
 def _csv_list(env_name: str, default: list[str]) -> list[str]:
     raw = os.getenv(env_name, "")
     items = [item.strip() for item in raw.split(",") if item.strip()]
     return items or default
+
+
+def _first_env(*env_names: str, default: str) -> str:
+    for env_name in env_names:
+        value = os.getenv(env_name, "").strip()
+        if value:
+            return value
+    return default
 
 
 @dataclass(frozen=True)
@@ -33,11 +41,25 @@ class CompanionConfig:
         / "web"
         / "dist"
     )
+    share_metrics_db_path: Path = field(
+        default_factory=lambda: Path(__file__).resolve().parents[2]
+        / "data"
+        / "chatgpt_companion_metrics.db"
+    )
     voice_api_url: str = field(
-        default_factory=lambda: os.getenv("SEJFA_VOICE_API_URL", "http://127.0.0.1:8000")
+        default_factory=lambda: _first_env(
+            "SEJFA_VOICE_API_URL",
+            "SEJFA_VOICE_URL",
+            default="http://127.0.0.1:8000",
+        )
     )
     monitor_api_url: str = field(
-        default_factory=lambda: os.getenv("SEJFA_MONITOR_API_URL", "http://127.0.0.1:8100")
+        default_factory=lambda: _first_env(
+            "SEJFA_MONITOR_API_URL",
+            "SEJFA_MONITOR_URL",
+            "MONITOR_URL",
+            default="http://127.0.0.1:8100",
+        )
     )
     public_base_url: str = field(
         default_factory=lambda: os.getenv(

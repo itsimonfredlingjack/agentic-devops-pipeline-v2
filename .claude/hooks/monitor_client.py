@@ -3,11 +3,23 @@
 from __future__ import annotations
 
 import json
+import os
 import urllib.request
 from typing import Any
 
-MONITOR_URL = "http://localhost:8100/events"
 TIMEOUT_S = 1
+
+
+def _monitor_events_url() -> str:
+    raw = (
+        os.getenv("SEJFA_MONITOR_API_URL")
+        or os.getenv("SEJFA_MONITOR_URL")
+        or os.getenv("MONITOR_URL")
+        or "http://127.0.0.1:8100"
+    ).rstrip("/")
+    if raw.endswith("/events"):
+        return raw
+    return f"{raw}/events"
 
 
 def post_event(event: dict[str, Any]) -> None:
@@ -15,7 +27,7 @@ def post_event(event: dict[str, Any]) -> None:
     try:
         data = json.dumps(event).encode("utf-8")
         req = urllib.request.Request(
-            MONITOR_URL,
+            _monitor_events_url(),
             data=data,
             headers={"Content-Type": "application/json"},
             method="POST",

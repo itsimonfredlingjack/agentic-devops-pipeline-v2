@@ -146,6 +146,26 @@ PYTHONPATH=services/voice-pipeline/src uvicorn voice_pipeline.main:app --host 0.
 PYTHONPATH=services/monitor-api/src uvicorn monitor.api:app --host 0.0.0.0 --port 8100
 ```
 
+### Local dev stack
+
+To run the SEJFA local stack without colliding with other local MCP or monitor
+projects, use the orchestrator script:
+
+```bash
+./scripts/start-sejfa-local.sh start
+./scripts/start-sejfa-local.sh status
+./scripts/start-sejfa-local.sh stop
+```
+
+Default local ports:
+
+- voice pipeline: `8000`
+- monitor API: `8110`
+- ChatGPT companion: `8788`
+
+You can override any of them with environment variables such as
+`SEJFA_MONITOR_PORT=8120` or `SEJFA_CHATGPT_COMPANION_PORT=8790`.
+
 ### Tests
 
 ```bash

@@ -113,8 +113,8 @@ start_uvicorn() {
 
   (
     cd "${REPO_ROOT}"
-    exec uvicorn src.chatgpt_companion.mcp_server:app --host 0.0.0.0 --port "${COMPANION_PORT}"
-  ) >"${UVICORN_LOG_FILE}" 2>&1 &
+    exec nohup uvicorn src.chatgpt_companion.mcp_server:app --host 0.0.0.0 --port "${COMPANION_PORT}"
+  ) >"${UVICORN_LOG_FILE}" 2>&1 </dev/null &
   echo "$!" > "${UVICORN_PID_FILE}"
   echo "${COMPANION_PORT}" > "${PORT_FILE}"
   log "Started companion server (pid $(cat "${UVICORN_PID_FILE}"))"
@@ -135,7 +135,7 @@ start_tunnel() {
   fi
 
   exec_cmd=(cloudflared tunnel run macos-mcp)
-  "${exec_cmd[@]}" >"${CLOUDFLARED_LOG_FILE}" 2>&1 &
+  nohup "${exec_cmd[@]}" >"${CLOUDFLARED_LOG_FILE}" 2>&1 </dev/null &
   echo "$!" > "${CLOUDFLARED_PID_FILE}"
   log "Started Cloudflare tunnel (pid $(cat "${CLOUDFLARED_PID_FILE}"))"
 }
@@ -186,6 +186,19 @@ show_logs() {
   log "Cloudflared log: ${CLOUDFLARED_LOG_FILE}"
 }
 
+ensure_monitor_schema() {
+  (
+    cd "${REPO_ROOT}"
+    PYTHONPATH=services/monitor-api/src python - <<'PY'
+import asyncio
+from monitor.models import init_db
+
+asyncio.run(init_db())
+PY
+  )
+  log "Ensured monitor database schema exists"
+}
+
 warn_if_tunnel_port_mismatch() {
   if [[ "$(ingress_port || true)" != "${COMPANION_PORT}" ]]; then
     log "Custom companion port ${COMPANION_PORT} selected"
@@ -203,6 +216,7 @@ start_all() {
     exit 1
   }
 
+  ensure_monitor_schema
   start_uvicorn
   start_tunnel
   sleep 1

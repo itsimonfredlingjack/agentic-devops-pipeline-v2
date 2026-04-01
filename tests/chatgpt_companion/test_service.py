@@ -253,3 +253,171 @@ def test_mission_service_derives_agent_phase_from_active_session(
     assert mission["mission_phase"] == "agent_active"
     assert mission["active_session"]["session_id"] == "sess-1"
     assert mission["latest_events"][0]["event_id"] == "evt-1"
+
+
+def test_mission_service_handles_uninitialized_monitor_db(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo_root = tmp_path / "repo"
+    write_text(repo_root / "README.md", "# SEJFA")
+    write_text(repo_root / "docs" / "ARCHITECTURE.md", "Agentic loop")
+    write_text(repo_root / "CLAUDE.md", "workflow")
+    write_text(
+        repo_root / "services" / "voice-pipeline" / "src" / "voice_pipeline" / "main.py",
+        "def health():\n    return {'status': 'ok'}\n",
+    )
+    write_text(
+        repo_root / "services" / "monitor-api" / "src" / "monitor" / "api.py",
+        "def mission_overview():\n    return {'status': 'ok'}\n",
+    )
+    monitor_db = repo_root / "data" / "monitor.db"
+    queue_db = repo_root / "loop_queue.db"
+    monitor_db.parent.mkdir(parents=True, exist_ok=True)
+    monitor_db.touch()
+    create_queue_db(queue_db)
+
+    monkeypatch.setattr(
+        "src.chatgpt_companion.service.config",
+        CompanionConfig(
+            repo_root=repo_root,
+            monitor_db_path=monitor_db,
+            queue_db_path=queue_db,
+            docs_root=repo_root / "docs",
+            widget_dist=repo_root / "chatgpt-companion" / "web" / "dist",
+        ),
+    )
+
+    service = MissionService()
+    monkeypatch.setattr(service, "_probe_connections", lambda: {"monitor": {"reachable": False}})
+
+    sessions = service.list_recent_sessions()
+    mission = service.get_active_mission()
+
+    assert sessions["sessions"] == []
+    assert sessions["monitor_data"]["available"] is False
+    assert sessions["monitor_data"]["reason"] == "missing_tables"
+    assert mission["monitor_data"]["available"] is False
+    assert mission["alerts"][0].startswith("Monitor history schema is not initialized yet")
+
+
+def test_companion_config_supports_monitor_and_voice_env_aliases(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("SEJFA_VOICE_API_URL", raising=False)
+    monkeypatch.setenv("SEJFA_VOICE_URL", "http://127.0.0.1:9000")
+    monkeypatch.delenv("SEJFA_MONITOR_API_URL", raising=False)
+    monkeypatch.setenv("SEJFA_MONITOR_URL", "http://127.0.0.1:9110")
+
+    config = CompanionConfig()
+
+    assert config.voice_api_url == "http://127.0.0.1:9000"
+    assert config.monitor_api_url == "http://127.0.0.1:9110"
+
+
+def test_probe_connections_falls_back_to_new_monitor_port(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    service = MissionService()
+
+    monkeypatch.delenv("SEJFA_MONITOR_API_URL", raising=False)
+
+    def fake_probe(url: str) -> dict[str, object]:
+        if url == "http://127.0.0.1:8100/status":
+            return {"reachable": False, "status_code": 404}
+        if url == "http://127.0.0.1:8110/status":
+            return {"reachable": True, "status_code": 200}
+        if url == "http://127.0.0.1:8000/health":
+            return {"reachable": True, "status_code": 200}
+        raise AssertionError(f"Unexpected probe URL: {url}")
+
+    monkeypatch.setattr(service, "_probe_http", fake_probe)
+
+    connections = service._probe_connections()
+
+    assert connections["monitor"]["reachable"] is True
+    assert connections["monitor"]["status_code"] == 200
+    assert connections["monitor"]["url"] == "http://127.0.0.1:8110/status"
+
+
+def test_mission_share_payload_generates_public_link_and_tracks_requests(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo_root = tmp_path / "repo"
+    write_text(repo_root / "README.md", "# SEJFA")
+    write_text(repo_root / "docs" / "ARCHITECTURE.md", "Agentic loop")
+    write_text(repo_root / "CLAUDE.md", "workflow")
+    write_text(
+        repo_root / "services" / "voice-pipeline" / "src" / "voice_pipeline" / "main.py",
+        "def health():\n    return {'status': 'ok'}\n",
+    )
+    write_text(
+        repo_root / "services" / "monitor-api" / "src" / "monitor" / "api.py",
+        "def mission_overview():\n    return {'status': 'ok'}\n",
+    )
+    monitor_db = repo_root / "data" / "monitor.db"
+    queue_db = repo_root / "loop_queue.db"
+    share_metrics_db = repo_root / "data" / "share_metrics.db"
+    create_monitor_db(monitor_db)
+    create_queue_db(queue_db)
+
+    with sqlite3.connect(monitor_db) as conn:
+        conn.execute(
+            """
+            INSERT INTO sessions (session_id, ticket_id, started_at, ended_at, total_cost_usd, total_events, outcome)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            ("sess-viral", "DEV-42", "2026-03-17T12:00:00+00:00", None, 0.42, 14, None),
+        )
+        conn.execute(
+            """
+            INSERT INTO events (event_id, session_id, ticket_id, timestamp, event_type, tool_name, tool_args_hash, tool_args_summary, success, duration_ms, cost_usd, error)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                "evt-share",
+                "sess-viral",
+                "DEV-42",
+                "2026-03-17T12:01:00+00:00",
+                "tool",
+                "Bash",
+                "hash-1",
+                "pytest tests/chatgpt_companion -q",
+                1,
+                900,
+                0.08,
+                None,
+            ),
+        )
+        conn.commit()
+
+    monkeypatch.setattr(
+        "src.chatgpt_companion.service.config",
+        CompanionConfig(
+            repo_root=repo_root,
+            monitor_db_path=monitor_db,
+            queue_db_path=queue_db,
+            docs_root=repo_root / "docs",
+            widget_dist=repo_root / "chatgpt-companion" / "web" / "dist",
+            public_base_url="https://share.example.com",
+            share_metrics_db_path=share_metrics_db,
+        ),
+    )
+
+    service = MissionService()
+    monkeypatch.setattr(
+        service,
+        "_probe_connections",
+        lambda: {"monitor": {"reachable": True}, "voice_pipeline": {"reachable": True}},
+    )
+
+    payload = service.build_share_payload(
+        session_id="sess-viral",
+        event_name="mission_share_requested",
+    )
+
+    assert payload["share"]["url"] == "https://share.example.com/share/session/sess-viral"
+    assert "DEV-42" in payload["share"]["text"]
+    assert "phase:" in payload["share"]["text"].lower()
+    assert payload["share"]["metrics"]["mission_share_requested"] == 1

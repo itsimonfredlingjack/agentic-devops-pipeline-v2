@@ -1,8 +1,17 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { useAppStore } from "../stores/appStore";
+import { getDefaultServiceUrls, useAppStore } from "../stores/appStore";
+
+function ensureWindow(): Window {
+  const scope = globalThis as typeof globalThis & { window?: Window };
+  if (!scope.window) {
+    scope.window = {} as Window;
+  }
+  return scope.window;
+}
 
 describe("appStore", () => {
   beforeEach(() => {
+    delete ensureWindow().sejfa;
     useAppStore.setState(useAppStore.getInitialState());
   });
 
@@ -19,6 +28,21 @@ describe("appStore", () => {
   it("tracks monitor connection", () => {
     useAppStore.getState().setMonitorConnected(true);
     expect(useAppStore.getState().monitorConnected).toBe(true);
+  });
+
+  it("reads runtime service urls from the Electron bridge", () => {
+    ensureWindow().sejfa = {
+      config: {
+        voiceUrl: "http://127.0.0.1:8001",
+        monitorUrl: "http://127.0.0.1:8110",
+      },
+      onGlobalShortcut: () => {},
+    };
+
+    expect(getDefaultServiceUrls()).toEqual({
+      voiceUrl: "http://127.0.0.1:8001",
+      monitorUrl: "http://127.0.0.1:8110",
+    });
   });
 
   it("derives phase from pipeline status recording", () => {

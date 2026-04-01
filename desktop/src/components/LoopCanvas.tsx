@@ -1,4 +1,5 @@
 import { useAppStore, type LoopPhase } from "../stores/appStore";
+import { IntentConfirmationView } from "./IntentConfirmationView";
 import styles from "./LoopCanvas.module.css";
 
 const phaseConfig: Record<LoopPhase, { label: string; caption: string; rgb: string }> = {
@@ -6,7 +7,7 @@ const phaseConfig: Record<LoopPhase, { label: string; caption: string; rgb: stri
   listening: { label: "Listening", caption: "Recording...", rgb: "48,176,199" },
   processing: { label: "Processing", caption: "Analyzing your request", rgb: "255,159,10" },
   loop: { label: "Loop Active", caption: "Ralph Loop executing", rgb: "88,86,214" },
-  verify: { label: "Verifying", caption: "Running verification gates", rgb: "0,122,255" },
+  verify: { label: "Verify & Confirm", caption: "Waiting for human approval", rgb: "0,122,255" },
   error: { label: "Alert", caption: "Something needs attention", rgb: "255,55,95" },
   done: { label: "Complete", caption: "Task finished", rgb: "52,199,89" },
 };
@@ -33,6 +34,7 @@ export function LoopCanvas() {
   const processingStep = useAppStore((s) => s.processingStep);
   const stuckAlert = useAppStore((s) => s.stuckAlert);
   const events = useAppStore((s) => s.events);
+  const preview = useAppStore((s) => s.preview);
 
   const config = phaseConfig[phase];
 
@@ -44,9 +46,9 @@ export function LoopCanvas() {
       <div className={styles.phaseLabel}>{config.label}</div>
       <div className={styles.caption}>{config.caption}</div>
 
-      {ticketKey && <div className={styles.ticket}>{ticketKey}</div>}
+      {ticketKey && !preview && <div className={styles.ticket}>{ticketKey}</div>}
 
-      {(phase === "loop" || phase === "verify" || phase === "done") && (
+      {(phase === "loop" || (phase === "verify" && !preview) || phase === "done") && (
         <div className={styles.metrics}>
           <div className={styles.metric}>
             <span className={styles.metricValue}>
@@ -75,6 +77,8 @@ export function LoopCanvas() {
           {" "}&mdash; repeated {stuckAlert.repeat_count}&times; ({stuckAlert.tokens_burned.toLocaleString()} tokens burned)
         </div>
       )}
+
+      {preview && <IntentConfirmationView />}
 
       <div className={styles.accent} />
     </div>

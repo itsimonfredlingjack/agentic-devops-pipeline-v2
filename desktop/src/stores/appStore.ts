@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import { create } from "zustand";
 import type {
   ClarificationState,
@@ -5,6 +6,7 @@ import type {
   CostEntry,
   EventRecord,
   PipelineStatus,
+  PreviewState,
   QueueItem,
   StuckAlert,
 } from "@sejfa/shared-types";
@@ -32,6 +34,7 @@ interface AppState {
   pipelineStatus: PipelineStatus;
   processingStep: string;
   clarification: ClarificationState | null;
+  preview: PreviewState | null;
 
   // Loop
   loopActive: boolean;
@@ -54,6 +57,7 @@ interface AppState {
   setPipelineStatus: (status: PipelineStatus) => void;
   setProcessingStep: (step: string) => void;
   setClarification: (clarification: ClarificationState | null) => void;
+  setPreview: (preview: PreviewState | null) => void;
   setLoopActive: (active: boolean) => void;
   setTicketKey: (key: string | null) => void;
   setSessionId: (id: string | null) => void;
@@ -100,8 +104,9 @@ function derivePhase(state: {
       return "listening";
     case "processing":
     case "clarifying":
-    case "previewing":
       return "processing";
+    case "previewing":
+      return "verify";
     case "error":
       return "error";
     default:
@@ -117,6 +122,7 @@ const initialState = {
   pipelineStatus: "idle" as PipelineStatus,
   processingStep: "",
   clarification: null,
+  preview: null,
   loopActive: false,
   ticketKey: null,
   sessionId: null,
@@ -144,6 +150,12 @@ export const useAppStore = create<AppState>()((set) => ({
   setProcessingStep: (step) => set({ processingStep: step }),
 
   setClarification: (clarification) => set({ clarification }),
+
+  setPreview: (preview) =>
+    set((state) => {
+      const next = { ...state, preview };
+      return { preview, phase: derivePhase(next) };
+    }),
 
   setLoopActive: (active) =>
     set((state) => {

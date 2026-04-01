@@ -166,6 +166,12 @@ class TestPipelineOrchestrator:
 
         result = await orchestrator.run_from_text("bygg en login med OAuth")
 
+        from src.voice_pipeline.pipeline.orchestrator import PreviewNeeded
+        assert isinstance(result, PreviewNeeded)
+
+        # Simulate human approval
+        result = await orchestrator.continue_with_approval(result.session_id)
+
         assert isinstance(result, PipelineResult)
         assert result.ticket_key == "TEST-42"
         assert result.summary == "Bygg login med OAuth"
@@ -226,9 +232,15 @@ class TestPipelineOrchestrator:
             answer_text="Det gäller login-sidan, OAuth-integrationen är trasig",
         )
 
-        assert isinstance(result2, PipelineResult)
-        assert result2.ticket_key == "TEST-42"
-        assert result2.session_id == session_id
+        from src.voice_pipeline.pipeline.orchestrator import PreviewNeeded
+        assert isinstance(result2, PreviewNeeded)
+
+        # Simulate human approval
+        result3 = await orchestrator.continue_with_approval(session_id)
+
+        assert isinstance(result3, PipelineResult)
+        assert result3.ticket_key == "TEST-42"
+        assert result3.session_id == session_id
         # Session should be cleaned up
         assert session_id not in orchestrator._sessions
 
@@ -296,8 +308,14 @@ class TestPipelineOrchestrator:
             answer_text="jag vet inte, gör ditt bästa",
         )
 
-        assert isinstance(result2, PipelineResult)
-        assert result2.ticket_key == "TEST-42"
+        from src.voice_pipeline.pipeline.orchestrator import PreviewNeeded
+        assert isinstance(result2, PreviewNeeded)
+
+        # Simulate human approval
+        result3 = await orchestrator.continue_with_approval(session_id)
+
+        assert isinstance(result3, PipelineResult)
+        assert result3.ticket_key == "TEST-42"
 
     async def test_unknown_session_raises_value_error(self):
         """continue_with_clarification with unknown session_id should raise ValueError."""

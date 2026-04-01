@@ -90,6 +90,38 @@ export async function submitClarification(
   });
 }
 
+export async function approvePipeline(
+  serverUrl: string,
+  sessionId: string,
+): Promise<Response> {
+  const base = normalizeUrl(serverUrl);
+  return fetch(`${base}/api/pipeline/approve`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      session_id: sessionId,
+    }),
+  });
+}
+
+export async function discardPipeline(
+  serverUrl: string,
+  sessionId: string,
+): Promise<Response> {
+  const base = normalizeUrl(serverUrl);
+  return fetch(`${base}/api/pipeline/discard`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      session_id: sessionId,
+    }),
+  });
+}
+
 export function connectVoicePipelineSocket(
   getServerUrl: () => string,
   handlers: {
@@ -102,6 +134,11 @@ export function connectVoicePipelineSocket(
       questions: string[];
       partial_summary: string;
       round: number;
+    }) => void;
+    onPreview?: (payload: {
+      sessionId: string;
+      transcribedText: string;
+      summary: string;
     }) => void;
     onLoopEvent?: (event: LoopEvent) => void;
   },
@@ -175,6 +212,16 @@ export function connectVoicePipelineSocket(
           return;
         }
 
+        if (data.type === "preview_needed" && handlers.onPreview) {
+          handlers.setProcessingStep("");
+          handlers.onPreview({
+            sessionId: data.session_id,
+            transcribedText: data.transcribed_text,
+            summary: data.summary,
+          });
+          return;
+        }
+
         if (
           handlers.onLoopEvent &&
           (data.type === "ticket_queued" ||
@@ -190,6 +237,7 @@ export function connectVoicePipelineSocket(
             transcribing: "processing",
             extracting: "processing",
             clarifying: "clarifying",
+            previewing: "previewing",
             creating_ticket: "processing",
             completed: "done",
             error: "error",

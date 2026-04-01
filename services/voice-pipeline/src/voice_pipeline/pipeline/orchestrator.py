@@ -107,6 +107,29 @@ class ClarificationNeeded:
         }
 
 
+class PreviewNeeded:
+    """Returned when intent is successfully extracted and waiting for human approval."""
+
+    def __init__(
+        self,
+        session_id: str,
+        transcribed_text: str,
+        summary: str,
+    ) -> None:
+        self.session_id = session_id
+        self.transcribed_text = transcribed_text
+        self.summary = summary
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "status": "preview_needed",
+            "session_id": self.session_id,
+            "transcribed_text": self.transcribed_text,
+            "summary": self.summary,
+        }
+
+
+
 class PipelineOrchestrator:
     """Runs the voice → Jira pipeline and broadcasts status at each stage.
 
@@ -170,19 +193,19 @@ class PipelineOrchestrator:
 
     async def run_from_audio(
         self, audio_bytes: bytes, filename: str = "audio.wav"
-    ) -> PipelineResult | ClarificationNeeded:
+    ) -> PipelineResult | ClarificationNeeded | PreviewNeeded:
         """Run the full pipeline from raw audio bytes."""
         async with self._lock:
             return await self._execute_pipeline(audio_bytes, filename)
 
-    async def run_from_text(self, text: str) -> PipelineResult | ClarificationNeeded:
+    async def run_from_text(self, text: str) -> PipelineResult | ClarificationNeeded | PreviewNeeded:
         """Run the pipeline skipping the transcription stage."""
         async with self._lock:
             return await self._execute_from_text(text)
 
     async def continue_with_clarification(
         self, session_id: str, answer_text: str
-    ) -> PipelineResult | ClarificationNeeded:
+    ) -> PipelineResult | ClarificationNeeded | PreviewNeeded:
         """Continue a pipeline session after the user answers clarification questions.
 
         Args:
@@ -202,9 +225,43 @@ class PipelineOrchestrator:
         async with self._lock:
             return await self._execute_clarification(session, answer_text)
 
+    async def continue_with_approval(
+        self, session_id: str
+    ) -> PipelineResult:
+        """Continue a pipeline session after the user approves the preview.
+        
+        Args:
+            session_id: The session ID from the PreviewNeeded response.
+            
+        Returns:
+            PipelineResult.
+            
+        Raises:
+            ValueError: If session_id is not found.
+        """
+        session = self._sessions.get(session_id)
+        if session is None:
+            raise ValueError(f"Unknown session: {session_id}")
+
+        async with self._lock:
+            combined_text = " | ".join(session.conversation_history)
+            intent = session.current_intent
+            if not intent:
+                raise ValueError("Session has no extracted intent to approve")
+            self._sessions.pop(session_id, None)
+            return await self._create_ticket(intent, combined_text, session_id)
+
+    async def discard_session(self, session_id: str) -> dict[str, str]:
+        """Discard a pipeline session without creating a ticket."""
+        async with self._lock:
+            if session_id in self._sessions:
+                self._sessions.pop(session_id)
+            await self._transition(PipelineStatus.DONE, "Pipeline discarded by user.")
+            return {"status": "discarded", "session_id": session_id}
+
     async def _execute_pipeline(
         self, audio_bytes: bytes, filename: str
-    ) -> PipelineResult | ClarificationNeeded:
+    ) -> PipelineResult | ClarificationNeeded | PreviewNeeded:
         """Internal: full pipeline from audio bytes."""
         suffix = Path(filename).suffix or ".wav"
 
@@ -235,7 +292,7 @@ class PipelineOrchestrator:
 
         return await self._execute_from_text(transcribed_text)
 
-    async def _execute_from_text(self, text: str) -> PipelineResult | ClarificationNeeded:
+    async def _execute_from_text(self, text: str) -> PipelineResult | ClarificationNeeded | PreviewNeeded:
         """Internal: pipeline from transcribed text onwards."""
         if not self._settings.jira_configured:
             raise RuntimeError("Jira is not configured. Set JIRA_URL, JIRA_EMAIL, JIRA_API_TOKEN.")
@@ -292,12 +349,40 @@ class PipelineOrchestrator:
                 round_number=1,
             )
 
-        # Clear enough — create ticket
-        return await self._create_ticket(intent, text, session_id)
+        # Clear enough — pause for intent confirmation
+        session = PipelineSession(
+            session_id=session_id,
+            original_text=text,
+            current_intent=intent,
+            clarification_round=0,
+            conversation_history=[text],
+        )
+        self._sessions[session.session_id] = session
+
+        await self._transition(
+            PipelineStatus.PREVIEWING,
+            f"Waiting for human approval: {intent.summary}",
+        )
+
+        if self._broadcast:
+            await self._broadcast(
+                {
+                    "type": "preview_needed",
+                    "session_id": session.session_id,
+                    "transcribed_text": text,
+                    "summary": intent.summary,
+                }
+            )
+
+        return PreviewNeeded(
+            session_id=session.session_id,
+            transcribed_text=text,
+            summary=intent.summary,
+        )
 
     async def _execute_clarification(
         self, session: PipelineSession, answer_text: str
-    ) -> PipelineResult | ClarificationNeeded:
+    ) -> PipelineResult | ClarificationNeeded | PreviewNeeded:
         """Internal: re-extract with clarification context."""
         session.conversation_history.append(answer_text)
         session.clarification_round += 1
@@ -365,13 +450,33 @@ class PipelineOrchestrator:
                 round_number=session.clarification_round,
             )
 
-        # Clear enough (or max rounds hit) — create ticket
+        # Clear enough (or max rounds hit) — wait for intent confirmation
         if session.clarification_round >= max_rounds:
-            logger.info("Max clarification rounds reached, creating ticket with best effort")
+            logger.info("Max clarification rounds reached, requesting preview with best effort intent")
 
         combined_text = " | ".join(session.conversation_history)
-        self._sessions.pop(session.session_id, None)
-        return await self._create_ticket(intent, combined_text, session.session_id)
+        self._sessions[session.session_id] = session
+
+        await self._transition(
+            PipelineStatus.PREVIEWING,
+            f"Waiting for human approval: {intent.summary}",
+        )
+
+        if self._broadcast:
+            await self._broadcast(
+                {
+                    "type": "preview_needed",
+                    "session_id": session.session_id,
+                    "transcribed_text": combined_text,
+                    "summary": intent.summary,
+                }
+            )
+
+        return PreviewNeeded(
+            session_id=session.session_id,
+            transcribed_text=combined_text,
+            summary=intent.summary,
+        )
 
     async def _create_ticket(
         self,

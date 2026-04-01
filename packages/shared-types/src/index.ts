@@ -25,6 +25,12 @@ export interface ClarificationState {
   round: number;
 }
 
+export interface PreviewState {
+  sessionId: string;
+  transcribedText: string;
+  summary: string;
+}
+
 export interface LoopEvent {
   type: "ticket_queued" | "loop_started" | "loop_completed";
   issue_key: string;

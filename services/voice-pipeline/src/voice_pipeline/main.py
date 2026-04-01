@@ -329,6 +329,12 @@ def create_app() -> FastAPI:
         session_id: str
         text: str
 
+    class ApproveRequest(BaseModel):
+        session_id: str
+
+    class DiscardRequest(BaseModel):
+        session_id: str
+
     @app.post("/api/pipeline/run", tags=["pipeline"])
     async def run_pipeline(request: PipelineTextRequest) -> dict[str, Any]:
         """Run the full voice pipeline from pre-transcribed text.
@@ -395,6 +401,32 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
         return result.to_dict()
+
+    @app.post("/api/pipeline/approve", tags=["pipeline"])
+    async def approve_pipeline(request: ApproveRequest) -> dict[str, Any]:
+        """Approve a previewed pipeline session and create the Jira ticket."""
+        orchestrator = _get_orchestrator()
+        try:
+            result = await orchestrator.continue_with_approval(
+                session_id=request.session_id,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+        return result.to_dict()
+
+    @app.post("/api/pipeline/discard", tags=["pipeline"])
+    async def discard_pipeline(request: DiscardRequest) -> dict[str, Any]:
+        """Discard a previewed pipeline session."""
+        orchestrator = _get_orchestrator()
+        try:
+            result = await orchestrator.discard_session(session_id=request.session_id)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        
+        return result
 
     # -----------------------------------------------------------------------
     # Jira webhook

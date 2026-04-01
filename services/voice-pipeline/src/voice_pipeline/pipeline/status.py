@@ -19,6 +19,7 @@ class PipelineStatus(StrEnum):
     EXTRACTING = "extracting"
     CLARIFYING = "clarifying"
     CREATING = "creating"
+    PREVIEWING = "previewing"
     DONE = "done"
     ERROR = "error"
     IDLE = "idle"
@@ -46,6 +47,7 @@ class MonitorService:
         PipelineStatus.TRANSCRIBING,
         PipelineStatus.EXTRACTING,
         PipelineStatus.CLARIFYING,
+        PipelineStatus.PREVIEWING,
         PipelineStatus.CREATING,
         PipelineStatus.DONE,
         PipelineStatus.ERROR,

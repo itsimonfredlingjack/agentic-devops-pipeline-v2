@@ -41,6 +41,9 @@ export function useConnections(): void {
             round: payload.round,
           });
         },
+        onPreview: (payload) => {
+          useAppStore.getState().setPreview(payload);
+        },
         onLoopEvent: (event) => {
           if (event.type === "loop_started") {
             store.setLoopActive(true);

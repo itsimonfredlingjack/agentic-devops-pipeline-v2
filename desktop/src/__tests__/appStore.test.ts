@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { getDefaultServiceUrls, useAppStore } from "../stores/appStore";
 
-function ensureWindow(): Window {
-  const scope = globalThis as typeof globalThis & { window?: Window };
+function ensureWindow(): any {
+  const scope = globalThis as typeof globalThis & { window?: any };
   if (!scope.window) {
-    scope.window = {} as Window;
+    scope.window = {};
   }
   return scope.window;
 }

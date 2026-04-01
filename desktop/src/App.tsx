@@ -1,8 +1,7 @@
-import { useEffect } from "react";
-import { VoiceRail } from "./components/VoiceRail";
-import { LoopCanvas } from "./components/LoopCanvas";
-import { EventStream } from "./components/EventStream";
-import { ClarificationDialog } from "./components/ClarificationDialog";
+import "@fontsource/geist-mono";
+import { useEffect, useState } from "react";
+import { Sidebar } from "./components/Sidebar";
+import { MasterWorkspace } from "./components/MasterWorkspace";
 import { useConnections } from "./hooks/useConnections";
 import { useElapsedTimer } from "./hooks/useElapsedTimer";
 import { useMicrophone } from "./hooks/useMicrophone";
@@ -12,6 +11,7 @@ export default function App() {
   useConnections();
   useElapsedTimer();
   const { recording, toggleRecording } = useMicrophone();
+  const [selectedTaskIndex, setSelectedTaskIndex] = useState(0);
 
   useEffect(() => {
     window.sejfa?.onGlobalShortcut((action) => {
@@ -22,24 +22,17 @@ export default function App() {
   }, [toggleRecording]);
 
   return (
-    <div className={styles.shell}>
+    <div className={styles.appRoot}>
       <div className={styles.dragRegion} />
-
-      <aside className="glass-panel">
-        <VoiceRail recording={recording} onToggle={toggleRecording} />
-      </aside>
-
-      <div className={styles.workspace}>
-        <main className="glass-panel">
-          <LoopCanvas />
-        </main>
-
-        <section className="glass-panel">
-          <EventStream />
-        </section>
-      </div>
-
-      <ClarificationDialog />
+      <Sidebar 
+        selectedIndex={selectedTaskIndex}
+        onSelectIndex={setSelectedTaskIndex}
+      />
+      <MasterWorkspace 
+        selectedIndex={selectedTaskIndex} 
+        recording={recording}
+        onToggleVoice={toggleRecording}
+      />
     </div>
   );
 }

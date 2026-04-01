@@ -1,0 +1,161 @@
+.sidebar {
+  width: 260px;
+  background-color: #0b0c0f;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  user-select: none;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.macSpacer {
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.orgHeader {
+  padding: 8px 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.orgLogomark {
+  width: 14px;
+  height: 14px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 4px;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+}
+
+.orgTitle {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #f3f4f6;
+  letter-spacing: 0.02em;
+}
+
+.navSection {
+  padding: 0 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionTitle {
+  padding: 0 8px;
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.telemetryItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  font-size: 13px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: #374151;
+  transition: all 0.3s;
+}
+
+.dotVoiceOn { background-color: #3b82f6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.6); }
+.dotMonitorOn { background-color: #8b5cf6; box-shadow: 0 0 8px rgba(139, 92, 246, 0.6); }
+
+.queueList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.emptyQueue {
+  padding: 12px 8px;
+  font-size: 12px;
+  color: #4b5563;
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+}
+
+.queueItem {
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid transparent;
+}
+
+.queueItem:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.activeQueueItem {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.issueTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.issueMetaLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconStandard {
+  color: #71717a;
+}
+.activeQueueItem .iconStandard {
+  color: #a1a1aa;
+}
+
+.iconUrgent {
+  /* color built in */
+}
+
+.qId {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.activeQueueItem .qId {
+  color: #9ca3af;
+}
+
+.qTitle {
+  font-size: 13px;
+  color: #d1d5db;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-weight: 500;
+}
+
+.activeQueueItem .qTitle {
+  color: #ffffff;
+}

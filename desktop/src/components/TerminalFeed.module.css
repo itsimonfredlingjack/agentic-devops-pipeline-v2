@@ -1,0 +1,109 @@
+.feedWrapper {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.logRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 12px 32px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes slideUpFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logRow:hover {
+  background-color: rgba(255, 255, 255, 0.015);
+}
+
+.logTime {
+  color: #52525b;
+  font-size: 11px;
+  flex-shrink: 0;
+  width: 65px;
+  padding-top: 2px;
+}
+
+.logBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.logTool {
+  color: #e4e4e7;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.logArgs {
+  color: #a1a1aa;
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.logMeta {
+  color: #52525b;
+  font-size: 11px;
+  padding-top: 2px;
+  text-align: right;
+  width: 48px;
+  flex-shrink: 0;
+}
+
+.logSuccess {
+  border-left: 2px solid #10b981;
+}
+
+.logError {
+  border-left: 2px solid #ef4444;
+  background-color: rgba(239, 68, 68, 0.04);
+}
+
+.activeStep {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 32px;
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  border-left: 2px solid #3b82f6;
+  background: rgba(59, 130, 246, 0.02);
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #3b82f6;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.activeText {
+  color: #a1a1aa;
+  font-size: 12px;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+.feedBottomBuffer {
+  height: 200px; /* generous buffer for blocked states docking over */
+  flex-shrink: 0;
+}

@@ -14,9 +14,11 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@fontsource/geist-mono": "^5.2.7",
     "@sejfa/data-client": "file:../packages/data-client",
     "@sejfa/shared-types": "file:../packages/shared-types",
     "@sejfa/ui-system": "file:../packages/ui-system",
+    "lucide-react": "^1.7.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "socket.io-client": "^4.8.3",

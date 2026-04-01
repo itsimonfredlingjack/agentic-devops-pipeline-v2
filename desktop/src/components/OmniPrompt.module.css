@@ -1,0 +1,206 @@
+.omniContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 380px;
+  position: relative;
+  z-index: 20;
+}
+
+.omniGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 400px;
+  background: 
+    radial-gradient(circle at 10% 30%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 60% 10%, rgba(16, 185, 129, 0.08) 0%, transparent 40%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 1;
+  animation: glowMesh 12s infinite alternate ease-in-out;
+}
+
+@keyframes glowMesh {
+  0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+  100% { transform: translate(-50%, -50%) rotate(15deg) scale(1.1); }
+}
+
+.omniBox {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  text-align: center;
+}
+
+.omniH1 {
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin: 0 0 10px 0;
+  background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.omniH1Recording {
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: #3b82f6;
+  margin: 0 0 10px 0;
+  animation: pulseRecording 2s infinite ease-in-out;
+}
+
+@keyframes pulseRecording {
+  0%, 100% { opacity: 1; text-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+  50% { opacity: 0.7; text-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+}
+
+.omniSub {
+  font-size: 15px;
+  color: #71717a;
+  margin: 0;
+}
+
+.omniAction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.shortcutHint {
+  color: #52525b;
+  font-size: 13px;
+}
+
+.shortcutHint kbd {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  padding: 3px 6px;
+  background: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 4px;
+  color: #a1a1aa;
+}
+
+.topBar {
+  padding: 44px 32px 20px;
+  background: rgba(9, 9, 11, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 50;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.topBarContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.barLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pulseActive {
+  width: 10px;
+  height: 10px;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+  animation: breathe 2s infinite ease-in-out;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+.taskMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.tKey {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 11px;
+  color: #3b82f6;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.tSum {
+  font-size: 16px;
+  font-weight: 500;
+  color: #f4f4f5;
+}
+
+.barRight {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.phasePill {
+  padding: 5px 10px;
+  background: #27272a;
+  border: 1px solid #3f3f46;
+  border-radius: 4px;
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: #d4d4d8;
+  letter-spacing: 0.05em;
+}
+
+.telemetryStat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.telLabel {
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 9px;
+  color: #52525b;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sparkline {
+  color: #3b82f6;
+  opacity: 0.8;
+  animation: scrollLine 4s infinite linear;
+}
+
+@keyframes scrollLine {
+  from { transform: translateX(2px); }
+  to { transform: translateX(0); }
+}
+
+.telVal {
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 14px;
+  color: #e4e4e7;
+}
+
+.warnBurn {
+  color: #f59e0b;
+}

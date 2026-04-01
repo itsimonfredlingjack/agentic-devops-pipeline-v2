@@ -1,24 +1,41 @@
-.shell {
+.appRoot {
+  display: flex;
   height: 100vh;
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 12px;
-  padding: 12px;
-  padding-top: 48px;
+  width: 100vw;
+  background-color: #0b0c0f;
+  color: #ededed;
+  font-family: "Inter", -apple-system, system-ui, sans-serif;
+  overflow: hidden;
+  letter-spacing: -0.01em;
 }
 
 .dragRegion {
-  position: fixed;
+  position: absolute;
   top: 0;
-  left: 80px;
+  left: 0;
   right: 0;
-  height: 40px;
-  z-index: 100;
+  height: 48px;
   -webkit-app-region: drag;
+  z-index: 9999;
+  pointer-events: none;
 }
 
-.workspace {
-  display: grid;
-  grid-template-rows: 1fr auto;
-  gap: 12px;
+/* Global Reset enhancements */
+:global(*) {
+  box-sizing: border-box;
+}
+
+:global(::-webkit-scrollbar) {
+  width: 10px;
+  background: transparent;
+}
+
+:global(::-webkit-scrollbar-thumb) {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  border: 2px solid #0b0c0f;
+}
+
+:global(::-webkit-scrollbar-thumb:hover) {
+  background: rgba(255, 255, 255, 0.2);
 }

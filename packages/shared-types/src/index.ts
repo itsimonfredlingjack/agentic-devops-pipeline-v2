@@ -60,6 +60,7 @@ export interface EventRecord {
   duration_ms?: number | null;
   cost_usd?: number | null;
   error?: string | null;
+  detail?: string | null;
 }
 
 export type GateStatus =

@@ -8,6 +8,11 @@
   user-select: none;
   flex-shrink: 0;
   z-index: 10;
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebarCollapsed {
+  width: 68px;
 }
 
 .macSpacer {
@@ -20,6 +25,12 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  overflow: hidden;
+}
+
+.sidebarCollapsed .orgHeader {
+  padding: 8px 0 28px 0;
+  justify-content: center;
 }
 
 .orgLogomark {
@@ -36,10 +47,41 @@
   font-weight: 600;
   color: #f3f4f6;
   letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.globalModeSwitcher {
+  margin: 0 16px 24px;
+  display: flex;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modeBtn {
+  flex: 1;
+  padding: 8px 0;
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  color: #71717a;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+
+.modeBtnActive {
+  background: #18181b;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .navSection {
-  padding: 0 16px 32px;
+  padding: 0 16px 24px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -48,10 +90,10 @@
 .sectionTitle {
   padding: 0 8px;
   font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: #6b7280;
+  color: #81818a;
   margin-bottom: 4px;
 }
 
@@ -63,6 +105,12 @@
   font-size: 13px;
   color: #9ca3af;
   font-weight: 500;
+  white-space: nowrap;
+}
+
+.sidebarCollapsed .telemetryItem {
+  justify-content: center;
+  padding: 6px 0;
 }
 
 .dot {
@@ -76,7 +124,47 @@
 .dotVoiceOn { background-color: #3b82f6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.6); }
 .dotMonitorOn { background-color: #8b5cf6; box-shadow: 0 0 8px rgba(139, 92, 246, 0.6); }
 
+/* View Switcher */
+.viewSwitcher {
+  margin: 0 16px 20px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  display: flex;
+  gap: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.viewBtn {
+  flex: 1;
+  padding: 6px 0;
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  font-weight: 600;
+  color: #71717a;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.02em;
+}
+
+.viewBtnActive {
+  background: rgba(255, 255, 255, 0.05);
+  color: #f3f4f6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.viewBtn:hover:not(.viewBtnActive) {
+  background: rgba(255, 255, 255, 0.02);
+  color: #a1a1aa;
+}
+
 .queueList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -85,11 +173,13 @@
 .emptyQueue {
   padding: 12px 8px;
   font-size: 12px;
-  color: #4b5563;
+  color: #71717a;
   font-family: "Geist Mono", ui-monospace, sans-serif;
+  text-align: center;
 }
 
 .queueItem {
+  width: 100%;
   padding: 10px 12px;
   border-radius: 6px;
   cursor: pointer;
@@ -97,16 +187,35 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
   border: 1px solid transparent;
+  border-left: 2px solid transparent;
+  background-color: transparent;
+  overflow: hidden;
+}
+
+.sidebarCollapsed .queueItem {
+  padding: 10px 0;
+  align-items: center;
 }
 
 .queueItem:hover {
   background-color: rgba(255, 255, 255, 0.02);
 }
 
+.queueItem:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.55);
+  outline-offset: 1px;
+  border-color: rgba(59, 130, 246, 0.45);
+  background-color: rgba(59, 130, 246, 0.08);
+}
+
 .activeQueueItem {
-  background-color: rgba(255, 255, 255, 0.04);
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
   border-color: rgba(255, 255, 255, 0.06);
+  border-left-color: #3b82f6;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
@@ -114,12 +223,49 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+}
+
+.sidebarCollapsed .issueTopRow {
+  justify-content: center;
 }
 
 .issueMetaLeft {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.issueMetaRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.estimatePill {
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #a1a1aa;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.labelDots {
+  display: flex;
+  gap: 3px;
+}
+
+.labelDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #5856d6; /* Default label color */
+}
+
+.labelDot:nth-child(2) {
+  background-color: #30b0c7;
 }
 
 .iconStandard {
@@ -129,14 +275,10 @@
   color: #a1a1aa;
 }
 
-.iconUrgent {
-  /* color built in */
-}
-
 .qId {
   font-family: "Geist Mono", ui-monospace, sans-serif;
   font-size: 11px;
-  color: #6b7280;
+  color: #71717a;
   font-weight: 500;
   letter-spacing: 0.02em;
 }
@@ -158,4 +300,64 @@
 
 .activeQueueItem .qTitle {
   color: #ffffff;
+}
+
+/* Projects View */
+.projectList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.projectHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: transparent;
+  border: none;
+  color: #a1a1aa;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.projectHeader:hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: #f3f4f6;
+}
+
+.chevron {
+  font-size: 10px;
+  color: #52525b;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.projectBacklog {
+  list-style: none;
+  padding: 4px 0 4px 12px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

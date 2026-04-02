@@ -323,6 +323,31 @@ export async function fetchMonitorStatus(
   };
 }
 
+export async function abortMission(
+  monitorUrl: string,
+  sessionId: string,
+): Promise<void> {
+  console.log(`[data-client] Sending ABORT signal for session ${sessionId} to ${monitorUrl}`);
+  // In a real implementation, this would be a POST to /sessions/{id}/abort
+}
+
+export async function sendTacticalInstruction(
+  monitorUrl: string,
+  sessionId: string,
+  text: string,
+): Promise<void> {
+  console.log(`[data-client] Sending TACTICAL INSTRUCTION for session ${sessionId}: "${text}"`);
+  // In a real implementation, this would be a POST to /sessions/{id}/instructions
+}
+
+export async function forceCheckpoint(
+  monitorUrl: string,
+  sessionId: string,
+): Promise<void> {
+  console.log(`[data-client] Sending CHECKPOINT signal for session ${sessionId}`);
+  // In a real implementation, this would be a POST to /sessions/{id}/checkpoint
+}
+
 export function connectMonitorSocket(
   getMonitorUrl: () => string,
   handlers: {

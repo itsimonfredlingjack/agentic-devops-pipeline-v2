@@ -5,16 +5,23 @@
   flex-direction: column;
 }
 
+.logContainer {
+  display: flex;
+  flex-direction: column;
+}
+
 .logRow {
   display: flex;
   align-items: flex-start;
-  gap: 24px;
-  padding: 12px 32px;
+  gap: 16px;
+  padding: 10px 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   opacity: 0;
   transform: translateY(10px);
+  cursor: default;
+  transition: background-color 0.2s;
 }
 
 @keyframes slideUpFade {
@@ -26,6 +33,14 @@
 
 .logRow:hover {
   background-color: rgba(255, 255, 255, 0.015);
+}
+
+.expandable {
+  cursor: pointer;
+}
+
+.expandable:hover {
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
 .logTime {
@@ -43,10 +58,22 @@
   gap: 6px;
 }
 
+.logToolGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .logTool {
   color: #e4e4e7;
   font-weight: 500;
   font-size: 12px;
+}
+
+.expandIndicator {
+  font-size: 8px;
+  color: #71717a;
+  transition: transform 0.2s;
 }
 
 .logArgs {
@@ -73,6 +100,74 @@
 .logError {
   border-left: 2px solid #ef4444;
   background-color: rgba(239, 68, 68, 0.04);
+}
+
+/* Detail View */
+.logDetail {
+  background: #09090b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 16px 16px 16px 97px; /* Aligned with logBody */
+  animation: expandDetail 0.2s ease-out;
+}
+
+@keyframes expandDetail {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.detailHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.detailHeader span {
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  color: #52525b;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.copyBtn {
+  background: transparent;
+  border: 1px solid #27272a;
+  color: #71717a;
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.copyBtn:hover {
+  background: #18181b;
+  color: #ffffff;
+  border-color: #3f3f46;
+}
+
+.codeBlock {
+  margin: 0;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  color: #d1d5db;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.codeError {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.02);
+  border-color: rgba(239, 68, 68, 0.1);
 }
 
 .activeStep {
@@ -104,6 +199,6 @@
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
 .feedBottomBuffer {
-  height: 200px; /* generous buffer for blocked states docking over */
+  height: 40px;
   flex-shrink: 0;
 }

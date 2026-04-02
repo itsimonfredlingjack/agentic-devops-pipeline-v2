@@ -4,7 +4,7 @@ import { useAppStore } from "../stores/appStore";
 import styles from "./BlockersView.module.css";
 
 export function BlockersView() {
-  const { preview, clarification, stuckAlert, completion, voiceUrl, setPreview, setPipelineStatus, setClarification, clearStuckAlert } = useAppStore();
+  const { preview, clarification, stuckAlert, completion, voiceUrl, setPreview, setPipelineStatus, setClarification, clearStuckAlert, reset } = useAppStore();
   const [answer, setAnswer] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -90,6 +90,9 @@ export function BlockersView() {
           <div className={styles.cardHeader}>MISSION COMPLETE</div>
           <div className={styles.cardContent}>
             <p className={styles.mutedText}>Task execution cycle concluded without exception. Validating readiness state...</p>
+          </div>
+          <div className={styles.cardActions}>
+            <button className={styles.btnPrimary} onClick={() => reset()}>CLOSE MISSION</button>
           </div>
         </div>
       )}

@@ -74,7 +74,7 @@ export function OmniPrompt({ recording, onToggleVoice, isExecuting, targetedTask
         
         <div className={styles.omniAction}>
            <MicButton recording={recording} onClick={onToggleVoice} />
-           <div className={styles.shortcutHint}>
+           <div className={`${styles.shortcutHint} ${phase === "idle" ? styles.shortcutPulse : ""}`}>
               <span>Hold <kbd>&#x2318;&#x21E7;V</kbd> to record</span>
            </div>
         </div>

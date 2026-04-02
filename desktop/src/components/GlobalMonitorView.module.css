@@ -1,0 +1,112 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 48px;
+  background-color: #0b0c0f;
+  animation: fadeIn 0.3s ease;
+  overflow-y: auto;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.header {
+  margin-bottom: 48px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #71717a;
+}
+
+.loading {
+  font-family: "Geist Mono", monospace;
+  font-size: 13px;
+  color: #3b82f6;
+  text-align: center;
+  padding: 100px 0;
+}
+
+.sessionList {
+  display: flex;
+  flex-direction: column;
+}
+
+.listHeader {
+  display: grid;
+  grid-template-columns: 120px 120px 1fr 100px 120px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  color: #52525b;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.sessionRow {
+  display: grid;
+  grid-template-columns: 120px 120px 1fr 100px 120px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  font-size: 13px;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.sessionRow:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sessionId {
+  font-family: "Geist Mono", monospace;
+  color: #71717a;
+}
+
+.ticketId {
+  font-family: "Geist Mono", monospace;
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.cost {
+  font-family: "Geist Mono", monospace;
+  color: #e4e4e7;
+}
+
+.outcome {
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.outcomeSuccess {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.outcomeFail {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.empty {
+  padding: 100px 0;
+  text-align: center;
+  color: #52525b;
+  font-size: 14px;
+}

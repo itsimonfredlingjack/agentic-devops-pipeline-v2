@@ -1,0 +1,155 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  padding-top: 15vh;
+  z-index: 10000;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  width: 100%;
+  max-width: 600px;
+  background: linear-gradient(180deg, rgba(24, 24, 27, 0.95), rgba(9, 9, 11, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 0, 0, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: fit-content;
+  max-height: 60vh;
+  animation: slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20px) scale(0.98); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.searchContainer {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 16px;
+}
+
+.searchIcon {
+  color: #71717a;
+  font-size: 18px;
+}
+
+.searchInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  font-family: "Inter", sans-serif;
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: #52525b;
+}
+
+.commandList {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  overflow-y: auto;
+}
+
+.commandItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.activeItem {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.activeItem .itemLabel {
+  color: #ffffff;
+}
+
+.activeItem .itemIcon {
+  color: #3b82f6;
+}
+
+.itemLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.itemIcon {
+  color: #71717a;
+  font-family: "Geist Mono", monospace;
+  font-size: 14px;
+  width: 24px;
+  text-align: center;
+}
+
+.itemLabel {
+  font-size: 14px;
+  color: #a1a1aa;
+  font-weight: 500;
+}
+
+.itemShortcut {
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  color: #52525b;
+  letter-spacing: 0.05em;
+}
+
+.emptyState {
+  padding: 32px;
+  text-align: center;
+  color: #52525b;
+  font-size: 14px;
+}
+
+.footer {
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.015);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  gap: 20px;
+}
+
+.instruction {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #71717a;
+}
+
+.instruction kbd {
+  font-family: "Geist Mono", monospace;
+  padding: 2px 4px;
+  background: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 3px;
+  color: #a1a1aa;
+}

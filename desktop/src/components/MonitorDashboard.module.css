@@ -1,0 +1,314 @@
+.monitorDash {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 32px;
+  background-color: #0b0c0f;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.dashHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.exitBtn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #71717a;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px;
+  transition: all 0.2s;
+  margin-right: 8px;
+}
+
+.exitBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.pulseActive {
+  width: 10px;
+  height: 10px;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+  animation: breathe 2s infinite ease-in-out;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+.missionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.missionId {
+  font-family: "Geist Mono", monospace;
+  font-size: 13px;
+  color: #3b82f6;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.missionStatus {
+  font-size: 11px;
+  color: #71717a;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+
+.headerRight {
+  display: flex;
+  gap: 32px;
+}
+
+.telemetryBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.telLabel {
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  color: #52525b;
+  letter-spacing: 0.08em;
+}
+
+.telVal {
+  font-family: "Geist Mono", monospace;
+  font-size: 14px;
+  color: #e4e4e7;
+  font-weight: 500;
+}
+
+/* Progress Rail */
+.progressRail {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  padding: 0 40px;
+  position: relative;
+}
+
+.phaseStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+  width: 80px;
+}
+
+.stepCircle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #18181b;
+  border: 1px solid #27272a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Geist Mono", monospace;
+  font-size: 11px;
+  color: #52525b;
+  transition: all 0.3s;
+}
+
+.stepLabel {
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  color: #52525b;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  transition: all 0.3s;
+}
+
+.stepConnector {
+  position: absolute;
+  top: 14px;
+  left: 60px;
+  width: calc(100vw / 5 - 100px);
+  height: 1px;
+  background: #18181b;
+  z-index: 1;
+}
+
+.phaseActive .stepCircle {
+  background: #1e3a8a;
+  border-color: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+.phaseActive .stepLabel {
+  color: #3b82f6;
+}
+
+.phaseComplete .stepCircle {
+  background: #064e3b;
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.phaseComplete .stepLabel {
+  color: #10b981;
+}
+
+/* Content Grid */
+.contentGrid {
+  display: flex;
+  gap: 24px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.feedPanel {
+  flex: 2;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.insightPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panelHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.panelTitle {
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  color: #71717a;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.liveIndicator {
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  color: #3b82f6;
+  animation: pulseOpacity 2s infinite ease-in-out;
+}
+
+@keyframes pulseOpacity {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.qualityCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.cardTitle {
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  color: #71717a;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.qualityMetrics {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.metricRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.metricRow span:first-child {
+  color: #52525b;
+  font-family: "Geist Mono", monospace;
+}
+
+.metricVal {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.valWarn {
+  color: #f59e0b;
+}
+
+.valDanger {
+  color: #ef4444;
+}
+
+.failedTools {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.subLabel {
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  color: #52525b;
+  letter-spacing: 0.05em;
+}
+
+.toolList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.toolPill {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+

@@ -23,6 +23,7 @@ export type LoopPhase =
 interface AppState {
   // Derived
   phase: LoopPhase;
+  activeGlobalView: "command" | "monitor";
 
   // Connection status
   voiceConnected: boolean;
@@ -68,6 +69,7 @@ interface AppState {
   clearStuckAlert: () => void;
   setCompletion: (completion: CompletionSummary) => void;
   setQueue: (queue: QueueItem[]) => void;
+  setActiveGlobalView: (view: "command" | "monitor") => void;
   reset: () => void;
 }
 
@@ -116,6 +118,7 @@ function derivePhase(state: {
 
 const initialState = {
   phase: "idle" as LoopPhase,
+  activeGlobalView: "command" as "command" | "monitor",
   voiceConnected: false,
   monitorConnected: false,
   ...getDefaultServiceUrls(),
@@ -196,6 +199,8 @@ export const useAppStore = create<AppState>()((set) => ({
     }),
 
   setQueue: (queue) => set({ queue }),
+
+  setActiveGlobalView: (view: "command" | "monitor") => set({ activeGlobalView: view }),
 
   reset: () => set({ ...initialState }),
 }));

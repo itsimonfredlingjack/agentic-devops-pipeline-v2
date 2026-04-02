@@ -38,17 +38,44 @@ export function useMicrophone() {
           }
 
           const data = await resp.json();
-          if (data.ticket_key) {
-            store.setTicketKey(data.ticket_key);
-            store.setPipelineStatus("done");
-          } else if (data.clarification) {
+          if (data.status === "preview_needed") {
+            const fallbackIntent = {
+              summary: data.summary || "",
+              description: "",
+              acceptanceCriteria: "",
+              issueType: "Story",
+              priority: "Medium",
+              labels: [] as string[],
+              ambiguityScore: 0,
+            };
+            store.setPreview({
+              sessionId: data.session_id,
+              transcribedText: data.transcribed_text,
+              summary: data.summary,
+              intent: data.intent
+                ? {
+                    summary: data.intent.summary,
+                    description: data.intent.description,
+                    acceptanceCriteria: data.intent.acceptance_criteria,
+                    issueType: data.intent.issue_type,
+                    priority: data.intent.priority,
+                    labels: data.intent.labels,
+                    ambiguityScore: data.intent.ambiguity_score,
+                  }
+                : fallbackIntent,
+            });
+            store.setPipelineStatus("previewing");
+          } else if (data.status === "clarification_needed") {
             store.setClarification({
               sessionId: data.session_id,
-              questions: data.clarification.questions,
-              partialSummary: data.clarification.partial_summary,
-              round: data.clarification.round,
+              questions: data.questions,
+              partialSummary: data.partial_summary,
+              round: data.round,
             });
             store.setPipelineStatus("clarifying");
+          } else if (data.ticket_key) {
+            store.setTicketKey(data.ticket_key);
+            store.setPipelineStatus("done");
           }
         } catch {
           store.setPipelineStatus("error");

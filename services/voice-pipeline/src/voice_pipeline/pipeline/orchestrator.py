@@ -115,18 +115,31 @@ class PreviewNeeded:
         session_id: str,
         transcribed_text: str,
         summary: str,
+        intent: JiraTicketIntent | None = None,
     ) -> None:
         self.session_id = session_id
         self.transcribed_text = transcribed_text
         self.summary = summary
+        self.intent = intent
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result: dict[str, Any] = {
             "status": "preview_needed",
             "session_id": self.session_id,
             "transcribed_text": self.transcribed_text,
             "summary": self.summary,
         }
+        if self.intent:
+            result["intent"] = {
+                "summary": self.intent.summary,
+                "description": self.intent.description,
+                "acceptance_criteria": self.intent.acceptance_criteria,
+                "issue_type": self.intent.issue_type,
+                "priority": self.intent.priority,
+                "labels": self.intent.labels,
+                "ambiguity_score": self.intent.ambiguity_score,
+            }
+        return result
 
 
 
@@ -225,17 +238,24 @@ class PipelineOrchestrator:
         async with self._lock:
             return await self._execute_clarification(session, answer_text)
 
+    _OVERRIDE_FIELDS = frozenset({
+        "summary", "description", "acceptance_criteria", "issue_type", "priority", "labels",
+    })
+
     async def continue_with_approval(
-        self, session_id: str
+        self,
+        session_id: str,
+        overrides: dict[str, Any] | None = None,
     ) -> PipelineResult:
         """Continue a pipeline session after the user approves the preview.
-        
+
         Args:
             session_id: The session ID from the PreviewNeeded response.
-            
+            overrides: Optional dict of intent field edits from the review UI.
+
         Returns:
             PipelineResult.
-            
+
         Raises:
             ValueError: If session_id is not found.
         """
@@ -248,6 +268,14 @@ class PipelineOrchestrator:
             intent = session.current_intent
             if not intent:
                 raise ValueError("Session has no extracted intent to approve")
+
+            if overrides:
+                intent_dict = intent.model_dump()
+                for key, value in overrides.items():
+                    if key in self._OVERRIDE_FIELDS:
+                        intent_dict[key] = value
+                intent = JiraTicketIntent.model_validate(intent_dict)
+
             self._sessions.pop(session_id, None)
             return await self._create_ticket(intent, combined_text, session_id)
 
@@ -364,21 +392,22 @@ class PipelineOrchestrator:
             f"Waiting for human approval: {intent.summary}",
         )
 
+        preview = PreviewNeeded(
+            session_id=session.session_id,
+            transcribed_text=text,
+            summary=intent.summary,
+            intent=intent,
+        )
+
         if self._broadcast:
             await self._broadcast(
                 {
                     "type": "preview_needed",
-                    "session_id": session.session_id,
-                    "transcribed_text": text,
-                    "summary": intent.summary,
+                    **preview.to_dict(),
                 }
             )
 
-        return PreviewNeeded(
-            session_id=session.session_id,
-            transcribed_text=text,
-            summary=intent.summary,
-        )
+        return preview
 
     async def _execute_clarification(
         self, session: PipelineSession, answer_text: str
@@ -462,21 +491,22 @@ class PipelineOrchestrator:
             f"Waiting for human approval: {intent.summary}",
         )
 
+        preview = PreviewNeeded(
+            session_id=session.session_id,
+            transcribed_text=combined_text,
+            summary=intent.summary,
+            intent=intent,
+        )
+
         if self._broadcast:
             await self._broadcast(
                 {
                     "type": "preview_needed",
-                    "session_id": session.session_id,
-                    "transcribed_text": combined_text,
-                    "summary": intent.summary,
+                    **preview.to_dict(),
                 }
             )
 
-        return PreviewNeeded(
-            session_id=session.session_id,
-            transcribed_text=combined_text,
-            summary=intent.summary,
-        )
+        return preview
 
     async def _create_ticket(
         self,

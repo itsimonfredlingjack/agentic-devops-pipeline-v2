@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { approvePipeline, discardPipeline, submitClarification } from "@sejfa/data-client";
+import { submitClarification } from "@sejfa/data-client";
 import { useAppStore } from "../stores/appStore";
 import styles from "./Workspace.module.css";
 import type { EventRecord } from "@sejfa/shared-types";
@@ -30,7 +30,6 @@ export function Workspace({ selectedIndex }: { selectedIndex: number }) {
     phase,
     ticketKey,
     queue,
-    preview,
     clarification,
     stuckAlert,
     completion,
@@ -39,8 +38,6 @@ export function Workspace({ selectedIndex }: { selectedIndex: number }) {
     cost,
     events,
     voiceUrl,
-    setPreview,
-    setPipelineStatus,
     setClarification,
     clearStuckAlert,
   } = useAppStore();
@@ -53,25 +50,6 @@ export function Workspace({ selectedIndex }: { selectedIndex: number }) {
   const focusSummary = isExecuting 
     ? queue.find(q => q.key === ticketKey)?.summary 
     : queue[selectedIndex]?.summary;
-
-  const handleApprove = async () => {
-    if (!preview) return;
-    setSubmitting(true);
-    try {
-      await approvePipeline(voiceUrl, preview.sessionId);
-      setPreview(null);
-    } catch (e) { console.error(e); setSubmitting(false); }
-  };
-
-  const handleDiscard = async () => {
-    if (!preview) return;
-    setSubmitting(true);
-    try {
-      await discardPipeline(voiceUrl, preview.sessionId);
-      setPreview(null);
-      setPipelineStatus("idle");
-    } catch (e) { console.error(e); setSubmitting(false); }
-  };
 
   const submitReply = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -170,28 +148,6 @@ export function Workspace({ selectedIndex }: { selectedIndex: number }) {
         {/* Padding so scrolling puts content above docker panels if they appear */}
         <div className={styles.bottomBuffer} />
       </div>
-
-      {preview && (
-        <div className={`${styles.dockerPanel} ${styles.warningBorder}`}>
-          <div className={styles.dockerHeader}>
-            <strong>VERIFICATION REQUIRED: Intent Confirmation</strong>
-          </div>
-          <div className={styles.dockerContent}>
-            <div className={styles.box}>
-              <sub>Transcript</sub>
-              <div>{preview.transcribedText}</div>
-            </div>
-            <div className={styles.box}>
-              <sub>Command Summary</sub>
-              <div>{preview.summary}</div>
-            </div>
-          </div>
-          <div className={styles.dockerActions}>
-            <button className={styles.btnGhost} onClick={handleDiscard} disabled={submitting}>DISCARD</button>
-            <button className={styles.btnPrimary} onClick={handleApprove} disabled={submitting}>APPROVE & EXECUTE</button>
-          </div>
-        </div>
-      )}
 
       {clarification && (
         <div className={`${styles.dockerPanel} ${styles.warningBorder}`}>

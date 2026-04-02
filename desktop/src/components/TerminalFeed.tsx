@@ -61,9 +61,13 @@ export function TerminalFeed() {
 
         return (
           <div key={e.event_id} className={styles.logContainer}>
-            <div 
+            <div
               className={`${styles.logRow} ${e.success === false ? styles.logError : e.success === true ? styles.logSuccess : ""} ${hasDetail ? styles.expandable : ""}`}
               onClick={() => hasDetail && toggleExpand(e.event_id)}
+              onKeyDown={(ev) => hasDetail && (ev.key === "Enter" || ev.key === " ") && (ev.preventDefault(), toggleExpand(e.event_id))}
+              role={hasDetail ? "button" : undefined}
+              tabIndex={hasDetail ? 0 : undefined}
+              aria-expanded={hasDetail ? isExpanded : undefined}
             >
               <div className={styles.logTime}>{formatTime(e.timestamp)}</div>
               <div className={styles.logBody}>
@@ -82,7 +86,7 @@ export function TerminalFeed() {
               <div className={styles.logDetail}>
                 <div className={styles.detailHeader}>
                   <span>DETAILED OUTPUT</span>
-                  <button className={styles.copyBtn} onClick={(evt) => handleCopy(evt, detail)}>COPY</button>
+                  <button className={styles.copyBtn} onClick={(evt) => handleCopy(evt, detail)} aria-label="Copy details to clipboard">COPY</button>
                 </div>
                 <pre className={`${styles.codeBlock} ${e.success === false ? styles.codeError : ""}`}>
                   {detail}

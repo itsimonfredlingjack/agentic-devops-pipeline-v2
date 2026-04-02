@@ -1,0 +1,249 @@
+.reviewContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px 40px;
+  gap: 24px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerTitle {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e4e4e7;
+  letter-spacing: 0.1em;
+}
+
+.phasePill {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: #007aff;
+  padding: 4px 10px;
+  border-radius: 99px;
+  letter-spacing: 0.05em;
+}
+
+/* Transcript section */
+.section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.sectionLabel {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 10px;
+  color: #71717a;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.transcriptBlock {
+  font-size: 15px;
+  color: #e4e4e7;
+  line-height: 1.6;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 16px;
+  white-space: pre-wrap;
+}
+
+/* Intent fields grid */
+.intentGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fieldRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 10px;
+  color: #71717a;
+  letter-spacing: 0.08em;
+}
+
+.fieldInput {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 10px 14px;
+  color: #f4f4f5;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.fieldInput:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.fieldTextarea {
+  composes: fieldInput;
+  min-height: 80px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.fieldSelect {
+  composes: fieldInput;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' fill='none' stroke='%2371717a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+/* Inline row for type + priority */
+.fieldRowInline {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Labels pills */
+.labelsDisplay {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 2px;
+}
+
+.labelPill {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: #a1a1aa;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 3px 10px;
+  border-radius: 99px;
+  letter-spacing: 0.02em;
+}
+
+.labelsEmpty {
+  font-size: 12px;
+  color: #52525b;
+  font-style: italic;
+}
+
+/* Confidence bar */
+.confidenceSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.confidenceLabel {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 10px;
+  color: #71717a;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+
+.confidenceBarTrack {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.confidenceBarFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease, background-color 0.4s ease;
+}
+
+.confidenceValue {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Action bar */
+.actionBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: auto;
+}
+
+.actionBarLeft {
+  display: flex;
+  gap: 16px;
+}
+
+.btnPrimary {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+.btnPrimary:hover {
+  background: linear-gradient(135deg, #4f8bf9, #3b82f6);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+}
+.btnPrimary:active { transform: translateY(1px); }
+.btnPrimary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.btnGhost {
+  background: transparent;
+  color: #a1a1aa;
+  border: none;
+  padding: 10px 16px;
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+}
+.btnGhost:hover { color: #f4f4f5; }
+.btnGhost:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btnReRecord {
+  composes: btnGhost;
+  color: #30b0c7;
+}
+.btnReRecord:hover { color: #67d4e5; }

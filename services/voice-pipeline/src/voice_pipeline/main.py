@@ -331,6 +331,7 @@ def create_app() -> FastAPI:
 
     class ApproveRequest(BaseModel):
         session_id: str
+        overrides: dict[str, Any] | None = None
 
     class DiscardRequest(BaseModel):
         session_id: str
@@ -409,6 +410,7 @@ def create_app() -> FastAPI:
         try:
             result = await orchestrator.continue_with_approval(
                 session_id=request.session_id,
+                overrides=request.overrides,
             )
         except ValueError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
@@ -425,7 +427,7 @@ def create_app() -> FastAPI:
             result = await orchestrator.discard_session(session_id=request.session_id)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
-        
+
         return result
 
     # -----------------------------------------------------------------------

@@ -161,7 +161,7 @@ export function Sidebar({
       <div className={styles.macSpacer} />
       
       <div className={styles.orgHeader}>
-        <div className={styles.orgLogomark} title="SEJFA COMMAND" onClick={onToggleCollapse} style={{ cursor: "pointer" }}></div>
+        <button className={styles.orgLogomark} onClick={onToggleCollapse} aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"} type="button" />
         {!isCollapsed && <span className={styles.orgTitle}>SEJFA COMMAND</span>}
       </div>
 
@@ -183,13 +183,13 @@ export function Sidebar({
       )}
 
       <div className={styles.navSection}>
-        {!isCollapsed && <div className={styles.sectionTitle}>SYSTEM TELEMETRY</div>}
-        <div className={styles.telemetryItem} title={voiceConnected ? "Voice Intake: Connected" : "Voice Intake: Disconnected"}>
-          <div className={`${styles.dot} ${voiceConnected ? styles.dotVoiceOn : ""}`} />
+        {!isCollapsed && <h3 className={styles.sectionTitle}>SYSTEM TELEMETRY</h3>}
+        <div className={styles.telemetryItem} role="status" aria-label={`Voice Intake: ${voiceConnected ? "Connected" : "Disconnected"}`}>
+          <div className={`${styles.dot} ${voiceConnected ? styles.dotVoiceOn : ""}`} aria-hidden="true" />
           {!isCollapsed && <span>Voice Intake</span>}
         </div>
-        <div className={styles.telemetryItem} title={monitorConnected ? "Monitor Stream: Connected" : "Monitor Stream: Disconnected"}>
-          <div className={`${styles.dot} ${monitorConnected ? styles.dotMonitorOn : ""}`} />
+        <div className={styles.telemetryItem} role="status" aria-label={`Monitor Stream: ${monitorConnected ? "Connected" : "Disconnected"}`}>
+          <div className={`${styles.dot} ${monitorConnected ? styles.dotMonitorOn : ""}`} aria-hidden="true" />
           {!isCollapsed && <span>Monitor Stream</span>}
         </div>
       </div>
@@ -218,15 +218,16 @@ export function Sidebar({
       )}
 
       <div className={styles.navSection}>
-        {!isCollapsed && <div className={styles.sectionTitle}>{activeView.toUpperCase()}</div>}
+        {!isCollapsed && <h3 className={styles.sectionTitle}>{activeView.toUpperCase()}</h3>}
         
         {activeView === 'projects' ? (
            <div className={styles.projectList}>
              {mockProjects.map(project => (
                <div key={project.name} className={styles.projectFolder}>
-                 <button 
+                 <button
                    className={styles.projectHeader}
                    onClick={() => toggleProject(project.name)}
+                   aria-expanded={expandedProjects.includes(project.name)}
                  >
                    <span className={`${styles.chevron} ${expandedProjects.includes(project.name) ? styles.chevronOpen : ""}`}>▸</span>
                    <span className={styles.projectName}>{project.name}</span>

@@ -41,6 +41,13 @@
 .sessionList {
   display: flex;
   flex-direction: column;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.sessionList thead,
+.sessionList tbody {
+  display: contents;
 }
 
 .listHeader {
@@ -53,6 +60,7 @@
   color: #52525b;
   letter-spacing: 0.1em;
   font-weight: 600;
+  text-align: left;
 }
 
 .sessionRow {

@@ -25,10 +25,21 @@ export interface ClarificationState {
   round: number;
 }
 
+export interface IntentPreview {
+  summary: string;
+  description: string;
+  acceptanceCriteria: string;
+  issueType: string;
+  priority: string;
+  labels: string[];
+  ambiguityScore: number;
+}
+
 export interface PreviewState {
   sessionId: string;
   transcribedText: string;
   summary: string;
+  intent: IntentPreview;
 }
 
 export interface LoopEvent {

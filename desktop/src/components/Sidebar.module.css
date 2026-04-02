@@ -9,6 +9,7 @@
   flex-shrink: 0;
   z-index: 10;
   transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
 }
 
 .sidebarCollapsed {
@@ -39,6 +40,14 @@
   background: linear-gradient(135deg, #10b981, #059669);
   border-radius: 4px;
   box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.orgLogomark:focus-visible {
+  outline: 2px solid rgba(16, 185, 129, 0.7);
+  outline-offset: 3px;
 }
 
 .orgTitle {
@@ -87,6 +96,13 @@
   gap: 10px;
 }
 
+.navSection:last-child {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 16px;
+}
+
 .sectionTitle {
   padding: 0 8px;
   font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -94,7 +110,7 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   color: #81818a;
-  margin-bottom: 4px;
+  margin: 0 0 4px 0;
 }
 
 .telemetryItem {

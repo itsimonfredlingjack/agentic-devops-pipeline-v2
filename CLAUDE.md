@@ -36,6 +36,7 @@ services/
 src/
   sejfa/                               # Shared Python utilities (integrations, monitor, utils)
   chatgpt_companion/                   # ChatGPT Developer Mode MCP companion
+desktop/                               # Electron + React 18 + Vite desktop app (Command Desk)
 chatgpt-companion/web/                 # React widget UI for the ChatGPT companion
 packages/
   data-client/                         # TS API client for voice backend
@@ -43,9 +44,13 @@ packages/
   ui-system/                           # Shared UI component library
 scripts/                               # Loop, Jira, Jules, systemd, deployment helpers
 tests/                                 # pytest suites mirroring source structure
+data/                                  # SQLite databases (monitor.db, companion metrics)
+.claude/hooks.json                     # Hook config registering monitor_hook.py
 .claude/hooks/                         # Monitor hook bridge (fire-and-forget)
 docs/                                  # Canonical + archive documentation
 ```
+
+The root `package.json` defines an npm workspace covering `packages/*` and `desktop/`.
 
 What does NOT exist in this repo:
 
@@ -113,6 +118,26 @@ cd chatgpt-companion/web && npm install && npm run build && cd ../..
 
 The companion runs via `uvicorn src.chatgpt_companion.mcp_server:app` on port `${SEJFA_CHATGPT_COMPANION_PORT:-8787}`.
 
+### Desktop app (Electron)
+
+```bash
+npm --workspace desktop run electron:dev   # Dev mode (Vite + Electron)
+npm --workspace desktop run test           # Vitest
+npm --workspace desktop run build          # Production build
+```
+
+### Local stack orchestrator
+
+Runs voice pipeline, monitor API, and ChatGPT companion together with non-colliding ports:
+
+```bash
+./scripts/start-sejfa-local.sh start       # Start all services
+./scripts/start-sejfa-local.sh status      # Check running services
+./scripts/start-sejfa-local.sh stop        # Stop all services
+```
+
+Default ports: voice `8000`, monitor `8110`, companion `8788`. Override with `SEJFA_VOICE_PORT`, `SEJFA_MONITOR_PORT`, `SEJFA_CHATGPT_COMPANION_PORT`.
+
 ### Loop runner
 
 ```bash
@@ -126,7 +151,10 @@ Polls `/api/loop/queue` for pending tickets, runs `claude --print "/start-task $
 ## Verification
 
 ```bash
-# All tests
+# Full CI validation (ruff + pytest with coverage, fail-under 80%)
+bash scripts/ci_check.sh
+
+# All Python tests
 pytest tests/ -xvs
 
 # Subsystem tests
@@ -142,6 +170,11 @@ pytest tests/voice_pipeline/test_pipeline.py -xvs
 # Lint and format
 ruff check .
 ruff format --check .
+
+# JS/TS workspace tests and builds
+npm run test                           # All workspace tests
+npm run build                          # All workspace builds
+npm run lint                           # All workspace lints
 ```
 
 pytest is configured with `asyncio_mode = "auto"` in pyproject.toml. Markers: `unit`, `integration`, `e2e`, `slow`.
@@ -171,9 +204,13 @@ Companion service that receives Claude Code hook events and provides session obs
 - `stuck_detector.py` — detects stalled execution
 - `ws_manager.py` — WebSocket broadcasting
 
+### Desktop App (`desktop/`)
+
+Electron + React 18 + Vite desktop companion (Command Desk). Uses Zustand for state, consumes `@sejfa/data-client`, `@sejfa/shared-types`, and `@sejfa/ui-system` from the monorepo. Key views: MonitorDashboard, CommandPalette, MissionDossier, TerminalFeed, BlockersView.
+
 ### Hook Bridge (`.claude/hooks/`)
 
-`hooks.json` registers `monitor_hook.py` for PreToolUse, PostToolUse, and Stop events (3s timeout). Hooks are fire-and-forget — they send events to the monitor API but cannot block Claude Code execution.
+`.claude/hooks.json` registers `monitor_hook.py` for PreToolUse, PostToolUse, and Stop events (3s timeout). Hooks are fire-and-forget — they send events to the monitor API but cannot block Claude Code execution.
 
 ### ChatGPT Companion (`src/chatgpt_companion/`)
 
@@ -239,6 +276,8 @@ Execution-layer boundary. Currently owns the loop-runner script that polls for p
 - Branch: `{type}/{JIRA-ID}-{slug}` (e.g. `feature/DEV-42-oauth-login`)
 - Commit: `DEV-42: Add OAuth login endpoint`
 - Stage with `git add -u`
+- Use `./scripts/create-branch.sh PROJ-123 feature "short description"` and `./scripts/create-pr.sh PROJ-123` for consistent naming
+- Run `bash scripts/preflight.sh` before starting ticket work (validates git state, Jira/GitHub connectivity, required files)
 
 ### TDD (Ralph Loop)
 
@@ -250,7 +289,7 @@ REFACTOR -> clean up without breaking behavior
 
 ### Documentation priority when docs disagree
 
-1. `README.md` / `CLAUDE.md`
+1. `CLAUDE.md` / `AGENTS.md` / `README.md`
 2. `docs/README.md` / `docs/ARCHITECTURE.md`
 3. Subsystem docs
 4. Archive docs (historical context only)

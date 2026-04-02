@@ -35,29 +35,33 @@ export function GlobalMonitorView() {
       {loading ? (
         <div className={styles.loading}>Accessing telemetry vault...</div>
       ) : (
-        <div className={styles.sessionList}>
-          <div className={styles.listHeader}>
-             <span>SESSION ID</span>
-             <span>MISSION</span>
-             <span>STARTED</span>
-             <span>COST</span>
-             <span>OUTCOME</span>
-          </div>
-          {sessions.map(s => (
-            <div key={s.session_id} className={styles.sessionRow}>
-              <span className={styles.sessionId}>{s.session_id.slice(0, 8)}...</span>
-              <span className={styles.ticketId}>{s.ticket_id || "—"}</span>
-              <span>{s.started_at ? new Date(s.started_at).toLocaleString() : "—"}</span>
-              <span className={styles.cost}>{s.total_cost_usd ? `$${s.total_cost_usd.toFixed(3)}` : "$0.000"}</span>
-              <span className={`${styles.outcome} ${s.outcome === 'done' ? styles.outcomeSuccess : styles.outcomeFail}`}>
-                {(s.outcome || "unknown").toUpperCase()}
-              </span>
-            </div>
-          ))}
-          {sessions.length === 0 && (
-            <div className={styles.empty}>No historical telemetry found.</div>
-          )}
-        </div>
+        <table className={styles.sessionList}>
+          <thead>
+            <tr className={styles.listHeader}>
+               <th>SESSION ID</th>
+               <th>MISSION</th>
+               <th>STARTED</th>
+               <th>COST</th>
+               <th>OUTCOME</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sessions.map(s => (
+              <tr key={s.session_id} className={styles.sessionRow}>
+                <td className={styles.sessionId}>{s.session_id.slice(0, 8)}...</td>
+                <td className={styles.ticketId}>{s.ticket_id || "—"}</td>
+                <td>{s.started_at ? new Date(s.started_at).toLocaleString() : "—"}</td>
+                <td className={styles.cost}>{s.total_cost_usd ? `$${s.total_cost_usd.toFixed(3)}` : "$0.000"}</td>
+                <td className={`${styles.outcome} ${s.outcome === 'done' ? styles.outcomeSuccess : styles.outcomeFail}`}>
+                  {(s.outcome || "unknown").toUpperCase()}
+                </td>
+              </tr>
+            ))}
+            {sessions.length === 0 && (
+              <tr><td colSpan={5} className={styles.empty}>No historical telemetry found.</td></tr>
+            )}
+          </tbody>
+        </table>
       )}
     </div>
   );

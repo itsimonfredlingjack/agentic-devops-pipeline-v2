@@ -42,7 +42,31 @@ export function useConnections(): void {
           });
         },
         onPreview: (payload) => {
-          useAppStore.getState().setPreview(payload);
+          const fallbackIntent = {
+            summary: payload.summary,
+            description: "",
+            acceptanceCriteria: "",
+            issueType: "Story",
+            priority: "Medium",
+            labels: [] as string[],
+            ambiguityScore: 0,
+          };
+          useAppStore.getState().setPreview({
+            sessionId: payload.sessionId,
+            transcribedText: payload.transcribedText,
+            summary: payload.summary,
+            intent: payload.intent
+              ? {
+                  summary: payload.intent.summary,
+                  description: payload.intent.description,
+                  acceptanceCriteria: payload.intent.acceptance_criteria,
+                  issueType: payload.intent.issue_type,
+                  priority: payload.intent.priority,
+                  labels: payload.intent.labels,
+                  ambiguityScore: payload.intent.ambiguity_score,
+                }
+              : fallbackIntent,
+          });
         },
         onLoopEvent: (event) => {
           if (event.type === "loop_started") {

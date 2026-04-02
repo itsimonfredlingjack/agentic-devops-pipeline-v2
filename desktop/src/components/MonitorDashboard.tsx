@@ -42,8 +42,8 @@ export function MonitorDashboard() {
     <div className={styles.monitorDash}>
       <div className={styles.dashHeader}>
         <div className={styles.headerLeft}>
-          <button className={styles.exitBtn} onClick={() => reset()} title="Exit mission view">✕</button>
-          <div className={styles.pulseActive}></div>
+          <button className={styles.exitBtn} onClick={() => reset()} aria-label="Exit mission view">✕</button>
+          <div className={styles.pulseActive} aria-hidden="true"></div>
           <div className={styles.missionInfo}>
             <span className={styles.missionId}>{ticketKey || "ACTIVE-MISSION"}</span>
             <span className={styles.missionStatus}>AUTONOMIC EXECUTION LOOP</span>
@@ -88,7 +88,7 @@ export function MonitorDashboard() {
         <div className={styles.feedPanel}>
           <div className={styles.panelHeader}>
              <span className={styles.panelTitle}>EXECUTION FEED</span>
-             {processingStep && <span className={styles.liveIndicator}>LIVE: {processingStep}</span>}
+             {processingStep && <span className={styles.liveIndicator} aria-live="polite">LIVE: {processingStep}</span>}
           </div>
           <TerminalFeed />
         </div>

@@ -156,8 +156,9 @@ export const useAppStore = create<AppState>()((set) => ({
 
   setPreview: (preview) =>
     set((state) => {
-      const next = { ...state, preview };
-      return { preview, phase: derivePhase(next) };
+      const pipelineStatus = preview ? "previewing" as PipelineStatus : state.pipelineStatus;
+      const next = { ...state, preview, pipelineStatus };
+      return { preview, pipelineStatus, phase: derivePhase(next) };
     }),
 
   setLoopActive: (active) =>

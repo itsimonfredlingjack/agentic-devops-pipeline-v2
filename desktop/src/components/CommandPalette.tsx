@@ -20,6 +20,7 @@ export function CommandPalette({ isOpen, onClose, onSelectTask }: {
   const [search, setSearch] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
 
   const commands: Command[] = useMemo(() => {
     const list: Command[] = [
@@ -53,9 +54,12 @@ export function CommandPalette({ isOpen, onClose, onSelectTask }: {
 
   useEffect(() => {
     if (isOpen) {
+      triggerRef.current = document.activeElement as HTMLElement;
       setSearch("");
       setSelectedIndex(0);
       setTimeout(() => inputRef.current?.focus(), 10);
+    } else {
+      triggerRef.current?.focus();
     }
   }, [isOpen]);
 
@@ -87,7 +91,7 @@ export function CommandPalette({ isOpen, onClose, onSelectTask }: {
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+      <div className={styles.modal} onClick={e => e.stopPropagation()} role="dialog" aria-label="Command palette" aria-modal="true">
         <div className={styles.searchContainer}>
           <span className={styles.searchIcon}>⠿</span>
           <input 
@@ -100,10 +104,12 @@ export function CommandPalette({ isOpen, onClose, onSelectTask }: {
           />
         </div>
 
-        <div className={styles.commandList}>
+        <div className={styles.commandList} role="listbox" aria-label="Commands">
           {filteredCommands.map((cmd, idx) => (
             <button
               key={cmd.id}
+              role="option"
+              aria-selected={idx === selectedIndex}
               className={`${styles.commandItem} ${idx === selectedIndex ? styles.activeItem : ""}`}
               onClick={() => { cmd.action(); onClose(); }}
               onMouseEnter={() => setSelectedIndex(idx)}

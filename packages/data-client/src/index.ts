@@ -93,6 +93,7 @@ export async function submitClarification(
 export async function approvePipeline(
   serverUrl: string,
   sessionId: string,
+  overrides?: Record<string, unknown>,
 ): Promise<Response> {
   const base = normalizeUrl(serverUrl);
   return fetch(`${base}/api/pipeline/approve`, {
@@ -102,6 +103,7 @@ export async function approvePipeline(
     },
     body: JSON.stringify({
       session_id: sessionId,
+      ...(overrides ? { overrides } : {}),
     }),
   });
 }
@@ -139,6 +141,15 @@ export function connectVoicePipelineSocket(
       sessionId: string;
       transcribedText: string;
       summary: string;
+      intent?: {
+        summary: string;
+        description: string;
+        acceptance_criteria: string;
+        issue_type: string;
+        priority: string;
+        labels: string[];
+        ambiguity_score: number;
+      };
     }) => void;
     onLoopEvent?: (event: LoopEvent) => void;
   },
@@ -218,6 +229,7 @@ export function connectVoicePipelineSocket(
             sessionId: data.session_id,
             transcribedText: data.transcribed_text,
             summary: data.summary,
+            intent: data.intent,
           });
           return;
         }

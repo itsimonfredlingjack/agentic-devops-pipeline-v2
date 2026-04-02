@@ -73,7 +73,9 @@ export function MissionDossier({ targetedTask }: { targetedTask: LinearIssue | u
       )}
 
       <div className={styles.actionArea}>
-        <button className={styles.ctaButton}>Commence Mission</button>
+        <div className={styles.ctaStatus} role="status" aria-live="polite">
+          Ready for voice command
+        </div>
       </div>
     </div>
   );

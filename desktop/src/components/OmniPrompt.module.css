@@ -3,7 +3,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  min-height: 280px;
+  min-height: clamp(260px, 36vh, 360px);
+  padding-top: max(40px, calc(env(safe-area-inset-top, 0px) + 24px));
   position: relative;
   z-index: 20;
 }
@@ -36,8 +37,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
+  gap: clamp(20px, 2.8vh, 32px);
   text-align: center;
+}
+
+.omniTextGroup {
+  max-width: min(860px, 100%);
+  padding: 0 16px;
 }
 
 .omniH1 {
@@ -76,11 +82,34 @@
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  width: min(780px, 100%);
+}
+
+.stageRail {
+  margin-bottom: 2px;
+}
+
+.processingDetail {
+  width: min(640px, 100%);
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: #a1a1aa;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  padding: 12px 14px;
+  text-align: left;
 }
 
 .shortcutHint {
   color: #71717a;
   font-size: 13px;
+  min-height: 20px;
+}
+
+.shortcutWarn {
+  color: #f6dd8f;
 }
 
 .shortcutPulse kbd {
@@ -214,6 +243,100 @@
   color: #f59e0b;
 }
 
+.voiceHud {
+  width: min(640px, 100%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 12px 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.voiceHudRow {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.voiceRecoveryHint {
+  font-size: 12px;
+  color: #f6dd8f;
+  border: 1px solid rgba(245, 158, 11, 0.24);
+  background: rgba(245, 158, 11, 0.08);
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-align: left;
+  line-height: 1.4;
+}
+
+.voiceHudLabel {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #8c8c95;
+  text-transform: uppercase;
+}
+
+.voiceHudValue {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 12px;
+  color: #d4d4d8;
+  letter-spacing: 0.03em;
+}
+
+.voiceHudHot {
+  color: #30b0c7;
+}
+
+.voiceHudWarn {
+  color: #ef4444;
+}
+
+.voiceSelect {
+  width: 100%;
+  min-width: 0;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #f4f4f5;
+  font-size: 12px;
+  padding: 8px 10px;
+  outline: none;
+}
+
+.voiceSelect:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.voiceSelect:focus {
+  border-color: rgba(48, 176, 199, 0.8);
+  box-shadow: 0 0 0 2px rgba(48, 176, 199, 0.2);
+}
+
+.levelTrack {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.levelFill {
+  height: 100%;
+  background: linear-gradient(90deg, #30b0c7, #10b981);
+  transition: width 0.08s linear;
+}
+
+.voiceError {
+  font-size: 12px;
+  color: #fca5a5;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 8px;
+}
+
 /* Processing heading */
 .omniH1Processing {
   font-size: 28px;
@@ -229,157 +352,22 @@
   50% { opacity: 0.8; text-shadow: 0 0 32px rgba(245, 158, 11, 0.5); }
 }
 
-/* Pipeline stepper */
-.stepper {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-start;
-  min-width: 220px;
-}
+@media (max-height: 860px) {
+  .omniContainer {
+    min-height: 230px;
+    padding-top: max(30px, calc(env(safe-area-inset-top, 0px) + 16px));
+  }
 
-.stepRow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #52525b;
-  transition: color 0.3s ease;
-}
+  .omniH1,
+  .omniH1Recording {
+    font-size: 30px;
+  }
 
-.stepRow.stepDone {
-  color: #10b981;
-}
+  .omniH1Processing {
+    font-size: 26px;
+  }
 
-.stepRow.stepActive {
-  color: #f59e0b;
-}
-
-.stepIndicator {
-  width: 14px;
-  height: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.stepCheck {
-  color: #10b981;
-}
-
-.stepPulse {
-  width: 10px;
-  height: 10px;
-  background: #f59e0b;
-  border-radius: 50%;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
-  animation: stepBreathe 1.5s infinite ease-in-out;
-}
-
-@keyframes stepBreathe {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.3); opacity: 0.7; }
-}
-
-.stepDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #27272a;
-  border: 1px solid #3f3f46;
-}
-
-.stepLabel {
-  font-family: "Geist Mono", ui-monospace, sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-}
-
-/* Inline clarification */
-.clarificationBox {
-  margin-top: 16px;
-  background: rgba(245, 158, 11, 0.05);
-  border: 1px solid rgba(245, 158, 11, 0.15);
-  border-radius: 10px;
-  padding: 16px 20px;
-  text-align: left;
-  max-width: 400px;
-  width: 100%;
-}
-
-.clarificationHeader {
-  font-family: "Geist Mono", ui-monospace, sans-serif;
-  font-size: 10px;
-  font-weight: 600;
-  color: #f59e0b;
-  letter-spacing: 0.1em;
-  margin-bottom: 8px;
-}
-
-.clarificationSummary {
-  font-size: 13px;
-  color: #a1a1aa;
-  margin: 0 0 10px 0;
-  line-height: 1.5;
-}
-
-.clarificationQuestions {
-  margin: 0 0 14px 0;
-  padding-left: 18px;
-  font-size: 13px;
-  color: #e4e4e7;
-  line-height: 1.6;
-}
-
-.clarificationForm {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.clarificationInput {
-  flex: 1;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
-  padding: 8px 12px;
-  color: #f4f4f5;
-  font-size: 13px;
-  font-family: "Geist Mono", ui-monospace, sans-serif;
-  outline: none;
-}
-
-.clarificationInput:focus {
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
-}
-
-.clarificationInput::placeholder {
-  color: #52525b;
-}
-
-.clarificationSend {
-  background: transparent;
-  color: #f59e0b;
-  border: none;
-  font-family: "Geist Mono", ui-monospace, sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  letter-spacing: 0.05em;
-}
-.clarificationSend:hover { color: #fbbf24; }
-.clarificationSend:disabled { opacity: 0.3; cursor: not-allowed; }
-
-.srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  .omniAction {
+    gap: 16px;
+  }
 }

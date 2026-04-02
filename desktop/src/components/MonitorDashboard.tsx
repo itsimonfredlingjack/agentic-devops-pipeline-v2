@@ -2,16 +2,9 @@ import { useAppStore } from "../stores/appStore";
 import { TerminalFeed } from "./TerminalFeed";
 import { BlockersView } from "./BlockersView";
 import { MissionControls } from "./MissionControls";
+import { PipelineStageRail } from "./PipelineStageRail";
 import { useSessionIntelligence } from "../hooks/useSessionIntelligence";
 import styles from "./MonitorDashboard.module.css";
-
-const PHASES = [
-  { id: "intake", label: "INTAKE" },
-  { id: "plan", label: "PLAN" },
-  { id: "implement", label: "IMPLEMENT" },
-  { id: "verify", label: "VERIFY" },
-  { id: "review", label: "REVIEW" },
-];
 
 function formatCost(usd: number): string {
   if (usd < 0.01) return `$${usd.toFixed(4)}`;
@@ -25,18 +18,30 @@ function formatElapsed(ms: number): string {
   return `${seconds}s`;
 }
 
+function deriveLoopLane(phase: string, toolName?: string): string {
+  if (phase === "done") return "Complete";
+  if (phase === "listening" || phase === "processing") return "Intake";
+  if (!toolName) return "Plan";
+
+  const normalizedTool = toolName.toLowerCase();
+  if (normalizedTool.includes("test") || normalizedTool.includes("pytest") || normalizedTool.includes("ruff")) return "Verify";
+  if (normalizedTool.includes("pr") || normalizedTool.includes("jules") || normalizedTool.includes("review")) return "Review";
+  if (
+    normalizedTool === "replace" ||
+    normalizedTool === "write_file" ||
+    normalizedTool.includes("apply_patch") ||
+    normalizedTool.includes("edit")
+  ) {
+    return "Implement";
+  }
+  return "Plan";
+}
+
 export function MonitorDashboard() {
   const { phase, events, cost, elapsedMs, ticketKey, processingStep, reset } = useAppStore();
   const intelligence = useSessionIntelligence();
-
-  // Determine current active internal loop phase
   const lastEvent = events[0];
-  let internalPhase = "plan";
-  if (phase === "listening" || phase === "processing") internalPhase = "intake";
-  else if (lastEvent?.tool_name === "replace" || lastEvent?.tool_name === "write_file") internalPhase = "implement";
-  else if (lastEvent?.tool_name?.includes("test") || lastEvent?.tool_name?.includes("pytest") || lastEvent?.tool_name?.includes("ruff")) internalPhase = "verify";
-  else if (lastEvent?.tool_name?.includes("pr") || lastEvent?.tool_name?.includes("jules")) internalPhase = "review";
-  else if (phase === "done") internalPhase = "complete";
+  const loopLane = deriveLoopLane(phase, lastEvent?.tool_name);
 
   return (
     <div className={styles.monitorDash}>
@@ -68,20 +73,10 @@ export function MonitorDashboard() {
       </div>
 
       <div className={styles.progressRail}>
-        {PHASES.map((p, idx) => {
-          const isActive = internalPhase === p.id;
-          const isComplete = PHASES.findIndex(x => x.id === internalPhase) > idx || internalPhase === "complete";
-          
-          return (
-            <div key={p.id} className={`${styles.phaseStep} ${isActive ? styles.phaseActive : ""} ${isComplete ? styles.phaseComplete : ""}`}>
-              <div className={styles.stepCircle}>
-                {isComplete ? "✓" : idx + 1}
-              </div>
-              <span className={styles.stepLabel}>{p.label}</span>
-              {idx < PHASES.length - 1 && <div className={styles.stepConnector}></div>}
-            </div>
-          );
-        })}
+        <PipelineStageRail className={styles.monitorStageRail} />
+        <div className={styles.loopLane} aria-live="polite">
+          Internal loop lane: <span className={styles.loopLaneValue}>{loopLane}</span>
+        </div>
       </div>
 
       <div className={styles.contentGrid}>

@@ -34,7 +34,9 @@ export function useConnections(): void {
           useAppStore.getState().setVoiceConnected(connected);
         },
         onClarification: (payload) => {
-          useAppStore.getState().setClarification({
+          const storeState = useAppStore.getState();
+          storeState.setPreview(null);
+          storeState.setClarification({
             sessionId: payload.session_id,
             questions: payload.questions,
             partialSummary: payload.partial_summary,
@@ -42,6 +44,7 @@ export function useConnections(): void {
           });
         },
         onPreview: (payload) => {
+          const storeState = useAppStore.getState();
           const fallbackIntent = {
             summary: payload.summary,
             description: "",
@@ -51,7 +54,8 @@ export function useConnections(): void {
             labels: [] as string[],
             ambiguityScore: 0,
           };
-          useAppStore.getState().setPreview({
+          storeState.setClarification(null);
+          storeState.setPreview({
             sessionId: payload.sessionId,
             transcribedText: payload.transcribedText,
             summary: payload.summary,

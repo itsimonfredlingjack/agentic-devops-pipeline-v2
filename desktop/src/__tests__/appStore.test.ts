@@ -55,6 +55,11 @@ describe("appStore", () => {
     expect(useAppStore.getState().phase).toBe("processing");
   });
 
+  it("derives phase from pipeline status clarifying as verify", () => {
+    useAppStore.getState().setPipelineStatus("clarifying");
+    expect(useAppStore.getState().phase).toBe("verify");
+  });
+
   it("derives phase from loop active", () => {
     useAppStore.getState().setLoopActive(true);
     expect(useAppStore.getState().phase).toBe("loop");

@@ -105,8 +105,8 @@ function derivePhase(state: {
     case "recording":
       return "listening";
     case "processing":
-    case "clarifying":
       return "processing";
+    case "clarifying":
     case "previewing":
       return "verify";
     case "error":
@@ -152,13 +152,29 @@ export const useAppStore = create<AppState>()((set) => ({
 
   setProcessingStep: (step) => set({ processingStep: step }),
 
-  setClarification: (clarification) => set({ clarification }),
+  setClarification: (clarification) =>
+    set((state) => {
+      let pipelineStatus = state.pipelineStatus;
+      if (clarification) {
+        pipelineStatus = "clarifying";
+      } else if (!state.preview && state.pipelineStatus === "clarifying") {
+        pipelineStatus = "processing";
+      }
+
+      const next = { ...state, clarification, pipelineStatus };
+      return { clarification, pipelineStatus, phase: derivePhase(next) };
+    }),
 
   setPreview: (preview) =>
     set((state) => {
-      const pipelineStatus = preview ? "previewing" as PipelineStatus : state.pipelineStatus;
-      const next = { ...state, preview, pipelineStatus };
-      return { preview, pipelineStatus, phase: derivePhase(next) };
+      const pipelineStatus = preview
+        ? ("previewing" as PipelineStatus)
+        : state.clarification
+          ? ("clarifying" as PipelineStatus)
+          : state.pipelineStatus;
+      const clarification = preview ? null : state.clarification;
+      const next = { ...state, preview, clarification, pipelineStatus };
+      return { preview, clarification, pipelineStatus, phase: derivePhase(next) };
     }),
 
   setLoopActive: (active) =>

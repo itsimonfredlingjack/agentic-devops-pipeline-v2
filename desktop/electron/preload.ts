@@ -10,7 +10,14 @@ const runtimeConfig = {
 
 contextBridge.exposeInMainWorld("sejfa", {
   config: runtimeConfig,
-  onGlobalShortcut: (callback: (action: string) => void) => {
+  onGlobalShortcut: (
+    callback: (
+      action:
+        | "start-voice-recording"
+        | "stop-voice-recording"
+        | "toggle-voice",
+    ) => void,
+  ) => {
     ipcRenderer.on("global-shortcut", (_event, action) => callback(action));
   },
 });

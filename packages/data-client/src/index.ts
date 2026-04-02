@@ -14,6 +14,75 @@ function normalizeUrl(url: string): string {
   return url.trim().replace(/\/+$/, "");
 }
 
+type FrontendPipelineStatus =
+  | "idle"
+  | "recording"
+  | "processing"
+  | "clarifying"
+  | "previewing"
+  | "done"
+  | "error";
+
+interface NormalizedVoiceSignal {
+  pipelineStatus: FrontendPipelineStatus;
+  processingStep: string;
+}
+
+const NODE_TO_PIPELINE_STATUS: Record<string, FrontendPipelineStatus> = {
+  idle: "idle",
+  recording: "recording",
+  transcribing: "processing",
+  extracting: "processing",
+  clarifying: "clarifying",
+  previewing: "previewing",
+  creating_ticket: "processing",
+  creating: "processing",
+  completed: "done",
+  done: "done",
+  error: "error",
+};
+
+const NODE_STEP_LABELS: Record<string, string> = {
+  idle: "",
+  recording: "Capturing voice input...",
+  transcribing: "Transcribing audio...",
+  extracting: "Analyzing intent...",
+  clarifying: "Waiting for clarification...",
+  previewing: "",
+  creating_ticket: "Creating Jira ticket...",
+  creating: "Creating Jira ticket...",
+  completed: "",
+  done: "",
+  error: "",
+};
+
+export function normalizeVoicePipelineSignal(payload: unknown): NormalizedVoiceSignal | null {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const signal =
+    typeof (payload as { current_node?: unknown }).current_node === "string"
+      ? (payload as { current_node: string }).current_node
+      : typeof (payload as { status?: unknown }).status === "string"
+        ? (payload as { status: string }).status
+        : null;
+
+  if (!signal) {
+    return null;
+  }
+
+  const pipelineStatus = NODE_TO_PIPELINE_STATUS[signal];
+  if (!pipelineStatus) {
+    return null;
+  }
+
+  return {
+    pipelineStatus,
+    processingStep: NODE_STEP_LABELS[signal] ?? "",
+  };
+}
+
 function normalizeQueueItems(payload: unknown): QueueItem[] {
   if (!Array.isArray(payload)) return [];
 
@@ -161,15 +230,6 @@ export function connectVoicePipelineSocket(
 
   const maxReconnectDelay = 30_000;
   const baseReconnectDelay = 1_000;
-  const stepLabels: Record<string, string> = {
-    transcribing: "Transcribing audio...",
-    extracting: "Analyzing intent...",
-    clarifying: "Waiting for clarification...",
-    creating_ticket: "Creating Jira ticket...",
-    creating: "Creating Jira ticket...",
-    completed: "",
-    error: "",
-  };
 
   function scheduleReconnect() {
     if (!shouldConnect) return;
@@ -213,7 +273,8 @@ export function connectVoicePipelineSocket(
         handlers.appendLog(`[ws] ${JSON.stringify(data)}`);
 
         if (data.type === "clarification_needed" && handlers.onClarification) {
-          handlers.setProcessingStep("");
+          handlers.setStatus("clarifying");
+          handlers.setProcessingStep("Waiting for clarification...");
           handlers.onClarification({
             session_id: data.session_id,
             questions: data.questions,
@@ -224,6 +285,7 @@ export function connectVoicePipelineSocket(
         }
 
         if (data.type === "preview_needed" && handlers.onPreview) {
+          handlers.setStatus("previewing");
           handlers.setProcessingStep("");
           handlers.onPreview({
             sessionId: data.session_id,
@@ -244,24 +306,10 @@ export function connectVoicePipelineSocket(
           return;
         }
 
-        if (data.status) {
-          const statusMap: Record<string, string> = {
-            transcribing: "processing",
-            extracting: "processing",
-            clarifying: "clarifying",
-            previewing: "previewing",
-            creating_ticket: "processing",
-            completed: "done",
-            error: "error",
-          };
-          const mapped = statusMap[data.status];
-          if (mapped) {
-            handlers.setStatus(mapped);
-          }
-          const step = stepLabels[data.status];
-          if (step !== undefined) {
-            handlers.setProcessingStep(step);
-          }
+        const normalizedSignal = normalizeVoicePipelineSignal(data);
+        if (normalizedSignal) {
+          handlers.setStatus(normalizedSignal.pipelineStatus);
+          handlers.setProcessingStep(normalizedSignal.processingStep);
         }
       } catch {
         handlers.appendLog(`[ws] Raw: ${event.data}`);

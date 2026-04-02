@@ -1,0 +1,857 @@
+[      69ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/chunk-6I5JPKR6.js?v=275167d2:21608
+[      81ms] [WARNING] WebSocket connection to 'ws://localhost:8000/ws/status' failed: WebSocket is closed before the connection is established. @ http://localhost:5173/@fs/Users/coffeedev/Projects/03_AGENTIC-DEVOPS/agentic-devops-pipeline-v2/packages/data-client/src/index.ts:196
+[      81ms] [WARNING] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: WebSocket is closed before the connection is established. @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1499
+[     112ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[     112ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[     124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[     124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[     154ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[    1114ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[    3830ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[    5090ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[    5090ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[    8490ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   10088ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   10089ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   13512ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   15088ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   15088ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   18528ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   20092ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   20092ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   23541ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   25091ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   25091ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   28555ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   30090ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   30090ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   33570ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   35090ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   35090ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   38642ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   40091ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   40091ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   43700ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   45092ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   45092ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   48733ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   50091ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   50091ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   53789ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   55092ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   55092ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   58957ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   60090ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   60090ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   64101ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   65090ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   65090ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   69372ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   70091ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   70091ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   74675ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   75089ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   75089ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   79909ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   80091ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   80091ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   85089ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   85090ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   85492ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   90088ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   90088ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   90647ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[   95090ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[   95090ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[   95957ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  100090ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  100090ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  101239ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  105089ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  105089ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  106607ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  110092ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  110092ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  112371ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  115088ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  115088ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  118109ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  120092ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  120092ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  124042ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  125087ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  125087ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  130089ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  130090ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  130287ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  135088ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  135089ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  137050ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  140088ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  140088ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  144434ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  145087ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  145087ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  150087ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  150087ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  152018ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  155091ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  155091ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  157024ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  160090ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  160090ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  162030ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  165092ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  165092ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  167036ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  170092ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  170093ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  172043ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  175089ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  175089ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  177052ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  180089ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  180089ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  182062ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  185089ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  185089ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  187076ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  190091ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  190091ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  192092ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  195088ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  195088ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  197111ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  200089ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  200089ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  202183ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  205089ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  205089ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  207320ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  210089ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  210089ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  212575ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  215088ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  215088ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  217902ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  220110ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  220110ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  223977ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  225089ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  225089ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  230093ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  230093ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  231109ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  235100ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  235100ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  238650ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  240105ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  240105ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  245109ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  245109ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  247140ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  250110ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  250110ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  255114ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  255114ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  256168ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  260114ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  260114ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  263022ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  265116ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  265117ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  270120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  270120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  271921ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  275118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  275118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  279312ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  280116ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  280117ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  285118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  285118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  286869ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  290118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  290118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  294012ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  295118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  295118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  300118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  300118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  302031ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  305118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  305118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  308433ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  310119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  310119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  315118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  315118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  317196ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  320118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  320118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  325118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  325119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  325215ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  330119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  330119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  332115ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  335120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  335120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  339664ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  340119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  340119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  345118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  345118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  346475ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  350118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  350118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  354390ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  355119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  355119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  360118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  360118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  361237ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  365118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  365119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  370118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  370118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  370979ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  375119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  375119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  377353ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  380118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  380118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  385119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  385119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  386064ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  390118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  390118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  393646ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  395118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  395118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  398652ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  400118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  400118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  403659ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  405119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  405119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  408665ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  410119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  410119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  413670ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  415119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  415119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  418679ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  420119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  420119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  423687ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  425119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  425119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  428700ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  430119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  430119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  433721ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  435118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  435119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  438764ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  440118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  440118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  443787ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  445119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  445120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  448847ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  450119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  450119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  454098ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  455119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  455119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  459515ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  460118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  460118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  465118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  465118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  465216ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  470118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  470118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  470955ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  475123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  475123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  479266ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  480120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  480120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  485120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  485121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  486778ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  490126ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  490126ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  493583ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  495119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  495119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  500118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  500118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  502511ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  505118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  505118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  508714ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  510119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  510119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  515123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  515123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  518070ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  520119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  520119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  523077ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  525119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  525119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  528084ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  530117ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  530117ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  533089ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  535120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  535121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  538098ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  540118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  540118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  543105ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  545117ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  545117ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  548114ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  550119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  550120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  553126ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  555120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  555120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  558149ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  560117ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  560117ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  563189ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  565121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  565121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  568248ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  570119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  570119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  573396ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  575120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  575120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  578617ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  580120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  580120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  583965ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  585120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  585120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  590082ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  590119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  590119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  595120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  595120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  595614ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  600119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  600119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  604651ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  605117ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  605117ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  610121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  610121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  613297ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  615119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  615119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  620120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  620120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  620398ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  625118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  625119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  626646ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  630117ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  630117ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  633890ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  635120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  635120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  640121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  640122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  642032ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  645119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  645119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  647038ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  650122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  650123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  652042ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  655120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  655120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  657048ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  660118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  660118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  662091ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  665117ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  665117ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  667099ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  670117ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  670118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  672108ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  675117ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  675117ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  677121ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  680117ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  680117ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  682140ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  685116ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  685117ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  687163ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  690121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  690121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  692212ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  695121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  695121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  697304ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  700119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  700119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  702489ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  705120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  705120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  707772ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  710119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  710119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  713884ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  715120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  715120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  720121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  720121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  720825ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  725119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  725120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  728788ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  730119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  730119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  735120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  735120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  738216ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  740119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  740120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  745118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  745118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  746076ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  750118ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  750118ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  755027ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  755120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  755120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  760120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  760120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  763483ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  765121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  765121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  768488ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  770120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  770120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  773495ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  775121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  775121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  778501ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  780121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  780121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  783508ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  785120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  785120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  788516ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  790120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  790120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  793529ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  795120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  795120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  798543ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  800121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  800121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  803556ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  805120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  805121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  808583ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  810123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  810124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  813671ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  815120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  815120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  818821ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  820121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  820121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  823984ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  825120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  825120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  829376ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  830121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  830121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  835120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  835120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  835625ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  840121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  840121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  841670ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  845120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  845121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  849849ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  850121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  850121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  855120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  855120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  859089ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  860123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  860123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  865121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  865121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  865990ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  870122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  870122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  875120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  875120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  875693ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  880120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  880120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  882855ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  885121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  885122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  890121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  890121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  891233ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  895122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  895122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  899777ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  900121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  900121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  905121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  905121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  907200ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  910122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  910122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  914223ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  915121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  915121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  920122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  920122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  920665ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  925121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  925121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  929377ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  930120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  930121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  935121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  935122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  937255ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  940123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  940123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  944755ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  945120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  945120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  950121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  950121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  952280ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  955121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  955121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  960122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  960122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  960448ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  965121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  965121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  967752ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  970121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  970121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  974222ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  975121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  975121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  980121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  980121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  981513ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  985123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  985123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  989409ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[  990121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  990121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  995122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[  995122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[  996659ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1000122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1000122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1004944ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1005121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1005121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1009950ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1010122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1010123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1014956ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1015121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1015121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1019963ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1020121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1020121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1024969ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1025122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1025122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1029979ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1030121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1030121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1034988ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1035122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1035122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1039999ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1040121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1040121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1045015ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1045122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1045122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1050060ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1050121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1050121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1055085ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1055120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1055120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1060120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1060120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1060227ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1065122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1065122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1065389ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1070122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1070123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1070655ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1075119ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1075119ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1076199ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1080122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1080122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1081871ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1085122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1085122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1088246ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1090121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1090121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1094719ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1095121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1095121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1100122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1100122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1101657ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1105122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1105122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1109757ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1110123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1110124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1115121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1115121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1118148ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1120122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1120122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1124917ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1125122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1125122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1130122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1130123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1134639ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1135121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1135121ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1140122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1140122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1141722ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1145122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1145122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1148021ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1150124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1150124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1155121ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1155122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1157255ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1160122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1160122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1165123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1165123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1165550ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1170122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1170123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1172416ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1175122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1175122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1180122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1180122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1182148ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1185122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1185122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1190122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1190122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1191574ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1195123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1195123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1199513ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1200123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1200123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1205122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1205122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1207100ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1210123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1210123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1214468ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1215122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1215122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1220122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1220122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1221588ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1225125ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1225126ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1229817ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1230123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1230123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1235123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1235124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1238947ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1240123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1240123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1245122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1245122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1246132ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1250120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1250120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1251139ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1255124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1255124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1256146ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1260123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1260123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1261152ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1265122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1265122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1266158ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1270123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1270123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1271166ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1275123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1275123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1276175ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1280122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1280122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1281189ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1285123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1285123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1286210ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1290122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1290122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1291255ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1295123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1295123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1296319ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1300124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1300124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1301400ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1305123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1305123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1306539ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1310123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1310123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1311875ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1315123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1315123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1317225ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1320122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1320122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1324316ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1325123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1325123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1330124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1330124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1331450ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1335123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1335123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1340123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1340123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1341157ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1345123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1345123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1347648ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1350122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1350122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1354072ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1355123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1355123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1360124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1360124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1363722ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1365123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1365123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1370123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1370123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1371706ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1375124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1375124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1379337ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1380124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1380124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1385123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1385123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1388148ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1390123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1390123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1395122ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1395122ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1396381ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1400123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1400123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1404568ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1405123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1405123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1410123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1410123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1410728ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1415123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1415124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1419867ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1420123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1420123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1425123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1425124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1427915ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1430123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1430123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1434864ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1435125ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1435125ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1440123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1440123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1442781ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1445123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1445124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1450120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1450120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1450633ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1455124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1455125ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1459668ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1460123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1460123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1465124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1465124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1468908ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1470124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1470124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1475123ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1475123ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1478308ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1480124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1480124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1485120ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1485120ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1487633ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1490125ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1490125ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1492639ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1495124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1495124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1497646ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1500124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1500124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1502653ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1505124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1505124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1507659ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1510124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1510124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1512665ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1515125ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1515125ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1517673ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523
+[ 1520124ms] [ERROR] Access to fetch at 'http://localhost:8100/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/:0
+[ 1520124ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8100/status:0
+[ 1522684ms] [ERROR] WebSocket connection to 'ws://localhost:8100/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:5173/node_modules/.vite/deps/socket__io-client.js?v=275167d2:1523

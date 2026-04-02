@@ -1,17 +1,42 @@
+import type { KeyboardEvent } from "react";
 import styles from "./MicButton.module.css";
 
 interface MicButtonProps {
   recording: boolean;
-  onClick: () => void;
+  onHoldStart: () => void;
+  onHoldEnd: () => void;
+  disabled?: boolean;
 }
 
-export function MicButton({ recording, onClick }: MicButtonProps) {
+export function MicButton({ recording, onHoldStart, onHoldEnd, disabled = false }: MicButtonProps) {
+  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.repeat) return;
+    if (event.key === " " || event.key === "Enter") {
+      event.preventDefault();
+      onHoldStart();
+    }
+  };
+
+  const handleKeyUp = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === " " || event.key === "Enter") {
+      event.preventDefault();
+      onHoldEnd();
+    }
+  };
+
   return (
     <button
       type="button"
       className={`${styles.mic} ${recording ? styles.recording : ""} no-drag`}
-      onClick={onClick}
+      onPointerDown={onHoldStart}
+      onPointerUp={onHoldEnd}
+      onPointerLeave={onHoldEnd}
+      onPointerCancel={onHoldEnd}
+      onBlur={onHoldEnd}
+      onKeyDown={handleKeyDown}
+      onKeyUp={handleKeyUp}
       aria-label={recording ? "Stop recording" : "Start recording"}
+      disabled={disabled}
     >
       <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
         {recording ? (

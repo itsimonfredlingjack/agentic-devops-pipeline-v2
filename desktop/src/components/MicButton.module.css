@@ -18,6 +18,11 @@
   background: var(--glass-bg-hover);
 }
 
+.mic:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .mic:focus-visible {
   box-shadow: 0 0 0 3px rgba(88, 86, 214, 0.4);
   outline: none;

@@ -1,0 +1,69 @@
+.rail {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  width: min(780px, 100%);
+  align-items: center;
+}
+
+.stageItem {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.stageDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #2f2f34;
+  border: 1px solid #46464d;
+  transition: all 0.2s ease;
+}
+
+.stageDot.active {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.stageDot.complete {
+  background: #10b981;
+  border-color: #10b981;
+}
+
+.stageLabel {
+  min-width: 0;
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: #8c8c95;
+  text-transform: uppercase;
+}
+
+.stageLabel.activeLabel {
+  color: #f4f4f5;
+}
+
+.connector {
+  height: 1px;
+  margin-left: 10px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04));
+}
+
+@media (max-width: 920px) {
+  .rail {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .stageItem {
+    grid-template-columns: auto auto;
+  }
+
+  .connector {
+    display: none;
+  }
+}

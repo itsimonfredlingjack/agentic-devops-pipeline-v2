@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { approvePipeline, discardPipeline } from "@sejfa/data-client";
 import { useAppStore } from "../stores/appStore";
+import { PipelineStageRail } from "./PipelineStageRail";
+import { applyPipelineServerResult } from "../utils/pipelineFlow";
 import styles from "./IntentReview.module.css";
 
 const ISSUE_TYPES = ["Story", "Bug", "Task", "Sub-task", "Epic"];
@@ -13,8 +15,18 @@ function confidenceColor(score: number): string {
 }
 
 export function IntentReview() {
-  const { preview, voiceUrl, setPreview, setPipelineStatus, reset } = useAppStore();
+  const {
+    preview,
+    voiceUrl,
+    setPreview,
+    setPipelineStatus,
+    setProcessingStep,
+    setClarification,
+    setTicketKey,
+    reset,
+  } = useAppStore();
   const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Local edit state — initialized from preview intent
   const intent = preview?.intent;
@@ -30,6 +42,9 @@ export function IntentReview() {
 
   const handleApprove = async () => {
     setSubmitting(true);
+    setErrorMessage(null);
+    setPipelineStatus("processing");
+    setProcessingStep("Creating Jira ticket...");
     try {
       // Compute overrides: only send fields that changed
       const overrides: Record<string, unknown> = {};
@@ -42,34 +57,70 @@ export function IntentReview() {
       if (priority !== intent.priority) overrides.priority = priority;
 
       const hasOverrides = Object.keys(overrides).length > 0;
-      await approvePipeline(voiceUrl, preview.sessionId, hasOverrides ? overrides : undefined);
-      setPreview(null);
-      setPipelineStatus("processing");
+      const response = await approvePipeline(
+        voiceUrl,
+        preview.sessionId,
+        hasOverrides ? overrides : undefined,
+      );
+
+      if (!response.ok) {
+        setErrorMessage(`Approve request failed with HTTP ${response.status}`);
+        setPipelineStatus("error");
+        setSubmitting(false);
+        return;
+      }
+
+      const data = await response.json();
+      const result = applyPipelineServerResult(data, {
+        setPipelineStatus,
+        setProcessingStep,
+        setClarification,
+        setPreview,
+        setTicketKey,
+      });
+
+      if (result === "unknown") {
+        setErrorMessage("Approve response had an unknown format.");
+        setPipelineStatus("error");
+        setSubmitting(false);
+      } else if (result !== "ticket_created") {
+        setSubmitting(false);
+      }
     } catch (e) {
       console.error("Approve failed:", e);
+      setErrorMessage("Could not approve and build ticket.");
+      setPipelineStatus("error");
       setSubmitting(false);
     }
   };
 
   const handleDiscard = async () => {
     setSubmitting(true);
+    setErrorMessage(null);
     try {
       await discardPipeline(voiceUrl, preview.sessionId);
+      setClarification(null);
       setPreview(null);
       setPipelineStatus("idle");
+      setProcessingStep("");
     } catch (e) {
       console.error("Discard failed:", e);
+      setErrorMessage("Could not discard this intent session.");
+      setPipelineStatus("error");
       setSubmitting(false);
     }
   };
 
   const handleReRecord = async () => {
     setSubmitting(true);
+    setErrorMessage(null);
     try {
       await discardPipeline(voiceUrl, preview.sessionId);
       reset();
     } catch (e) {
       console.error("Re-record cleanup failed:", e);
+      setErrorMessage("Could not reset for re-record.");
+      setPipelineStatus("error");
       setSubmitting(false);
     }
   };
@@ -81,6 +132,8 @@ export function IntentReview() {
         <span className={styles.headerTitle}>INTENT VERIFICATION</span>
         <span className={styles.phasePill}>VERIFY</span>
       </div>
+
+      <PipelineStageRail className={styles.stageRail} />
 
       {/* Transcript */}
       <div className={styles.section}>
@@ -216,6 +269,8 @@ export function IntentReview() {
           APPROVE &amp; BUILD
         </button>
       </div>
+
+      {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}
     </div>
   );
 }

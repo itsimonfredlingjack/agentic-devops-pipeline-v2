@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { MicButton } from "./MicButton";
-import { submitClarification } from "@sejfa/data-client";
+import { PipelineStageRail } from "./PipelineStageRail";
 import styles from "./OmniPrompt.module.css";
 import { useAppStore } from "../stores/appStore";
+import type { MicrophonePermissionStatus } from "../hooks/useMicrophone";
 
 function formatElapsed(ms: number): string {
   const seconds = Math.floor(ms / 1000);
@@ -16,6 +16,28 @@ function formatCost(usd: number): string {
   return `$${usd.toFixed(2)}`;
 }
 
+function formatRecordingDuration(ms: number): string {
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60)
+    .toString()
+    .padStart(2, "0");
+  const seconds = (totalSeconds % 60).toString().padStart(2, "0");
+  return `${minutes}:${seconds}`;
+}
+
+function permissionLabel(status: MicrophonePermissionStatus): string {
+  switch (status) {
+    case "granted":
+      return "Granted";
+    case "denied":
+      return "Denied";
+    case "prompt":
+      return "Prompt";
+    default:
+      return "Unknown";
+  }
+}
+
 function MiniSparkline() {
   return (
     <svg width="40" height="12" viewBox="0 0 40 12" className={styles.sparkline}>
@@ -26,111 +48,46 @@ function MiniSparkline() {
   );
 }
 
-const PIPELINE_STEPS = [
-  { key: "listening", label: "Listening" },
-  { key: "transcribing", label: "Transcribing audio" },
-  { key: "extracting", label: "Extracting intent" },
-  { key: "review", label: "Ready for review" },
-] as const;
-
-function deriveStepIndex(processingStep: string, pipelineStatus: string): number {
-  if (pipelineStatus === "recording") return 0;
-  if (processingStep.toLowerCase().includes("transcrib")) return 1;
-  if (
-    processingStep.toLowerCase().includes("intent") ||
-    processingStep.toLowerCase().includes("analyz") ||
-    processingStep.toLowerCase().includes("extract")
-  ) return 2;
-  if (pipelineStatus === "clarifying") return 2;
-  if (pipelineStatus === "previewing") return 3;
-  // Default: if processing but no specific step yet, show transcribing
-  if (pipelineStatus === "processing") return 1;
-  return 0;
+interface OmniPromptProps {
+  recording: boolean;
+  onStartVoice: () => void;
+  onStopVoice: () => void;
+  permissionStatus: MicrophonePermissionStatus;
+  availableDevices: MediaDeviceInfo[];
+  selectedDeviceId: string;
+  onSelectDevice: (deviceId: string) => void;
+  inputLevel: number;
+  recordingDurationMs: number;
+  errorMessage: string | null;
+  isExecuting: boolean;
+  targetedTask: { id?: string; title?: string } | null;
 }
 
-function PipelineStepper() {
-  const { processingStep, pipelineStatus } = useAppStore();
-  const activeIndex = deriveStepIndex(processingStep, pipelineStatus);
-
-  return (
-    <div className={styles.stepper} role="group" aria-label="Pipeline progress" aria-live="polite" aria-atomic="true">
-      {PIPELINE_STEPS.map((step, i) => {
-        const isDone = i < activeIndex;
-        const isActive = i === activeIndex;
-        const status = isDone ? "complete" : isActive ? "in progress" : "pending";
-        return (
-          <div
-            key={step.key}
-            className={`${styles.stepRow} ${isDone ? styles.stepDone : ""} ${isActive ? styles.stepActive : ""}`}
-            aria-label={`${step.label}: ${status}`}
-          >
-            <div className={styles.stepIndicator} aria-hidden="true">
-              {isDone ? (
-                <svg width="14" height="14" viewBox="0 0 14 14" className={styles.stepCheck} role="img" aria-label="Complete">
-                  <circle cx="7" cy="7" r="6" fill="currentColor" opacity="0.2" />
-                  <path d="M4 7l2 2 4-4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              ) : isActive ? (
-                <div className={styles.stepPulse} />
-              ) : (
-                <div className={styles.stepDot} />
-              )}
-            </div>
-            <span className={styles.stepLabel}>{step.label}</span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function ClarificationInline() {
-  const { clarification, voiceUrl, setClarification } = useAppStore();
-  const [answer, setAnswer] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
-  if (!clarification) return null;
-
-  const submitReply = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!answer.trim()) return;
-    setSubmitting(true);
-    try {
-      await submitClarification(voiceUrl, { sessionId: clarification.sessionId, text: answer.trim() });
-      setAnswer("");
-      setClarification(null);
-    } catch { } finally { setSubmitting(false); }
-  };
-
-  return (
-    <div className={styles.clarificationBox}>
-      <div className={styles.clarificationHeader}>CLARIFICATION NEEDED</div>
-      <p className={styles.clarificationSummary}>{clarification.partialSummary}</p>
-      <ul className={styles.clarificationQuestions}>
-        {clarification.questions.map((q, i) => <li key={i}>{q}</li>)}
-      </ul>
-      <form className={styles.clarificationForm} onSubmit={submitReply}>
-        <label htmlFor="clarify-answer" className={styles.srOnly}>Your clarification answer</label>
-        <input
-          id="clarify-answer"
-          autoFocus
-          value={answer}
-          onChange={e => setAnswer(e.target.value)}
-          disabled={submitting}
-          placeholder="Type your answer..."
-          className={styles.clarificationInput}
-          aria-label="Provide your answer to the clarification questions"
-        />
-        <button type="submit" className={styles.clarificationSend} disabled={submitting || !answer.trim()}>
-          SEND
-        </button>
-      </form>
-    </div>
-  );
-}
-
-export function OmniPrompt({ recording, onToggleVoice, isExecuting, targetedTask }: any) {
-  const { phase, elapsedMs, cost, pipelineStatus, clarification } = useAppStore();
+export function OmniPrompt({
+  recording,
+  onStartVoice,
+  onStopVoice,
+  permissionStatus,
+  availableDevices,
+  selectedDeviceId,
+  onSelectDevice,
+  inputLevel,
+  recordingDurationMs,
+  errorMessage,
+  isExecuting,
+  targetedTask,
+}: OmniPromptProps) {
+  const { phase, elapsedMs, cost, processingStep } = useAppStore();
+  const recordingBlocked = permissionStatus === "denied";
+  const noInputDevices = availableDevices.length === 0;
+  const permissionRecoveryText =
+    "Enable microphone access in System Settings > Privacy & Security > Microphone for SEJFA COMMAND.";
+  const deviceRecoveryText = "Connect a microphone, select it above, then hold ⌘⇧V to record.";
+  const shortcutText = recordingBlocked
+    ? "Microphone permission required to record"
+    : noInputDevices
+      ? "No microphone detected"
+      : "Hold ⌘⇧V to record";
 
   if (isExecuting) {
     return (
@@ -162,7 +119,6 @@ export function OmniPrompt({ recording, onToggleVoice, isExecuting, targetedTask
     );
   }
 
-  // Processing state: show stepper instead of mic button
   const isProcessing = phase === "processing";
 
   return (
@@ -182,16 +138,83 @@ export function OmniPrompt({ recording, onToggleVoice, isExecuting, targetedTask
            )}
         </div>
 
+        <PipelineStageRail className={styles.stageRail} />
+
         {isProcessing ? (
           <div className={styles.omniAction}>
-            <PipelineStepper />
-            {clarification && <ClarificationInline />}
+            <div className={styles.processingDetail}>{processingStep || "Running voice intake pipeline..."}</div>
           </div>
         ) : (
           <div className={styles.omniAction}>
-             <MicButton recording={recording} onClick={onToggleVoice} />
-             <div className={`${styles.shortcutHint} ${phase === "idle" ? styles.shortcutPulse : ""}`}>
-                <span>Hold <kbd>&#x2318;&#x21E7;V</kbd> to record</span>
+             <MicButton
+               recording={recording}
+               onHoldStart={onStartVoice}
+               onHoldEnd={onStopVoice}
+               disabled={recordingBlocked}
+             />
+             <div
+               className={`${styles.shortcutHint} ${phase === "idle" && !recordingBlocked && !noInputDevices ? styles.shortcutPulse : ""} ${recordingBlocked || noInputDevices ? styles.shortcutWarn : ""}`}
+               aria-live="polite"
+             >
+                <span>
+                  {recordingBlocked || noInputDevices ? shortcutText : <>Hold <kbd>&#x2318;&#x21E7;V</kbd> to record</>}
+                </span>
+             </div>
+
+             <div className={styles.voiceHud}>
+                <div className={styles.voiceHudRow}>
+                  <span className={styles.voiceHudLabel}>Permission</span>
+                  <span className={`${styles.voiceHudValue} ${permissionStatus === "denied" ? styles.voiceHudWarn : ""}`}>
+                    {permissionLabel(permissionStatus)}
+                  </span>
+                </div>
+
+                {recordingBlocked && (
+                  <div className={styles.voiceRecoveryHint} role="status" aria-live="polite">
+                    {permissionRecoveryText}
+                  </div>
+                )}
+
+                <div className={styles.voiceHudRow}>
+                  <label htmlFor="voice-device" className={styles.voiceHudLabel}>Microphone</label>
+                  <select
+                    id="voice-device"
+                    className={styles.voiceSelect}
+                    value={selectedDeviceId}
+                    onChange={(event) => onSelectDevice(event.target.value)}
+                    disabled={recording || availableDevices.length === 0}
+                    aria-label="Select microphone input"
+                  >
+                    {availableDevices.length === 0 && <option value="">Default microphone</option>}
+                    {availableDevices.map((device, index) => (
+                      <option key={device.deviceId || `mic-${index}`} value={device.deviceId}>
+                        {device.label || `Microphone ${index + 1}`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {!recordingBlocked && noInputDevices && (
+                  <div className={styles.voiceRecoveryHint} role="status" aria-live="polite">
+                    {deviceRecoveryText}
+                  </div>
+                )}
+
+                <div className={styles.voiceHudRow}>
+                  <span className={styles.voiceHudLabel}>Input level</span>
+                  <div className={styles.levelTrack} role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(inputLevel * 100)}>
+                    <div className={styles.levelFill} style={{ width: `${Math.round(inputLevel * 100)}%` }} />
+                  </div>
+                </div>
+
+                <div className={styles.voiceHudRow}>
+                  <span className={styles.voiceHudLabel}>Recording</span>
+                  <span className={`${styles.voiceHudValue} ${recording ? styles.voiceHudHot : ""}`}>
+                    {recording ? `LIVE ${formatRecordingDuration(recordingDurationMs)}` : "Standby"}
+                  </span>
+                </div>
+
+                {errorMessage && <div className={styles.voiceError}>{errorMessage}</div>}
              </div>
           </div>
         )}

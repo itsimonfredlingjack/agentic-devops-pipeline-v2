@@ -1,0 +1,134 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e6]:
+      - generic "SEJFA COMMAND" [ref=e7] [cursor=pointer]
+      - generic [ref=e8]: SEJFA COMMAND
+    - generic [ref=e9]:
+      - button "COMMAND" [ref=e10] [cursor=pointer]
+      - button "MONITOR" [ref=e11] [cursor=pointer]
+    - generic [ref=e12]:
+      - generic [ref=e13]: SYSTEM TELEMETRY
+      - 'generic "Voice Intake: Connected" [ref=e14]':
+        - generic [ref=e16]: Voice Intake
+      - 'generic "Monitor Stream: Disconnected" [ref=e17]':
+        - generic [ref=e19]: Monitor Stream
+    - generic [ref=e20]:
+      - button "CYCLE" [ref=e21] [cursor=pointer]
+      - button "MY ISSUES" [ref=e22] [cursor=pointer]
+      - button "PROJECTS" [ref=e23] [cursor=pointer]
+    - generic [ref=e24]:
+      - generic [ref=e25]: CYCLE
+      - list "Issue list" [ref=e26]:
+        - listitem [ref=e27]:
+          - button "SEJ-42 5 Frontend API Implement Linear Integration in Sidebar" [pressed] [ref=e28] [cursor=pointer]:
+            - generic [ref=e29]:
+              - generic [ref=e30]:
+                - img [ref=e31]
+                - generic [ref=e34]: SEJ-42
+                - generic [ref=e35]: "5"
+              - generic [ref=e36]:
+                - generic [ref=e37]:
+                  - generic "Frontend" [ref=e38]
+                  - generic "API" [ref=e39]
+                - img [ref=e40]
+            - generic [ref=e43]: Implement Linear Integration in Sidebar
+        - listitem [ref=e44]:
+          - button "SEJ-55 3 Frontend OmniPrompt state synchronization" [ref=e45] [cursor=pointer]:
+            - generic [ref=e46]:
+              - generic [ref=e47]:
+                - img [ref=e48]
+                - generic [ref=e49]: SEJ-55
+                - generic [ref=e50]: "3"
+              - generic [ref=e51]:
+                - generic "Frontend" [ref=e53]
+                - img [ref=e54]
+            - generic [ref=e56]: OmniPrompt state synchronization
+        - listitem [ref=e57]:
+          - button "SEJ-61 8 AI Backend Add \"Move to in progress\" voice intent" [ref=e58] [cursor=pointer]:
+            - generic [ref=e59]:
+              - generic [ref=e60]:
+                - img [ref=e61]
+                - generic [ref=e62]: SEJ-61
+                - generic [ref=e63]: "8"
+              - generic [ref=e64]:
+                - generic [ref=e65]:
+                  - generic "AI" [ref=e66]
+                  - generic "Backend" [ref=e67]
+                - img [ref=e68]
+            - generic [ref=e70]: Add "Move to in progress" voice intent
+        - listitem [ref=e71]:
+          - button "SEJ-68 2 UI/UX Fix Glass Morphing z-index on Blockers" [ref=e72] [cursor=pointer]:
+            - generic [ref=e73]:
+              - generic [ref=e74]:
+                - img [ref=e75]
+                - generic [ref=e76]: SEJ-68
+                - generic [ref=e77]: "2"
+              - generic [ref=e78]:
+                - generic "UI/UX" [ref=e80]
+                - img [ref=e81]
+            - generic [ref=e84]: Fix Glass Morphing z-index on Blockers
+        - listitem [ref=e85]:
+          - button "SEJ-59 13 Backend Migrate existing queue items to GraphQL" [ref=e86] [cursor=pointer]:
+            - generic [ref=e87]:
+              - generic [ref=e88]:
+                - img [ref=e89]
+                - generic [ref=e90]: SEJ-59
+                - generic [ref=e91]: "13"
+              - generic [ref=e92]:
+                - generic "Backend" [ref=e94]
+                - img [ref=e95]
+            - generic [ref=e97]: Migrate existing queue items to GraphQL
+        - listitem [ref=e98]:
+          - button "SEJ-43 3 Frontend Refactor TerminalFeed row animations" [ref=e99] [cursor=pointer]:
+            - generic [ref=e100]:
+              - generic [ref=e101]:
+                - img [ref=e102]
+                - generic [ref=e103]: SEJ-43
+                - generic [ref=e104]: "3"
+              - generic [ref=e105]:
+                - generic "Frontend" [ref=e107]
+                - img [ref=e108]
+            - generic [ref=e111]: Refactor TerminalFeed row animations
+  - main [ref=e112]:
+    - generic [ref=e114]:
+      - generic [ref=e115]:
+        - heading "What should we build next?" [level=1] [ref=e116]
+        - paragraph [ref=e117]: Describe an objective, or assign a task from the queue.
+      - generic [ref=e118]:
+        - button "Start recording" [ref=e119] [cursor=pointer]:
+          - img [ref=e120]
+        - generic [ref=e124]: Hold ⌘⇧V to record
+    - generic [ref=e126]:
+      - heading "PRE-FLIGHT BRIEFING" [level=3] [ref=e127]
+      - generic [ref=e128]:
+        - generic [ref=e129]:
+          - generic [ref=e130]: TARGET ID
+          - generic [ref=e131]:
+            - generic [ref=e132]: 5 pts
+            - strong [ref=e133]: SEJ-42
+        - generic [ref=e134]:
+          - generic [ref=e135]: SUMMARY
+          - strong [ref=e136]: Implement Linear Integration in Sidebar
+        - generic [ref=e137]:
+          - generic [ref=e138]: STATUS
+          - generic [ref=e139]: IN-PROGRESS
+        - generic [ref=e140]:
+          - generic [ref=e141]: ASSIGNEE
+          - strong [ref=e143]: Jack
+      - generic [ref=e144]:
+        - generic [ref=e145]: Frontend
+        - generic [ref=e146]: API
+      - generic [ref=e147]:
+        - heading "DESCRIPTION" [level=4] [ref=e148]
+        - paragraph [ref=e149]: Connect the sidebar queue to the actual Linear API. We need to fetch the active cycle and display issues assigned to the current user.
+      - generic [ref=e150]:
+        - heading "CONTEXT MAP" [level=4] [ref=e151]
+        - generic [ref=e152]:
+          - generic [ref=e153]: BRANCH
+          - generic [ref=e154]: feature/SEJ-42-linear-sidebar
+        - generic [ref=e155]:
+          - generic [ref=e156]: FILES
+          - generic [ref=e157]:
+            - generic [ref=e158]: src/components/Sidebar.tsx
+            - generic [ref=e159]: src/hooks/useLinear.ts
+      - button "Commence Mission" [ref=e161] [cursor=pointer]

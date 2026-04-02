@@ -34,6 +34,10 @@
   letter-spacing: 0.05em;
 }
 
+.stageRail {
+  margin: 2px 0 8px;
+}
+
 /* Transcript section */
 .section {
   background: rgba(255, 255, 255, 0.02);
@@ -247,3 +251,9 @@
   color: #30b0c7;
 }
 .btnReRecord:hover { color: #67d4e5; }
+
+.errorMessage {
+  margin-top: -6px;
+  color: #fca5a5;
+  font-size: 12px;
+}

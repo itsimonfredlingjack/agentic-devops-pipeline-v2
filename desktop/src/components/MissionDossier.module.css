@@ -181,27 +181,14 @@
   justify-content: center;
 }
 
-.ctaButton {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: #ffffff;
-  font-family: "Inter", sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 10px 24px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transition: all 0.2s ease;
-}
-
-.ctaButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-  background: linear-gradient(135deg, #4f8bf9, #3b82f6);
-}
-
-.ctaButton:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+.ctaStatus {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 999px;
+  padding: 8px 14px;
 }

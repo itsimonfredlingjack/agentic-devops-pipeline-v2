@@ -387,8 +387,8 @@ export async function abortMission(
   monitorUrl: string,
   sessionId: string,
 ): Promise<void> {
-  console.log(`[data-client] Sending ABORT signal for session ${sessionId} to ${monitorUrl}`);
-  // In a real implementation, this would be a POST to /sessions/{id}/abort
+  const base = normalizeUrl(monitorUrl);
+  await fetch(`${base}/sessions/${sessionId}/abort`, { method: "POST" });
 }
 
 export async function sendTacticalInstruction(
@@ -396,16 +396,63 @@ export async function sendTacticalInstruction(
   sessionId: string,
   text: string,
 ): Promise<void> {
-  console.log(`[data-client] Sending TACTICAL INSTRUCTION for session ${sessionId}: "${text}"`);
-  // In a real implementation, this would be a POST to /sessions/{id}/instructions
+  const base = normalizeUrl(monitorUrl);
+  await fetch(`${base}/sessions/${sessionId}/instructions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: text }),
+  });
 }
 
 export async function forceCheckpoint(
   monitorUrl: string,
   sessionId: string,
 ): Promise<void> {
-  console.log(`[data-client] Sending CHECKPOINT signal for session ${sessionId}`);
-  // In a real implementation, this would be a POST to /sessions/{id}/checkpoint
+  const base = normalizeUrl(monitorUrl);
+  await fetch(`${base}/sessions/${sessionId}/checkpoint`, { method: "POST" });
+}
+
+// -----------------------------------------------------------------------
+// Jira proxy (via voice pipeline backend)
+// -----------------------------------------------------------------------
+
+export interface JiraIssueCompact {
+  key: string;
+  summary: string;
+  status: string;
+  issue_type: string;
+  priority: string | null;
+  assignee: string | null;
+  labels: string[];
+}
+
+export interface JiraIssueDetail extends JiraIssueCompact {
+  description: string | null;
+  reporter: string | null;
+}
+
+export async function fetchJiraIssues(
+  voiceUrl: string,
+  project?: string,
+  maxResults = 20,
+): Promise<JiraIssueCompact[]> {
+  const base = normalizeUrl(voiceUrl);
+  const params = new URLSearchParams();
+  if (project) params.set("project", project);
+  params.set("max_results", String(maxResults));
+  const resp = await fetch(`${base}/api/jira/issues?${params}`);
+  if (!resp.ok) throw new Error(`Jira proxy returned HTTP ${resp.status}`);
+  return (await resp.json()) as JiraIssueCompact[];
+}
+
+export async function fetchJiraIssue(
+  voiceUrl: string,
+  key: string,
+): Promise<JiraIssueDetail> {
+  const base = normalizeUrl(voiceUrl);
+  const resp = await fetch(`${base}/api/jira/issue/${key}`);
+  if (!resp.ok) throw new Error(`Jira proxy returned HTTP ${resp.status}`);
+  return (await resp.json()) as JiraIssueDetail;
 }
 
 export function connectMonitorSocket(

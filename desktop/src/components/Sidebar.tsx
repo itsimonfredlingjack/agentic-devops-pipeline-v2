@@ -1,6 +1,7 @@
 import { KeyboardEvent, useRef, useState } from "react";
 import { useAppStore } from "../stores/appStore";
 import { mockLinearCycle, mockMyIssues, mockProjects, Priority, Status, LinearIssue } from "../mockLinearData";
+import { useJiraIssues } from "../hooks/useJiraIssues";
 import {
   LinearUrgent, LinearHigh, LinearMedium, LinearLow, LinearNone,
   LinearBacklog, LinearTodo, LinearInProgress, LinearReview, LinearDone, LinearCanceled
@@ -100,17 +101,20 @@ export function Sidebar({
   const [expandedProjects, setExpandedProjects] = useState<string[]>([]);
   const activeGlobalView = useAppStore((s) => s.activeGlobalView);
   const setActiveGlobalView = useAppStore((s) => s.setActiveGlobalView);
+  const { issues: jiraIssues } = useJiraIssues();
 
   const toggleProject = (name: string) => {
-    setExpandedProjects(prev => 
+    setExpandedProjects(prev =>
       prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]
     );
   };
 
+  const liveIssues = jiraIssues.length > 0 ? jiraIssues : mockLinearCycle;
+
   const getIssues = () => {
     switch (activeView) {
-      case 'cycle': return mockLinearCycle;
-      case 'assigned': return mockMyIssues;
+      case 'cycle': return liveIssues;
+      case 'assigned': return liveIssues.filter(i => i.assignee);
       case 'projects': return []; // Handled separately
       default: return [];
     }

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useAppStore } from "../stores/appStore";
 import { mockLinearCycle } from "../mockLinearData";
+import { useJiraIssues } from "../hooks/useJiraIssues";
 import styles from "./CommandPalette.module.css";
 
 interface Command {
@@ -17,10 +18,13 @@ export function CommandPalette({ isOpen, onClose, onSelectTask }: {
   onSelectTask: (idx: number) => void;
 }) {
   const { setActiveGlobalView, phase } = useAppStore();
+  const { issues: jiraIssues } = useJiraIssues();
   const [search, setSearch] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
+
+  const taskIssues = jiraIssues.length > 0 ? jiraIssues : mockLinearCycle;
 
   const commands: Command[] = useMemo(() => {
     const list: Command[] = [
@@ -33,18 +37,18 @@ export function CommandPalette({ isOpen, onClose, onSelectTask }: {
       list.push({ id: "sys-abort", label: "Abort Current Mission", icon: "ABT", shortcut: "⌘.", action: () => console.log("Aborting...") });
     }
 
-    // Add dynamic tasks
-    mockLinearCycle.forEach((issue, idx) => {
-      list.push({ 
-        id: `task-${issue.id}`, 
-        label: `Jump to ${issue.id}: ${issue.title}`, 
-        icon: "TSK", 
+    // Add dynamic tasks from Jira (or mock fallback)
+    taskIssues.forEach((issue, idx) => {
+      list.push({
+        id: `task-${issue.id}`,
+        label: `Jump to ${issue.id}: ${issue.title}`,
+        icon: "TSK",
         action: () => onSelectTask(idx)
       });
     });
 
     return list;
-  }, [setActiveGlobalView, phase, onSelectTask]);
+  }, [setActiveGlobalView, phase, onSelectTask, taskIssues]);
 
   const filteredCommands = useMemo(() => {
     if (!search) return commands;

@@ -7,6 +7,7 @@ import { IntentReview } from "./IntentReview";
 import { ClarificationReview } from "./ClarificationReview";
 import styles from "./MasterWorkspace.module.css";
 import { mockLinearCycle } from "../mockLinearData";
+import { useJiraIssues } from "../hooks/useJiraIssues";
 import type { MicrophonePermissionStatus } from "../hooks/useMicrophone";
 
 interface MasterWorkspaceProps {
@@ -46,6 +47,8 @@ export function MasterWorkspace({
     stuckAlert,
     completion,
   } = useAppStore();
+  const { issues: jiraIssues } = useJiraIssues();
+  const taskIssues = jiraIssues.length > 0 ? jiraIssues : mockLinearCycle;
 
   if (activeGlobalView === "monitor") {
     return (
@@ -76,8 +79,8 @@ export function MasterWorkspace({
   const isExecuting = phase === "loop" || phase === "done" || (phase === "error" && hasLoopContext);
 
   const targetedTask = isExecuting
-    ? mockLinearCycle.find(q => q.id === ticketKey) || mockLinearCycle[selectedIndex]
-    : mockLinearCycle[selectedIndex];
+    ? taskIssues.find(q => q.id === ticketKey) || taskIssues[selectedIndex]
+    : taskIssues[selectedIndex];
 
   return (
     <main className={styles.workspace}>

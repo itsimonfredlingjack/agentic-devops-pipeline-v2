@@ -458,6 +458,60 @@ def create_app() -> FastAPI:
         return {"status": "ignored", "event": event_type}
 
     # -----------------------------------------------------------------------
+    # Jira proxy (for desktop — avoids CORS)
+    # -----------------------------------------------------------------------
+
+    @app.get("/api/jira/issues", tags=["jira"])
+    async def jira_list_issues(
+        project: str | None = None,
+        max_results: int = 20,
+    ) -> list[dict[str, Any]]:
+        """Proxy: list Jira issues for the desktop app."""
+        try:
+            from src.sejfa.integrations.jira_client import get_jira_client
+
+            client = get_jira_client()
+            project_key = project or settings.jira_project_key
+            jql = f"project = {project_key} ORDER BY updated DESC"
+            issues = client.search_issues(jql, max_results=max_results)
+            return [
+                {
+                    "key": i.key,
+                    "summary": i.summary,
+                    "status": i.status,
+                    "issue_type": i.issue_type,
+                    "priority": i.priority,
+                    "assignee": i.assignee,
+                    "labels": i.labels,
+                }
+                for i in issues
+            ]
+        except Exception as e:
+            raise HTTPException(status_code=502, detail=f"Jira unavailable: {e}") from e
+
+    @app.get("/api/jira/issue/{key}", tags=["jira"])
+    async def jira_get_issue(key: str) -> dict[str, Any]:
+        """Proxy: fetch a single Jira issue for the desktop app."""
+        try:
+            from src.sejfa.integrations.jira_client import get_jira_client
+
+            client = get_jira_client()
+            issue = client.get_issue(key)
+            return {
+                "key": issue.key,
+                "summary": issue.summary,
+                "description": issue.description,
+                "status": issue.status,
+                "issue_type": issue.issue_type,
+                "priority": issue.priority,
+                "assignee": issue.assignee,
+                "reporter": issue.reporter,
+                "labels": issue.labels,
+            }
+        except Exception as e:
+            raise HTTPException(status_code=502, detail=f"Jira unavailable: {e}") from e
+
+    # -----------------------------------------------------------------------
     # Ralph Loop queue
     # -----------------------------------------------------------------------
 

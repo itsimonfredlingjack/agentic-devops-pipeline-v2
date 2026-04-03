@@ -32,6 +32,9 @@ broadcast = BroadcastManager(sio)
 stuck_detector = StuckDetector()
 cost_tracker = CostTracker()
 
+# Session signals (transient — not persisted)
+_session_signals: dict[str, dict[str, Any]] = {}
+
 # Pipeline stage mapping
 STAGE_MAP: dict[str, str] = {
     "Bash": "actions",
@@ -262,4 +265,48 @@ async def reset_session() -> dict[str, bool]:
     """Clear current session state (in-memory analyzers)."""
     stuck_detector.reset()
     cost_tracker.reset()
+    _session_signals.clear()
     return {"ok": True}
+
+
+# -----------------------------------------------------------------------
+# Session control signals (abort, instructions, checkpoint)
+# -----------------------------------------------------------------------
+
+
+class InstructionBody(BaseModel):
+    message: str
+
+
+@fastapi_app.post("/sessions/{session_id}/abort")
+async def abort_session(session_id: str) -> dict[str, Any]:
+    """Signal a running session to abort."""
+    _session_signals.setdefault(session_id, {})["abort"] = True
+    await broadcast.emit("session_abort", {"session_id": session_id})
+    return {"ok": True, "session_id": session_id}
+
+
+@fastapi_app.post("/sessions/{session_id}/instructions")
+async def send_instruction(session_id: str, body: InstructionBody) -> dict[str, Any]:
+    """Send a tactical instruction to a running session."""
+    _session_signals.setdefault(session_id, {})["instruction"] = body.message
+    await broadcast.emit(
+        "session_instruction",
+        {"session_id": session_id, "message": body.message},
+    )
+    return {"ok": True, "session_id": session_id}
+
+
+@fastapi_app.post("/sessions/{session_id}/checkpoint")
+async def force_checkpoint(session_id: str) -> dict[str, Any]:
+    """Request a checkpoint commit from a running session."""
+    _session_signals.setdefault(session_id, {})["checkpoint"] = True
+    await broadcast.emit("session_checkpoint", {"session_id": session_id})
+    return {"ok": True, "session_id": session_id}
+
+
+@fastapi_app.get("/sessions/{session_id}/signals")
+async def get_signals(session_id: str) -> dict[str, Any]:
+    """Check for pending signals (called by monitor hook on PreToolUse)."""
+    signals = _session_signals.pop(session_id, {})
+    return signals

@@ -25,8 +25,13 @@ CREATE TABLE IF NOT EXISTS queue_entries (
     queued_at   REAL NOT NULL,
     started_at  REAL,
     completed_at REAL,
-    success     INTEGER
+    success     INTEGER,
+    retry_count INTEGER NOT NULL DEFAULT 0
 );
+"""
+
+_MIGRATION_SQL = """
+ALTER TABLE queue_entries ADD COLUMN retry_count INTEGER NOT NULL DEFAULT 0;
 """
 
 
@@ -64,16 +69,24 @@ class PersistentLoopQueue(LoopQueue):
         conn = sqlite3.connect(str(self._db_path))
         conn.execute("PRAGMA journal_mode=WAL;")
         conn.executescript(_SCHEMA_SQL)
+        # Migrate: add retry_count column if missing (idempotent)
+        try:
+            conn.execute(_MIGRATION_SQL)
+            conn.commit()
+        except sqlite3.OperationalError:
+            pass  # Column already exists
         return conn
 
     def _restore_entries(self) -> None:
         """Load all rows from the database into the in-memory dict."""
         cursor = self._conn.execute(
-            "SELECT key, summary, status, queued_at, started_at, completed_at, success "
+            "SELECT key, summary, status, queued_at, started_at, completed_at, success, retry_count "
             "FROM queue_entries"
         )
         for row in cursor:
-            key, summary, status, queued_at, started_at, completed_at, success_int = row
+            key, summary, status, queued_at, started_at, completed_at, success_int, retry_count = (
+                row
+            )
             entry = QueueEntry(
                 key=key,
                 summary=summary,
@@ -82,6 +95,7 @@ class PersistentLoopQueue(LoopQueue):
                 started_at=started_at,
                 completed_at=completed_at,
                 success=None if success_int is None else bool(success_int),
+                retry_count=retry_count or 0,
             )
             self._entries[key] = entry
         count = len(self._entries)
@@ -92,8 +106,8 @@ class PersistentLoopQueue(LoopQueue):
         """Insert or replace a single entry in the database."""
         self._conn.execute(
             "INSERT OR REPLACE INTO queue_entries "
-            "(key, summary, status, queued_at, started_at, completed_at, success) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            "(key, summary, status, queued_at, started_at, completed_at, success, retry_count) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
             (
                 entry.key,
                 entry.summary,
@@ -102,6 +116,7 @@ class PersistentLoopQueue(LoopQueue):
                 entry.started_at,
                 entry.completed_at,
                 None if entry.success is None else int(entry.success),
+                entry.retry_count,
             ),
         )
         self._conn.commit()
@@ -130,3 +145,12 @@ class PersistentLoopQueue(LoopQueue):
         entry = self._entries.get(key)
         if entry is not None:
             self._upsert(entry)
+
+    def reset_to_pending(self, key: str) -> bool:
+        """Reset a failed ticket to pending and persist the change."""
+        result = super().reset_to_pending(key)
+        if result:
+            entry = self._entries.get(key)
+            if entry is not None:
+                self._upsert(entry)
+        return result

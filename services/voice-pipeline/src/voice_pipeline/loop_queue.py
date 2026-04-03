@@ -30,6 +30,7 @@ class QueueEntry:
     started_at: float | None = None
     completed_at: float | None = None
     success: bool | None = None
+    retry_count: int = 0
 
 
 class LoopQueue:
@@ -81,4 +82,26 @@ class LoopQueue:
             entry.status = TicketStatus.COMPLETED if success else TicketStatus.FAILED
             entry.completed_at = time.monotonic()
             entry.success = success
+            if not success:
+                entry.retry_count += 1
             logger.info("Loop completed for %s (success=%s)", key, success)
+
+    def get_failed(self) -> list[dict]:
+        """Return all failed tickets with retry counts."""
+        return [
+            {"key": e.key, "summary": e.summary, "retry_count": e.retry_count}
+            for e in self._entries.values()
+            if e.status == TicketStatus.FAILED
+        ]
+
+    def reset_to_pending(self, key: str) -> bool:
+        """Reset a failed ticket back to pending for retry."""
+        entry = self._entries.get(key)
+        if entry is not None and entry.status == TicketStatus.FAILED:
+            entry.status = TicketStatus.PENDING
+            entry.started_at = None
+            entry.completed_at = None
+            entry.success = None
+            logger.info("Reset %s to pending (retry_count=%d)", key, entry.retry_count)
+            return True
+        return False

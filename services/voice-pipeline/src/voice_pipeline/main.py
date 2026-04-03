@@ -501,6 +501,19 @@ def create_app() -> FastAPI:
 
         return {"status": "ok", "key": request.key, "success": str(request.success)}
 
+    @app.get("/api/loop/failed", tags=["loop"])
+    async def get_loop_failed() -> list[dict]:
+        """Return all failed tickets with retry counts."""
+        return _get_loop_queue().get_failed()
+
+    @app.post("/api/loop/retry/{key}", tags=["loop"])
+    async def retry_loop_ticket(key: str) -> dict[str, str]:
+        """Reset a failed ticket back to pending for retry."""
+        queue = _get_loop_queue()
+        if queue.reset_to_pending(key):
+            return {"status": "ok", "key": key}
+        return {"status": "not_found", "key": key}
+
     return app
 
 

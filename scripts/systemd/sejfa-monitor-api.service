@@ -1,5 +1,5 @@
 [Unit]
-Description=SEJFA Voice Pipeline (FastAPI on :8000)
+Description=SEJFA Monitor API (FastAPI on :8100)
 After=network.target
 
 [Service]
@@ -7,13 +7,13 @@ Type=simple
 User=sejfa
 WorkingDirectory=/opt/sejfa
 EnvironmentFile=/opt/sejfa/.env
-ExecStart=/opt/sejfa/venv/bin/uvicorn voice_pipeline.main:app --host 0.0.0.0 --port 8000
-Environment=PYTHONPATH=/opt/sejfa/services/voice-pipeline/src
+ExecStart=/opt/sejfa/venv/bin/uvicorn monitor.api:app --host 0.0.0.0 --port 8100
+Environment=PYTHONPATH=/opt/sejfa/services/monitor-api/src
 Restart=on-failure
 RestartSec=5
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=sejfa-voice
+SyslogIdentifier=sejfa-monitor
 
 [Install]
 WantedBy=multi-user.target

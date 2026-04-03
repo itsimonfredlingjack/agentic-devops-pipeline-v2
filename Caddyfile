@@ -1,0 +1,39 @@
+# SEJFA Reverse Proxy — automatic HTTPS via Let's Encrypt
+#
+# Replace {$SEJFA_DOMAIN} with your domain, or set the env var.
+# For local testing: use `localhost` instead.
+
+{$SEJFA_DOMAIN:localhost} {
+	# Voice pipeline API + WebSocket
+	handle /api/* {
+		reverse_proxy voice-pipeline:8000
+	}
+	handle /ws/* {
+		reverse_proxy voice-pipeline:8000
+	}
+	handle /health {
+		reverse_proxy voice-pipeline:8000
+	}
+
+	# Monitor API + Socket.IO
+	handle /events* {
+		reverse_proxy monitor-api:8100
+	}
+	handle /sessions* {
+		reverse_proxy monitor-api:8100
+	}
+	handle /status {
+		reverse_proxy monitor-api:8100
+	}
+	handle /reset {
+		reverse_proxy monitor-api:8100
+	}
+	handle /socket.io/* {
+		reverse_proxy monitor-api:8100
+	}
+
+	# Default: voice pipeline
+	handle {
+		reverse_proxy voice-pipeline:8000
+	}
+}

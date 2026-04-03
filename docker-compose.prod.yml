@@ -1,0 +1,80 @@
+# SEJFA Production — Hetzner deployment
+#
+# Services: voice pipeline + monitor API + Caddy reverse proxy
+# Usage:
+#   docker compose -f docker-compose.prod.yml up -d
+#   docker compose -f docker-compose.prod.yml logs -f
+#   docker compose -f docker-compose.prod.yml down
+
+services:
+  voice-pipeline:
+    build:
+      context: .
+      target: voice-pipeline
+    container_name: sejfa-voice
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8000
+    expose:
+      - "8000"
+    volumes:
+      - voice-data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+
+  monitor-api:
+    build:
+      context: .
+      target: monitor-api
+    container_name: sejfa-monitor
+    restart: unless-stopped
+    env_file: .env
+    expose:
+      - "8100"
+    volumes:
+      - monitor-data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8100/events?limit=1')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: sejfa-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      voice-pipeline:
+        condition: service_healthy
+      monitor-api:
+        condition: service_healthy
+
+volumes:
+  voice-data:
+  monitor-data:
+  caddy-data:
+  caddy-config:

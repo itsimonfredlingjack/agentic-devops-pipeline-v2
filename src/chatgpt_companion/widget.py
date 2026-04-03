@@ -46,9 +46,7 @@ def _read_asset(path: Path) -> str:
 
 
 def _fallback_widget_html(message: str) -> str:
-    safe_message = (
-        message.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-    )
+    safe_message = message.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     return f"""
 <!DOCTYPE html>
 <html lang="en">
@@ -90,4 +88,3 @@ def _fallback_widget_html(message: str) -> str:
   </body>
 </html>
 """.strip()
-

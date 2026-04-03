@@ -223,7 +223,9 @@ def fetch_workspace_file(
     end_line: int | None = None,
 ) -> dict:
     try:
-        return mission_service.fetch_workspace_file(path=path, start_line=start_line, end_line=end_line)
+        return mission_service.fetch_workspace_file(
+            path=path, start_line=start_line, end_line=end_line
+        )
     except (FileNotFoundError, ValueError) as exc:
         return {"error": str(exc), "path": path}
 
@@ -379,7 +381,9 @@ async def share_current(_request: Request) -> HTMLResponse:
 
 @mcp.custom_route("/share/session/{session_id}", methods=["GET"])
 async def share_session(_request: Request) -> HTMLResponse:
-    return HTMLResponse(mission_service.render_share_page(session_id=_request.path_params["session_id"]))
+    return HTMLResponse(
+        mission_service.render_share_page(session_id=_request.path_params["session_id"])
+    )
 
 
 MCP_STANDARD_METHODS = {

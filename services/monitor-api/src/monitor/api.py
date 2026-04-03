@@ -52,10 +52,7 @@ def infer_stage(tool_name: str, tool_args_summary: str) -> str:
 
     # Check for test/lint commands
     if tool_name == "Bash":
-        if any(
-            kw in summary_lower
-            for kw in ("pytest", "vitest", "ruff", "biome", "lint", "test")
-        ):
+        if any(kw in summary_lower for kw in ("pytest", "vitest", "ruff", "biome", "lint", "test")):
             return "verify"
         if any(kw in summary_lower for kw in ("git push", "gh pr", "git merge")):
             return "deploy"
@@ -203,9 +200,7 @@ async def get_events(
 async def get_sessions() -> list[dict[str, Any]]:
     """List all sessions with summary stats."""
     async with async_session() as session:
-        result = await session.execute(
-            select(Session).order_by(desc(Session.started_at)).limit(50)
-        )
+        result = await session.execute(select(Session).order_by(desc(Session.started_at)).limit(50))
         sessions = result.scalars().all()
         return [
             {
@@ -225,9 +220,7 @@ async def get_sessions() -> list[dict[str, Any]]:
 async def get_session_detail(session_id: str) -> dict[str, Any]:
     """Get single session detail."""
     async with async_session() as session:
-        result = await session.execute(
-            select(Session).where(Session.session_id == session_id)
-        )
+        result = await session.execute(select(Session).where(Session.session_id == session_id))
         s = result.scalar_one_or_none()
         if not s:
             return {"error": "Session not found"}

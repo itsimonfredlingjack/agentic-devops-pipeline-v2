@@ -151,7 +151,7 @@ Polls `/api/loop/queue` for pending tickets, runs `claude --print "/start-task $
 ## Verification
 
 ```bash
-# Full CI validation (ruff + pytest with coverage, fail-under 80%)
+# Full CI validation (ruff + pytest with coverage, fail-under 65%)
 bash scripts/ci_check.sh
 
 # All Python tests

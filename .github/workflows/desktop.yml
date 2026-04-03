@@ -1,0 +1,37 @@
+name: Desktop
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "desktop/**"
+      - "packages/**"
+      - "package.json"
+      - "package-lock.json"
+
+permissions:
+  contents: read
+
+jobs:
+  desktop-build:
+    name: Desktop build check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build packages
+        run: npm run build --workspaces --if-present
+
+      - name: Desktop tests
+        run: npm --workspace desktop run test
+
+      - name: Desktop TypeScript check
+        run: npm --workspace desktop run build

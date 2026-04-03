@@ -252,8 +252,7 @@ class WorkspaceService:
             end_line = min(end_line, start_line + config.max_file_excerpt_lines - 1, last_line)
 
         excerpt = [
-            {"line": index, "text": lines[index - 1]}
-            for index in range(start_line, end_line + 1)
+            {"line": index, "text": lines[index - 1]} for index in range(start_line, end_line + 1)
         ]
         return {
             "path": target.relative_to(self.repo_root).as_posix(),
@@ -309,7 +308,12 @@ class WorkspaceService:
             "architecture": (self.repo_root / "docs" / "ARCHITECTURE.md", 1, 220),
             "workflow": (self.repo_root / "CLAUDE.md", 1, 220),
             "voice": (
-                self.repo_root / "services" / "voice-pipeline" / "src" / "voice_pipeline" / "main.py",
+                self.repo_root
+                / "services"
+                / "voice-pipeline"
+                / "src"
+                / "voice_pipeline"
+                / "main.py",
                 1,
                 220,
             ),
@@ -411,13 +415,17 @@ class MissionService:
         session_id = (
             active_session["session_id"]
             if active_session
-            else latest_session["session_id"] if latest_session else None
+            else latest_session["session_id"]
+            if latest_session
+            else None
         )
         events = self._query_events(session_id=session_id, limit=12) if session_id else []
         ticket_key = (
             active_session.get("ticket_id")
             if active_session
-            else queued_ticket.get("key") if queued_ticket else latest_session.get("ticket_id")
+            else queued_ticket.get("key")
+            if queued_ticket
+            else latest_session.get("ticket_id")
             if latest_session
             else None
         )
@@ -459,7 +467,9 @@ class MissionService:
         if resolved_session_id is None and ticket_id:
             matching = self._query_single_session(ticket_id=ticket_id, active_only=False)
             resolved_session_id = matching["session_id"] if matching else None
-        events = self._query_events(session_id=resolved_session_id, ticket_id=ticket_id, limit=limit)
+        events = self._query_events(
+            session_id=resolved_session_id, ticket_id=ticket_id, limit=limit
+        )
         return {
             "session_id": resolved_session_id,
             "ticket_id": ticket_id,
@@ -598,10 +608,41 @@ class MissionService:
         metrics = share.get("metrics") or {}
 
         stat_cards = [
-            ("Session", str((payload.get("active_session") or payload.get("latest_session") or {}).get("session_id") or "waiting")),
-            ("Outcome", str((payload.get("active_session") or payload.get("latest_session") or {}).get("outcome") or "in progress")),
-            ("Cost", self._format_money((payload.get("active_session") or payload.get("latest_session") or {}).get("total_cost_usd"))),
-            ("Events", str((payload.get("active_session") or payload.get("latest_session") or {}).get("total_events") or 0)),
+            (
+                "Session",
+                str(
+                    (payload.get("active_session") or payload.get("latest_session") or {}).get(
+                        "session_id"
+                    )
+                    or "waiting"
+                ),
+            ),
+            (
+                "Outcome",
+                str(
+                    (payload.get("active_session") or payload.get("latest_session") or {}).get(
+                        "outcome"
+                    )
+                    or "in progress"
+                ),
+            ),
+            (
+                "Cost",
+                self._format_money(
+                    (payload.get("active_session") or payload.get("latest_session") or {}).get(
+                        "total_cost_usd"
+                    )
+                ),
+            ),
+            (
+                "Events",
+                str(
+                    (payload.get("active_session") or payload.get("latest_session") or {}).get(
+                        "total_events"
+                    )
+                    or 0
+                ),
+            ),
         ]
         stats_html = "".join(
             f"""
@@ -612,24 +653,32 @@ class MissionService:
             """
             for label, value in stat_cards
         )
-        gates_html = "".join(
-            f'<div class="chip {self._tone_class(gate.get("status"))}">{html.escape(str(gate.get("name") or "gate"))}: {html.escape(str(gate.get("status") or "pending"))}</div>'
-            for gate in (payload.get("gates") or [])
-        ) or '<div class="muted">No evidence cards yet.</div>'
-        events_html = "".join(
-            f"""
+        gates_html = (
+            "".join(
+                f'<div class="chip {self._tone_class(gate.get("status"))}">{html.escape(str(gate.get("name") or "gate"))}: {html.escape(str(gate.get("status") or "pending"))}</div>'
+                for gate in (payload.get("gates") or [])
+            )
+            or '<div class="muted">No evidence cards yet.</div>'
+        )
+        events_html = (
+            "".join(
+                f"""
             <li>
               <strong>{html.escape(str(event.get("tool_name") or "Event"))}</strong>
               <span>{html.escape(str(event.get("timestamp") or ""))}</span>
               <p>{html.escape(str(event.get("error") or event.get("tool_args_summary") or "No detail provided."))}</p>
             </li>
             """
-            for event in (payload.get("latest_events") or [])[:6]
-        ) or '<div class="muted">No recent events yet.</div>'
-        alerts_html = "".join(
-            f"<li>{html.escape(str(alert))}</li>"
-            for alert in (payload.get("alerts") or [])
-        ) or "<li>No active alerts.</li>"
+                for event in (payload.get("latest_events") or [])[:6]
+            )
+            or '<div class="muted">No recent events yet.</div>'
+        )
+        alerts_html = (
+            "".join(
+                f"<li>{html.escape(str(alert))}</li>" for alert in (payload.get("alerts") or [])
+            )
+            or "<li>No active alerts.</li>"
+        )
 
         opened_count = int(metrics.get("mission_share_opened", 0))
         requested_count = int(metrics.get("mission_share_requested", 0))
@@ -944,10 +993,7 @@ class MissionService:
                 gates["review"] = "passed" if success is not False else "failed"
             if any(token in summary for token in ("git push", "deploy", "merge")):
                 gates["ci_cd"] = "passed" if success is not False else "failed"
-        return [
-            {"name": key, "status": value}
-            for key, value in gates.items()
-        ]
+        return [{"name": key, "status": value} for key, value in gates.items()]
 
     def _derive_alerts(
         self,
@@ -1051,8 +1097,7 @@ class MissionService:
         session_label = resolved_session_id or "waiting"
         stats = payload.get("active_session") or payload.get("latest_session") or {}
         gate_summary = ", ".join(
-            f"{gate.get('name')}: {gate.get('status')}"
-            for gate in (payload.get("gates") or [])[:2]
+            f"{gate.get('name')}: {gate.get('status')}" for gate in (payload.get("gates") or [])[:2]
         )
         if not gate_summary:
             gate_summary = "evidence pending"

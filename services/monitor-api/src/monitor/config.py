@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import os
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -31,9 +31,7 @@ class MonitorConfig:
     db_path: Path = field(
         default_factory=lambda: Path(os.getenv("SEJFA_MONITOR_DB_PATH", "data/monitor.db"))
     )
-    cors_origins: list[str] = field(
-        default_factory=lambda: ["http://localhost:*", "file://"]
-    )
+    cors_origins: list[str] = field(default_factory=lambda: ["http://localhost:*", "file://"])
     cost_rates: CostRates = field(default_factory=CostRates)
     stuck: StuckConfig = field(default_factory=StuckConfig)
 

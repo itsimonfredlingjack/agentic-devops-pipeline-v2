@@ -157,6 +157,7 @@ class TestAutoDispatch:
         result = await orchestrator.run_from_text("Build OAuth login")
 
         from src.voice_pipeline.pipeline.orchestrator import PreviewNeeded
+
         assert isinstance(result, PreviewNeeded)
         assert result.summary == "Build OAuth"
 
@@ -229,6 +230,7 @@ class TestAutoDispatch:
         result = await orchestrator.run_from_text("Build OAuth login")
 
         from src.voice_pipeline.pipeline.orchestrator import PreviewNeeded
+
         assert isinstance(result, PreviewNeeded)
 
         # Simulate human approval

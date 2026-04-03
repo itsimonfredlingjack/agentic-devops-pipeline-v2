@@ -1,7 +1,5 @@
 """Tests for stuck detection."""
 
-import pytest
-
 from src.monitor.stuck_detector import StuckDetector
 
 

@@ -3,10 +3,7 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
-
-HOOK_CLIENT_PATH = (
-    Path(__file__).resolve().parents[2] / ".claude" / "hooks" / "monitor_client.py"
-)
+HOOK_CLIENT_PATH = Path(__file__).resolve().parents[2] / ".claude" / "hooks" / "monitor_client.py"
 
 
 def load_monitor_client():

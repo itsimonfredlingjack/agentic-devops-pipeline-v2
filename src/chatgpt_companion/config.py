@@ -23,28 +23,23 @@ def _first_env(*env_names: str, default: str) -> str:
 
 @dataclass(frozen=True)
 class CompanionConfig:
-    repo_root: Path = field(
-        default_factory=lambda: Path(__file__).resolve().parents[2]
-    )
+    repo_root: Path = field(default_factory=lambda: Path(__file__).resolve().parents[2])
     monitor_db_path: Path = field(
         default_factory=lambda: Path(__file__).resolve().parents[2] / "data" / "monitor.db"
     )
     queue_db_path: Path = field(
         default_factory=lambda: Path(__file__).resolve().parents[2] / "loop_queue.db"
     )
-    docs_root: Path = field(
-        default_factory=lambda: Path(__file__).resolve().parents[2] / "docs"
-    )
+    docs_root: Path = field(default_factory=lambda: Path(__file__).resolve().parents[2] / "docs")
     widget_dist: Path = field(
-        default_factory=lambda: Path(__file__).resolve().parents[2]
-        / "chatgpt-companion"
-        / "web"
-        / "dist"
+        default_factory=lambda: (
+            Path(__file__).resolve().parents[2] / "chatgpt-companion" / "web" / "dist"
+        )
     )
     share_metrics_db_path: Path = field(
-        default_factory=lambda: Path(__file__).resolve().parents[2]
-        / "data"
-        / "chatgpt_companion_metrics.db"
+        default_factory=lambda: (
+            Path(__file__).resolve().parents[2] / "data" / "chatgpt_companion_metrics.db"
+        )
     )
     voice_api_url: str = field(
         default_factory=lambda: _first_env(

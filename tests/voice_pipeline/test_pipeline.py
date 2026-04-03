@@ -167,6 +167,7 @@ class TestPipelineOrchestrator:
         result = await orchestrator.run_from_text("bygg en login med OAuth")
 
         from src.voice_pipeline.pipeline.orchestrator import PreviewNeeded
+
         assert isinstance(result, PreviewNeeded)
 
         # Simulate human approval
@@ -233,6 +234,7 @@ class TestPipelineOrchestrator:
         )
 
         from src.voice_pipeline.pipeline.orchestrator import PreviewNeeded
+
         assert isinstance(result2, PreviewNeeded)
 
         # Simulate human approval
@@ -309,6 +311,7 @@ class TestPipelineOrchestrator:
         )
 
         from src.voice_pipeline.pipeline.orchestrator import PreviewNeeded
+
         assert isinstance(result2, PreviewNeeded)
 
         # Simulate human approval

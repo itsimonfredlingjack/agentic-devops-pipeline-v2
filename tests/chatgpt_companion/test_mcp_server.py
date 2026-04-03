@@ -7,12 +7,12 @@ from src.chatgpt_companion.mcp_server import (
     app,
     fetch,
     get_current_mission_share,
-    get_project_overview_context,
     get_mission_share,
+    get_project_overview_context,
     list_recent_sessions_default,
     mcp,
-    render_mission_dashboard,
     render_current_mission_dashboard,
+    render_mission_dashboard,
     search,
 )
 from src.chatgpt_companion.service import MissionService

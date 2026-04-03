@@ -142,7 +142,6 @@ class PreviewNeeded:
         return result
 
 
-
 class PipelineOrchestrator:
     """Runs the voice → Jira pipeline and broadcasts status at each stage.
 
@@ -211,7 +210,9 @@ class PipelineOrchestrator:
         async with self._lock:
             return await self._execute_pipeline(audio_bytes, filename)
 
-    async def run_from_text(self, text: str) -> PipelineResult | ClarificationNeeded | PreviewNeeded:
+    async def run_from_text(
+        self, text: str
+    ) -> PipelineResult | ClarificationNeeded | PreviewNeeded:
         """Run the pipeline skipping the transcription stage."""
         async with self._lock:
             return await self._execute_from_text(text)
@@ -238,9 +239,16 @@ class PipelineOrchestrator:
         async with self._lock:
             return await self._execute_clarification(session, answer_text)
 
-    _OVERRIDE_FIELDS = frozenset({
-        "summary", "description", "acceptance_criteria", "issue_type", "priority", "labels",
-    })
+    _OVERRIDE_FIELDS = frozenset(
+        {
+            "summary",
+            "description",
+            "acceptance_criteria",
+            "issue_type",
+            "priority",
+            "labels",
+        }
+    )
 
     async def continue_with_approval(
         self,
@@ -320,7 +328,9 @@ class PipelineOrchestrator:
 
         return await self._execute_from_text(transcribed_text)
 
-    async def _execute_from_text(self, text: str) -> PipelineResult | ClarificationNeeded | PreviewNeeded:
+    async def _execute_from_text(
+        self, text: str
+    ) -> PipelineResult | ClarificationNeeded | PreviewNeeded:
         """Internal: pipeline from transcribed text onwards."""
         if not self._settings.jira_configured:
             raise RuntimeError("Jira is not configured. Set JIRA_URL, JIRA_EMAIL, JIRA_API_TOKEN.")
@@ -481,7 +491,9 @@ class PipelineOrchestrator:
 
         # Clear enough (or max rounds hit) — wait for intent confirmation
         if session.clarification_round >= max_rounds:
-            logger.info("Max clarification rounds reached, requesting preview with best effort intent")
+            logger.info(
+                "Max clarification rounds reached, requesting preview with best effort intent"
+            )
 
         combined_text = " | ".join(session.conversation_history)
         self._sessions[session.session_id] = session

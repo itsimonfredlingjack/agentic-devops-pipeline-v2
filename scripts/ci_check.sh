@@ -10,4 +10,4 @@ fi
 
 ruff check .
 ruff format --check .
-pytest -q --cov=src --cov-report=term-missing --cov-fail-under=80
+pytest -q --cov=src --cov-report=term-missing

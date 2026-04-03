@@ -134,7 +134,9 @@ def test_workspace_supports_standard_search_and_fetch_shapes(tmp_path: Path) -> 
     assert fetch_payload["metadata"]["path"] == "README.md"
 
 
-def test_mission_service_derives_queued_phase(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_mission_service_derives_queued_phase(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     repo_root = tmp_path / "repo"
     write_text(repo_root / "README.md", "# SEJFA")
     write_text(repo_root / "docs" / "ARCHITECTURE.md", "Agentic loop")

@@ -48,6 +48,9 @@ class Session(Base):
     outcome = Column(String(32), nullable=True)
 
 
+# Ensure the database directory exists before creating the engine
+config.db_path.parent.mkdir(parents=True, exist_ok=True)
+
 _engine = create_async_engine(
     f"sqlite+aiosqlite:///{config.db_path}",
     echo=False,

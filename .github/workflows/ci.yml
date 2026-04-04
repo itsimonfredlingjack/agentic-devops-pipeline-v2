@@ -54,7 +54,7 @@ jobs:
 
       - name: Classify failure
         id: classify
-        run: python scripts/classify_failure.py /tmp/ci-log.txt --github-output
+        run: python scripts/classify_failure.py --log-file /tmp/ci-log.txt --github-output "$GITHUB_OUTPUT"
 
       - name: Post classification comment
         if: github.event_name == 'pull_request'

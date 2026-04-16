@@ -20,18 +20,21 @@
   border-radius: 50%;
   background: #2f2f34;
   border: 1px solid #46464d;
-  transition: all 0.2s ease;
+  transition:
+    background-color var(--motion-fast),
+    border-color var(--motion-fast),
+    box-shadow var(--motion-fast);
 }
 
 .stageDot.active {
-  background: #f59e0b;
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+  background: var(--status-warning);
+  border-color: var(--status-warning);
+  box-shadow: 0 0 0 3px var(--status-warning-bg);
 }
 
 .stageDot.complete {
-  background: #10b981;
-  border-color: #10b981;
+  background: var(--status-success);
+  border-color: var(--status-success);
 }
 
 .stageLabel {

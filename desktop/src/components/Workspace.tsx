@@ -66,8 +66,8 @@ export function Workspace({ selectedIndex }: { selectedIndex: number }) {
     return (
       <main className={styles.workspaceEmpty}>
         <div className={styles.emptyIcon}>&#x2318;</div>
-        <h2>SEJFA COMMAND CENTER</h2>
-        <p>No active mission. Awaiting instruction.</p>
+        <h2>No Active Mission</h2>
+        <p>Pick a queued task or hold ⌘⇧V to create one from voice.</p>
       </main>
     );
   }
@@ -105,7 +105,7 @@ export function Workspace({ selectedIndex }: { selectedIndex: number }) {
           <div className={styles.executionStatus}>
              <div className={styles.stepIndicator}>
                 <div className={styles.spinner} />
-                <span>{processingStep || "Executing autonomic loop..."}</span>
+                <span>{processingStep || "Executing autonomic loop…"}</span>
              </div>
           </div>
         )}
@@ -165,7 +165,7 @@ export function Workspace({ selectedIndex }: { selectedIndex: number }) {
               value={answer}
               onChange={e => setAnswer(e.target.value)}
               className={styles.inputField} 
-              placeholder="Provide clarification..." 
+              placeholder="Provide clarification…"
               autoFocus 
               disabled={submitting} 
             />

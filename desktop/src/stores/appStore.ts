@@ -20,10 +20,37 @@ export type LoopPhase =
   | "error"
   | "done";
 
+export type UiDensity = "comfort" | "compact";
+
+const DENSITY_STORAGE_KEY = "sejfa.ui.density";
+
+function readStoredDensity(): UiDensity {
+  if (typeof window === "undefined" || !window.localStorage) {
+    return "comfort";
+  }
+
+  try {
+    const raw = window.localStorage.getItem(DENSITY_STORAGE_KEY);
+    return raw === "compact" ? "compact" : "comfort";
+  } catch {
+    return "comfort";
+  }
+}
+
+function persistDensity(density: UiDensity): void {
+  if (typeof window === "undefined" || !window.localStorage) return;
+  try {
+    window.localStorage.setItem(DENSITY_STORAGE_KEY, density);
+  } catch {
+    // Ignore persistence failures (private mode, quota, etc.)
+  }
+}
+
 interface AppState {
   // Derived
   phase: LoopPhase;
-  activeGlobalView: "command" | "monitor";
+  activeWorkspaceSection: "work" | "history";
+  density: UiDensity;
 
   // Connection status
   voiceConnected: boolean;
@@ -69,7 +96,8 @@ interface AppState {
   clearStuckAlert: () => void;
   setCompletion: (completion: CompletionSummary) => void;
   setQueue: (queue: QueueItem[]) => void;
-  setActiveGlobalView: (view: "command" | "monitor") => void;
+  setActiveWorkspaceSection: (view: "work" | "history") => void;
+  setDensity: (density: UiDensity) => void;
   reset: () => void;
 }
 
@@ -118,7 +146,8 @@ function derivePhase(state: {
 
 const initialState = {
   phase: "idle" as LoopPhase,
-  activeGlobalView: "command" as "command" | "monitor",
+  activeWorkspaceSection: "work" as "work" | "history",
+  density: readStoredDensity() as UiDensity,
   voiceConnected: false,
   monitorConnected: false,
   ...getDefaultServiceUrls(),
@@ -217,7 +246,16 @@ export const useAppStore = create<AppState>()((set) => ({
 
   setQueue: (queue) => set({ queue }),
 
-  setActiveGlobalView: (view: "command" | "monitor") => set({ activeGlobalView: view }),
+  setActiveWorkspaceSection: (view: "work" | "history") => set({ activeWorkspaceSection: view }),
 
-  reset: () => set({ ...initialState }),
+  setDensity: (density: UiDensity) => {
+    persistDensity(density);
+    set({ density });
+  },
+
+  reset: () =>
+    set((state) => ({
+      ...initialState,
+      density: state.density,
+    })),
 }));

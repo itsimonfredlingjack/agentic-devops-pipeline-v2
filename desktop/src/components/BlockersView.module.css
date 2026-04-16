@@ -7,18 +7,19 @@
 }
 
 .blockerCard {
-  background: linear-gradient(180deg, rgba(24, 24, 27, 0.95), rgba(9, 9, 11, 0.98));
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
+  background: linear-gradient(180deg, rgba(24, 24, 27, 0.94), rgba(12, 14, 18, 0.96));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-radius: 8px;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,0,0,1);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.42), 0 0 0 1px rgba(0,0,0,1);
   pointer-events: auto;
   overflow: hidden;
 }
 
-.borderWarn { box-shadow: inset 0 1px 0 0 rgba(245, 158, 11, 0.5), 0 24px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,0,0,1); }
-.borderDanger { box-shadow: inset 0 1px 0 0 rgba(239, 68, 68, 0.5), 0 24px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,0,0,1); }
-.borderSuccess { box-shadow: inset 0 1px 0 0 rgba(16, 185, 129, 0.5), 0 24px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,0,0,1); }
+.borderWarn { box-shadow: inset 0 1px 0 0 rgba(245, 158, 11, 0.5), 0 12px 28px rgba(0,0,0,0.42), 0 0 0 1px rgba(0,0,0,1); }
+.borderDanger { box-shadow: inset 0 1px 0 0 rgba(239, 68, 68, 0.5), 0 12px 28px rgba(0,0,0,0.42), 0 0 0 1px rgba(0,0,0,1); }
+.borderSuccess { box-shadow: inset 0 1px 0 0 rgba(16, 185, 129, 0.5), 0 12px 28px rgba(0,0,0,0.42), 0 0 0 1px rgba(0,0,0,1); }
+.borderNeutral { box-shadow: inset 0 1px 0 0 rgba(148, 163, 184, 0.32), 0 12px 28px rgba(0,0,0,0.42), 0 0 0 1px rgba(0,0,0,1); }
 
 .cardHeader {
   padding: 12px 16px;
@@ -60,7 +61,7 @@
 }
 
 .mutedText {
-  color: #a1a1aa;
+  color: #c3c7d0;
   font-size: 14px;
   line-height: 1.6;
   margin: 0;
@@ -107,7 +108,10 @@
   font-weight: 600;
   cursor: pointer;
   letter-spacing: 0.05em;
-  transition: all 0.2s;
+  transition:
+    background-color var(--motion-fast),
+    color var(--motion-fast),
+    border-color var(--motion-fast);
 }
 .btnPrimary:hover { background: #2563eb; }
 .btnPrimary:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -120,7 +124,7 @@
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color var(--motion-fast);
 }
 .btnGhost:hover { color: #f4f4f5; }
 
@@ -157,8 +161,13 @@
   border: none;
   color: #f4f4f5;
   font-size: 14px;
-  outline: none;
   font-family: "Geist Mono", ui-monospace, sans-serif;
+}
+
+.promptInput:focus-visible {
+  outline: 2px solid var(--status-info);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .promptInput::placeholder { color: #52525b; }

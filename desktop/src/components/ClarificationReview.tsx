@@ -31,7 +31,7 @@ export function ClarificationReview() {
     setSubmitting(true);
     setErrorMessage(null);
     setPipelineStatus("processing");
-    setProcessingStep("Analyzing clarification...");
+    setProcessingStep("Analyzing clarification…");
 
     try {
       const response = await submitClarification(voiceUrl, {
@@ -104,7 +104,7 @@ export function ClarificationReview() {
   return (
     <div className={styles.reviewContainer}>
       <div className={styles.header}>
-        <span className={styles.headerTitle}>CLARIFICATION REVIEW</span>
+        <span className={styles.headerTitle}>CLARIFICATION RESPONSE</span>
         <span className={styles.phasePill}>VERIFY</span>
       </div>
 
@@ -138,17 +138,49 @@ export function ClarificationReview() {
 
         <div className={styles.actionBar}>
           <div className={styles.actionLeft}>
-            <button type="button" className={styles.btnReRecord} onClick={handleReRecord} disabled={submitting}>
-              RE-RECORD
-            </button>
-            <button type="button" className={styles.btnGhost} onClick={handleDiscard} disabled={submitting}>
-              DISCARD
-            </button>
+            <div className={styles.actionCluster}>
+              <button
+                type="button"
+                className={styles.btnReRecord}
+                onClick={handleReRecord}
+                disabled={submitting}
+                aria-describedby="cue-rerecord-clarify"
+              >
+                RE-RECORD
+              </button>
+              <span id="cue-rerecord-clarify" className={styles.actionCue}>
+                <span aria-hidden="true">↺</span> Capture a new voice input
+              </span>
+            </div>
+            <div className={styles.actionCluster}>
+              <button
+                type="button"
+                className={styles.btnGhost}
+                onClick={handleDiscard}
+                disabled={submitting}
+                aria-describedby="cue-discard-clarify"
+              >
+                DISCARD
+              </button>
+              <span id="cue-discard-clarify" className={styles.actionCue}>
+                <span aria-hidden="true">✕</span> Discard this clarification round
+              </span>
+            </div>
           </div>
 
-          <button type="submit" className={styles.btnPrimary} disabled={submitting || !answer.trim()}>
-            SEND CLARIFICATION
-          </button>
+          <div className={styles.actionCluster}>
+            <button
+              type="submit"
+              className={styles.btnPrimary}
+              disabled={submitting || !answer.trim()}
+              aria-describedby="cue-send-clarification"
+            >
+              SEND CLARIFICATION
+            </button>
+            <span id="cue-send-clarification" className={styles.actionCue}>
+              <span aria-hidden="true">✓</span> Apply details and continue ticket refinement
+            </span>
+          </div>
         </div>
       </form>
     </div>

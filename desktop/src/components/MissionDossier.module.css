@@ -1,82 +1,91 @@
 .dossierContainer {
-  margin-top: 40px;
-  max-width: 500px;
+  margin-top: 0;
+  max-width: 560px;
   width: 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(16, 20, 26, 0.88));
+  border: 1px solid var(--surface-command-border);
+  border-radius: 20px;
+  padding: 24px 24px 28px;
+  box-shadow: var(--shadow-panel);
 }
 
 .dossierHeader {
-  font-family: "Geist Mono", ui-monospace, sans-serif;
-  font-size: 12px;
-  color: #71717a;
-  letter-spacing: 0.1em;
-  margin: 0 0 20px 0;
-  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--type-meta-size);
+  line-height: var(--type-meta-line);
+  color: var(--text-tertiary);
+  letter-spacing: 0.12em;
+  margin: 0 0 18px 0;
+  text-align: left;
 }
 
 .dossierMeta {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  border-top: 1px solid #18181b;
-  padding-top: 20px;
-  margin-bottom: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 18px;
+  margin-bottom: 22px;
 }
 
 .metaRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
 }
 
 .metaRow span {
-  font-family: "Geist Mono", ui-monospace, sans-serif;
-  color: #81818a;
-  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  font-size: var(--type-meta-size);
   letter-spacing: 0.05em;
-  width: 100px;
-  flex-shrink: 0;
-  padding-top: 1px;
+  padding-top: 2px;
 }
 
 .idGroup {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .estimateLabel {
-  font-family: "Geist Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
-  color: #5856d6;
-  background: rgba(88, 86, 214, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
+  color: #aab6cb;
+  background: rgba(137, 167, 204, 0.1);
+  border: 1px solid rgba(137, 167, 204, 0.16);
+  padding: 3px 7px;
+  border-radius: 999px;
   font-weight: 600;
 }
 
 .monoStrong {
-  font-family: "Geist Mono", ui-monospace, sans-serif;
-  color: #e4e4e7;
-  font-size: 13px;
-  font-weight: 500;
-  text-align: right;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
 }
 
 .titleStrong {
-  color: #f4f4f5;
-  font-size: 14px;
-  font-weight: 500;
-  text-align: right;
-  line-height: 1.4;
+  color: var(--text-primary);
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 600;
+  text-align: left;
 }
 
 .statusPill {
-  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-family: var(--font-mono);
   font-size: 10px;
-  color: #d4d4d8;
-  background: rgba(255, 255, 255, 0.08);
-  padding: 4px 8px;
-  border-radius: 4px;
+  color: var(--status-info);
+  background: var(--status-info-bg);
+  border: 1px solid var(--status-info-border);
+  padding: 5px 9px;
+  border-radius: 999px;
   font-weight: 600;
   letter-spacing: 0.05em;
 }
@@ -84,6 +93,7 @@
 .assigneeGroup {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 8px;
 }
 
@@ -91,11 +101,11 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .assigneeName {
-  color: #e4e4e7;
+  color: var(--text-primary);
   font-size: 13px;
   font-weight: 500;
 }
@@ -104,41 +114,41 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
 
 .labelPill {
   font-size: 10px;
   font-weight: 600;
-  color: #a1a1aa;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 2px 8px;
-  border-radius: 99px;
+  color: var(--text-tertiary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 4px 9px;
+  border-radius: 999px;
   letter-spacing: 0.02em;
 }
 
 .briefingSection {
-  margin-bottom: 24px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  margin-bottom: 18px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
   padding: 16px;
 }
 
 .sectionHeader {
-  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-family: var(--font-mono);
   font-size: 11px;
-  color: #81818a;
-  letter-spacing: 0.05em;
-  margin: 0 0 12px 0;
-  font-weight: 500;
+  color: var(--text-tertiary);
+  letter-spacing: 0.06em;
+  margin: 0 0 10px 0;
+  font-weight: 600;
 }
 
 .descriptionText {
-  font-size: 13px;
-  color: #d1d5db;
-  line-height: 1.5;
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-line);
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -155,40 +165,42 @@
 
 .contextLabel {
   font-size: 11px;
-  color: #71717a;
+  color: var(--text-muted);
 }
 
 .fileList {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .contextPill {
-  font-family: "JetBrains Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
-  color: #a1a1aa;
-  background: #18181b;
-  border: 1px solid #27272a;
-  padding: 4px 8px;
-  border-radius: 4px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 6px 9px;
+  border-radius: 10px;
   width: fit-content;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .actionArea {
-  margin-top: 32px;
+  margin-top: 24px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .ctaStatus {
-  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.06em;
-  color: #a1a1aa;
+  color: var(--text-secondary);
   text-transform: uppercase;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.03);
   border-radius: 999px;
-  padding: 8px 14px;
+  padding: 9px 14px;
 }

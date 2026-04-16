@@ -1,7 +1,7 @@
 .sidebar {
-  width: 272px;
-  background: linear-gradient(180deg, rgba(14, 18, 23, 0.98), rgba(12, 15, 20, 0.98));
-  border-right: 1px solid rgba(148, 163, 184, 0.12);
+  width: 276px;
+  background: #0d1016;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   flex-direction: column;
   user-select: none;
@@ -21,7 +21,7 @@
 }
 
 .orgHeader {
-  padding: 12px 20px 20px;
+  padding: 10px 20px 22px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -33,45 +33,27 @@
 }
 
 .orgLogomark {
-  min-width: 14px;
-  height: 24px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(135deg, #7ea0c7, #6f869d);
-  border-radius: 6px;
+  width: 14px;
+  height: 14px;
+  background: linear-gradient(135deg, #16a34a, #0f766e);
+  border-radius: 4px;
   border: none;
-  padding: 0 6px;
+  padding: 0;
   cursor: pointer;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 10px rgba(22, 163, 74, 0.18);
 }
 
 .orgLogomark:focus-visible {
-  outline: 2px solid rgba(142, 163, 192, 0.5);
+  outline: 2px solid rgba(34, 197, 94, 0.6);
   outline-offset: 3px;
 }
 
 .orgTitle {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 600;
+  color: #f8fafc;
+  letter-spacing: 0.01em;
   white-space: nowrap;
-}
-
-.toggleGlyph {
-  font-size: 12px;
-  line-height: 1;
-  color: rgba(255, 255, 255, 0.92);
-}
-
-.toggleLabel {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.9);
-  text-transform: uppercase;
 }
 
 .globalModeSwitcher,
@@ -80,9 +62,9 @@
   display: flex;
   gap: 6px;
   padding: 4px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .modeBtn,
@@ -90,8 +72,8 @@
   flex: 1;
   border: none;
   background: transparent;
-  color: var(--text-muted);
-  border-radius: 10px;
+  color: #8d97aa;
+  border-radius: 9px;
   cursor: pointer;
   transition:
     background-color var(--motion-fast),
@@ -117,9 +99,9 @@
 
 .modeBtnActive,
 .viewBtnActive {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-primary);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .navSection {
@@ -142,7 +124,7 @@
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 600;
-  color: var(--text-muted);
+  color: #6f7787;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -151,8 +133,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 8px;
-  color: var(--text-secondary);
+  padding: 6px 8px;
+  color: #b5becf;
   font-size: 13px;
 }
 
@@ -164,20 +146,20 @@
   width: 7px;
   height: 7px;
   border-radius: 999px;
-  background-color: rgba(148, 163, 184, 0.4);
+  background-color: #475569;
   transition:
     background-color var(--motion-context),
     box-shadow var(--motion-context);
 }
 
 .dotVoiceOn {
-  background-color: #8fb0d4;
-  box-shadow: 0 0 8px rgba(143, 176, 212, 0.22);
+  background-color: #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.35);
 }
 
 .dotMonitorOn {
-  background-color: #87aa95;
-  box-shadow: 0 0 8px rgba(135, 170, 149, 0.2);
+  background-color: #818cf8;
+  box-shadow: 0 0 8px rgba(129, 140, 248, 0.35);
 }
 
 .queueList {
@@ -186,17 +168,17 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .emptyQueue,
 .historyHint {
   padding: 14px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
   background: rgba(255, 255, 255, 0.02);
   font-size: 12px;
-  color: var(--text-secondary);
+  color: #95a0b5;
   line-height: 1.5;
 }
 
@@ -215,7 +197,7 @@
 .queueItem {
   width: 100%;
   padding: 12px;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
   transition:
     background-color var(--motion-fast),
@@ -242,14 +224,14 @@
 }
 
 .queueItem:focus-visible {
-  outline: 2px solid rgba(142, 163, 192, 0.45);
+  outline: 2px solid rgba(56, 189, 248, 0.55);
   outline-offset: 1px;
 }
 
 .activeQueueItem {
-  background: rgba(137, 167, 204, 0.08);
-  border-color: rgba(137, 167, 204, 0.18);
-  box-shadow: inset 0 0 0 1px rgba(137, 167, 204, 0.1);
+  background: rgba(56, 189, 248, 0.08);
+  border-color: rgba(56, 189, 248, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.12);
 }
 
 .issueTopRow {
@@ -273,7 +255,7 @@
 
 .issueFooter {
   justify-content: space-between;
-  color: var(--text-tertiary);
+  color: #8d97aa;
   font-size: 11px;
 }
 
@@ -285,23 +267,23 @@
 }
 
 .iconStandard {
-  color: var(--text-tertiary);
+  color: #8d97aa;
 }
 
 .iconUrgent {
-  color: #d8a164;
+  color: #f97316;
 }
 
 .qId {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--text-secondary);
-  font-weight: 600;
+  color: #d7deeb;
+  font-weight: 500;
 }
 
 .qTitle {
   font-size: 13px;
-  color: var(--text-primary);
+  color: #eff6ff;
   line-height: 1.45;
   display: -webkit-box;
   -webkit-line-clamp: 2;

@@ -18,8 +18,8 @@
 .modal {
   width: 100%;
   max-width: 600px;
-  background: linear-gradient(180deg, rgba(24, 24, 27, 0.95), rgba(9, 9, 11, 0.98));
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, var(--surface-command-panel-strong), #07080d);
+  border: 1px solid var(--surface-command-border);
   border-radius: 12px;
   box-shadow: 0 32px 64px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 0, 0, 1);
   display: flex;
@@ -55,7 +55,12 @@
   color: #ffffff;
   font-size: 16px;
   font-family: "Inter", sans-serif;
-  outline: none;
+}
+
+.searchInput:focus-visible {
+  outline: 2px solid var(--status-info);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .searchInput::placeholder {
@@ -69,6 +74,14 @@
   overflow-y: auto;
 }
 
+.groupLabel {
+  padding: 8px 10px 4px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
 .commandItem {
   width: 100%;
   display: flex;
@@ -80,7 +93,7 @@
   border: none;
   cursor: pointer;
   text-align: left;
-  transition: background 0.1s;
+  transition: background var(--motion-fast);
 }
 
 .activeItem {
@@ -122,11 +135,28 @@
   letter-spacing: 0.05em;
 }
 
+.itemMeta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .emptyState {
   padding: 32px;
   text-align: center;
   color: #52525b;
   font-size: 14px;
+}
+
+.emptyState strong,
+.emptyState span {
+  display: block;
+}
+
+.emptyState span {
+  margin-top: 4px;
 }
 
 .footer {

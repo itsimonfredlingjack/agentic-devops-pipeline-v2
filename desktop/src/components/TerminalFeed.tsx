@@ -12,30 +12,10 @@ function formatTime(timestamp: string): string {
   }
 }
 
-// Simulated data for demo purposes
-function getSimulatedDetail(e: EventRecord): string | null {
-  if (e.detail) return e.detail;
-  if (e.error) return e.error;
-
-  if (e.tool_name === "Bash") {
-    if (e.tool_args_summary?.includes("pytest")) {
-      return "============================= test session starts =============================\nplatform darwin -- Python 3.11.0, pytest-8.1.1, pluggy-1.4.0\nrootdir: /Users/coffeedev/Projects/agentic-devops\nplugins: asyncio-0.23.5, cov-4.1.0\ncollected 4 items\n\ntests/test_logic.py ....                                                 [100%]\n\n============================== 4 passed in 0.12s ==============================";
-    }
-    if (e.tool_args_summary?.includes("ruff")) {
-      return "All checks passed! No linting errors found in 42 files.";
-    }
-  }
-
-  if (e.tool_name === "Edit" || e.tool_name === "replace") {
-    return "--- desktop/src/components/Sidebar.tsx\n+++ desktop/src/components/Sidebar.tsx\n@@ -42,5 +42,6 @@\n-  const [isOpen, setIsOpen] = useState(false);\n+  const [isOpen, setIsOpen] = useState(true);\n+  const activeGlobalView = useAppStore(s => s.activeGlobalView);";
-  }
-
-  return null;
-}
-
 export function TerminalFeed() {
   const events = useAppStore((s) => s.events);
   const processingStep = useAppStore((s) => s.processingStep);
+  const density = useAppStore((s) => s.density);
   const feedEndRef = useRef<HTMLDivElement>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -53,16 +33,28 @@ export function TerminalFeed() {
   };
 
   return (
-    <div className={styles.feedWrapper}>
+    <div className={styles.feedWrapper} data-density={density}>
+      {events.length === 0 && !processingStep && (
+        <div className={styles.emptyState}>
+          <strong>No execution events yet.</strong>
+          <span>Start a mission to populate this timeline with tool activity and outcomes.</span>
+        </div>
+      )}
       {events.map((e) => {
         const isExpanded = expandedId === e.event_id;
-        const detail = getSimulatedDetail(e);
+        const detail = e.detail ?? e.error ?? null;
         const hasDetail = !!detail;
+        const statusLabel =
+          e.success === true
+            ? "Success"
+            : e.success === false
+              ? "Failed"
+              : "Pending";
 
         return (
           <div key={e.event_id} className={styles.logContainer}>
             <div
-              className={`${styles.logRow} ${e.success === false ? styles.logError : e.success === true ? styles.logSuccess : ""} ${hasDetail ? styles.expandable : ""}`}
+                className={`${styles.logRow} ${e.success === false ? styles.logError : e.success === true ? styles.logSuccess : ""} ${hasDetail ? styles.expandable : ""}`}
               onClick={() => hasDetail && toggleExpand(e.event_id)}
               onKeyDown={(ev) => hasDetail && (ev.key === "Enter" || ev.key === " ") && (ev.preventDefault(), toggleExpand(e.event_id))}
               role={hasDetail ? "button" : undefined}
@@ -70,15 +62,14 @@ export function TerminalFeed() {
               aria-expanded={hasDetail ? isExpanded : undefined}
             >
               <div className={styles.logTime}>{formatTime(e.timestamp)}</div>
-              <div className={styles.logBody}>
-                <div className={styles.logToolGroup}>
-                  <div className={styles.logTool}>{e.tool_name}</div>
-                  {hasDetail && <span className={styles.expandIndicator}>{isExpanded ? "▼" : "▶"}</span>}
-                </div>
-                {e.tool_args_summary && <div className={styles.logArgs}>{e.tool_args_summary}</div>}
+              <div className={styles.logToolGroup}>
+                <div className={styles.logTool}>{e.tool_name}</div>
+                {hasDetail && <span className={styles.expandIndicator}>{isExpanded ? "▼" : "▶"}</span>}
               </div>
+              <div className={styles.logArgs}>{e.tool_args_summary || "No arguments captured."}</div>
               <div className={styles.logMeta}>
-                 {e.duration_ms ? `${(e.duration_ms / 1000).toFixed(1)}s` : "—"}
+                <span className={styles.statusText}>{statusLabel}</span>
+                <span>{e.duration_ms ? `${(e.duration_ms / 1000).toFixed(1)}s` : "—"}</span>
               </div>
             </div>
 
@@ -91,6 +82,17 @@ export function TerminalFeed() {
                 <pre className={`${styles.codeBlock} ${e.success === false ? styles.codeError : ""}`}>
                   {detail}
                 </pre>
+              </div>
+            )}
+
+            {isExpanded && !detail && (
+              <div className={styles.logDetail}>
+                <div className={styles.detailHeader}>
+                  <span>DETAILED OUTPUT</span>
+                </div>
+                <div className={styles.noDetail}>
+                  No output captured for this event.
+                </div>
               </div>
             )}
           </div>

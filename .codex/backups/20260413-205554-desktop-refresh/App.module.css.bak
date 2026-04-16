@@ -7,7 +7,7 @@
   font-family: var(--font-body);
   overflow: hidden;
   letter-spacing: -0.01em;
-  transition: background-color var(--transition-normal);
+  transition: background-color var(--transition-normal), box-shadow var(--transition-normal);
 }
 
 .appRoot[data-section="history"] {
@@ -16,37 +16,30 @@
 
 .appRoot[data-phase="idle"] {
   --phase-surface-bg: var(--phase-idle-bg);
-  --active-phase-rgb: var(--phase-idle-rgb);
 }
 
 .appRoot[data-phase="listening"] {
   --phase-surface-bg: var(--phase-listening-bg);
-  --active-phase-rgb: var(--phase-listening-rgb);
 }
 
 .appRoot[data-phase="processing"] {
   --phase-surface-bg: var(--phase-processing-bg);
-  --active-phase-rgb: var(--phase-processing-rgb);
 }
 
 .appRoot[data-phase="loop"] {
   --phase-surface-bg: var(--phase-loop-bg);
-  --active-phase-rgb: var(--phase-loop-rgb);
 }
 
 .appRoot[data-phase="verify"] {
   --phase-surface-bg: var(--phase-verify-bg);
-  --active-phase-rgb: var(--phase-verify-rgb);
 }
 
 .appRoot[data-phase="error"] {
   --phase-surface-bg: var(--phase-error-bg);
-  --active-phase-rgb: var(--phase-error-rgb);
 }
 
 .appRoot[data-phase="done"] {
   --phase-surface-bg: var(--phase-done-bg);
-  --active-phase-rgb: var(--phase-done-rgb);
 }
 
 .dragRegion {
@@ -56,24 +49,26 @@
   right: 0;
   height: 48px;
   -webkit-app-region: drag;
-  z-index: 40;
+  z-index: 9999;
   pointer-events: none;
 }
 
+/* Global Reset enhancements */
 :global(*) {
   box-sizing: border-box;
 }
 
 :global(::-webkit-scrollbar) {
-  width: 8px;
+  width: 10px;
   background: transparent;
 }
 
 :global(::-webkit-scrollbar-thumb) {
-  background: rgba(148, 163, 184, 0.16);
-  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  border: 2px solid #0b0c0f;
 }
 
 :global(::-webkit-scrollbar-thumb:hover) {
-  background: rgba(148, 163, 184, 0.26);
+  background: rgba(255, 255, 255, 0.2);
 }

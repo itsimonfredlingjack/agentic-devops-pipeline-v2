@@ -8,7 +8,12 @@
   cursor: pointer;
   display: grid;
   place-content: center;
-  transition: all var(--transition-normal);
+  transition:
+    border-color var(--transition-normal),
+    background-color var(--transition-normal),
+    color var(--transition-normal),
+    box-shadow var(--transition-normal),
+    transform var(--transition-normal);
   position: relative;
 }
 

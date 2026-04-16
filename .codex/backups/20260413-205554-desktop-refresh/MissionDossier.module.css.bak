@@ -1,0 +1,206 @@
+.dossierContainer {
+  margin-top: 0;
+  max-width: 500px;
+  width: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(8, 10, 18, 0.55));
+  border: 1px solid var(--surface-command-border);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.32), 0 0 24px var(--surface-command-glow);
+}
+
+.dossierHeader {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: var(--type-meta-size);
+  line-height: var(--type-meta-line);
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+.dossierMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-top: 1px solid var(--surface-command-border);
+  padding-top: 20px;
+  margin-bottom: 24px;
+}
+
+.metaRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.metaRow span {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  color: var(--text-muted);
+  font-size: var(--type-meta-size);
+  letter-spacing: 0.05em;
+  width: 100px;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.idGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.estimateLabel {
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  color: #5856d6;
+  background: rgba(88, 86, 214, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.monoStrong {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  color: var(--text-primary);
+  font-size: var(--type-body-size);
+  font-weight: 500;
+  text-align: right;
+}
+
+.titleStrong {
+  color: var(--text-primary);
+  font-size: var(--type-section-size);
+  line-height: var(--type-section-line);
+  font-weight: 500;
+  text-align: right;
+  line-height: 1.4;
+}
+
+.statusPill {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 10px;
+  color: var(--status-info);
+  background: var(--status-info-bg);
+  border: 1px solid var(--status-info-border);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.assigneeGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.assigneeName {
+  color: #e4e4e7;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.labelSection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.labelPill {
+  font-size: 10px;
+  font-weight: 600;
+  color: #a1a1aa;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 2px 8px;
+  border-radius: 99px;
+  letter-spacing: 0.02em;
+}
+
+.briefingSection {
+  margin-bottom: 24px;
+  background: var(--surface-command-panel);
+  border: 1px solid var(--surface-command-border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.sectionHeader {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 11px;
+  color: #81818a;
+  letter-spacing: 0.05em;
+  margin: 0 0 12px 0;
+  font-weight: 500;
+}
+
+.descriptionText {
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-line);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.contextRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.contextRow:last-child {
+  margin-bottom: 0;
+}
+
+.contextLabel {
+  font-size: 11px;
+  color: #71717a;
+}
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contextPill {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--surface-command-border);
+  padding: 4px 8px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.actionArea {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.ctaStatus {
+  font-family: "Geist Mono", ui-monospace, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 999px;
+  padding: 8px 14px;
+}

@@ -43,6 +43,7 @@ function toLinearIssue(jira: JiraIssueCompact): LinearIssue {
 export function useJiraIssues(interval = 30_000) {
   const [issues, setIssues] = useState<LinearIssue[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const voiceUrl = useAppStore((s) => s.voiceUrl);
 
   useEffect(() => {
@@ -53,10 +54,14 @@ export function useJiraIssues(interval = 30_000) {
         const raw = await fetchJiraIssues(voiceUrl);
         if (!cancelled) {
           setIssues(raw.map(toLinearIssue));
+          setError(null);
           setLoading(false);
         }
       } catch {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setError("Jira issues are currently unavailable.");
+          setLoading(false);
+        }
       }
     }
 
@@ -68,5 +73,5 @@ export function useJiraIssues(interval = 30_000) {
     };
   }, [voiceUrl, interval]);
 
-  return { issues, loading };
+  return { issues, loading, error };
 }

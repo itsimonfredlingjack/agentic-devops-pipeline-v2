@@ -1,0 +1,13 @@
+# Example repo-scoped config for agentic-devops-pipeline-v2
+
+project_doc_max_bytes = 49152
+
+[profiles.repo-review]
+sandbox_mode = "read-only"
+model_reasoning_effort = "high"
+web_search = "cached"
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@playwright/mcp@latest"]
+required = false

@@ -44,7 +44,7 @@ export function IntentReview() {
     setSubmitting(true);
     setErrorMessage(null);
     setPipelineStatus("processing");
-    setProcessingStep("Creating Jira ticket...");
+    setProcessingStep("Creating Jira ticket…");
     try {
       // Compute overrides: only send fields that changed
       const overrides: Record<string, unknown> = {};
@@ -129,7 +129,7 @@ export function IntentReview() {
     <div className={styles.reviewContainer}>
       {/* Header */}
       <div className={styles.header}>
-        <span className={styles.headerTitle}>INTENT VERIFICATION</span>
+        <span className={styles.headerTitle}>INTENT REVIEW</span>
         <span className={styles.phasePill}>VERIFY</span>
       </div>
 
@@ -137,13 +137,13 @@ export function IntentReview() {
 
       {/* Transcript */}
       <div className={styles.section}>
-        <span className={styles.sectionLabel}>WHAT WE HEARD</span>
+        <span className={styles.sectionLabel}>TRANSCRIPT</span>
         <div className={styles.transcriptBlock}>{preview.transcribedText}</div>
       </div>
 
       {/* Extracted intent — editable */}
       <div className={styles.section}>
-        <span className={styles.sectionLabel}>EXTRACTED INTENT</span>
+        <span className={styles.sectionLabel}>DRAFT TICKET FIELDS</span>
         <div className={styles.intentGrid}>
           <div className={styles.fieldRow}>
             <label className={styles.fieldLabel} htmlFor="review-summary">SUMMARY</label>
@@ -246,28 +246,46 @@ export function IntentReview() {
       {/* Action bar */}
       <div className={styles.actionBar}>
         <div className={styles.actionBarLeft}>
-          <button
-            className={styles.btnReRecord}
-            onClick={handleReRecord}
-            disabled={submitting}
-          >
-            RE-RECORD
-          </button>
-          <button
-            className={styles.btnGhost}
-            onClick={handleDiscard}
-            disabled={submitting}
-          >
-            DISCARD
-          </button>
+          <div className={styles.actionCluster}>
+            <button
+              className={styles.btnReRecord}
+              onClick={handleReRecord}
+              disabled={submitting}
+              aria-describedby="cue-rerecord"
+            >
+              RE-RECORD
+            </button>
+            <span id="cue-rerecord" className={styles.actionCue}>
+              <span aria-hidden="true">↺</span> Capture a new voice input
+            </span>
+          </div>
+          <div className={styles.actionCluster}>
+            <button
+              className={styles.btnGhost}
+              onClick={handleDiscard}
+              disabled={submitting}
+              aria-describedby="cue-discard-intent"
+            >
+              DISCARD
+            </button>
+            <span id="cue-discard-intent" className={styles.actionCue}>
+              <span aria-hidden="true">✕</span> Discard this draft and return to idle
+            </span>
+          </div>
         </div>
-        <button
-          className={styles.btnPrimary}
-          onClick={handleApprove}
-          disabled={submitting || !summary.trim()}
-        >
-          APPROVE &amp; BUILD
-        </button>
+        <div className={styles.actionCluster}>
+          <button
+            className={styles.btnPrimary}
+            onClick={handleApprove}
+            disabled={submitting || !summary.trim()}
+            aria-describedby="cue-approve-build"
+          >
+            APPROVE AND CREATE TICKET
+          </button>
+          <span id="cue-approve-build" className={styles.actionCue}>
+            <span aria-hidden="true">✓</span> Submit validated scope and continue pipeline
+          </span>
+        </div>
       </div>
 
       {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}

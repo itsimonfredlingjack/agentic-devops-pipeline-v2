@@ -142,7 +142,7 @@ export function useMicrophone() {
   const handleRecordingUpload = useCallback(async (blob: Blob) => {
     const store = useAppStore.getState();
     store.setPipelineStatus("processing");
-    store.setProcessingStep("Transcribing audio...");
+    store.setProcessingStep("Transcribing audio…");
 
     try {
       const form = new FormData();

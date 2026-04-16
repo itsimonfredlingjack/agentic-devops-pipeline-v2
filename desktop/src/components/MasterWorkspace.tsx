@@ -6,7 +6,6 @@ import { GlobalMonitorView } from "./GlobalMonitorView";
 import { IntentReview } from "./IntentReview";
 import { ClarificationReview } from "./ClarificationReview";
 import styles from "./MasterWorkspace.module.css";
-import { mockLinearCycle } from "../mockLinearData";
 import { useJiraIssues } from "../hooks/useJiraIssues";
 import type { MicrophonePermissionStatus } from "../hooks/useMicrophone";
 
@@ -39,53 +38,39 @@ export function MasterWorkspace({
 }: MasterWorkspaceProps) {
   const {
     phase,
-    ticketKey,
-    activeGlobalView,
+    activeWorkspaceSection,
     clarification,
     preview,
     loopActive,
     stuckAlert,
     completion,
   } = useAppStore();
-  const { issues: jiraIssues } = useJiraIssues();
-  const taskIssues = jiraIssues.length > 0 ? jiraIssues : mockLinearCycle;
+  const { issues, loading, error } = useJiraIssues();
 
-  if (activeGlobalView === "monitor") {
-    return (
-      <main className={styles.workspace}>
-        <GlobalMonitorView />
-      </main>
-    );
-  }
-
-  if (clarification) {
-    return (
-      <main className={styles.workspace}>
-        <ClarificationReview />
-      </main>
-    );
-  }
-
-  if (preview) {
-    return (
-      <main className={styles.workspace}>
-        <IntentReview />
-      </main>
-    );
-  }
-
-  // Keep intake errors in the intake surface. MonitorDashboard should only appear for loop execution states.
   const hasLoopContext = loopActive || Boolean(stuckAlert) || Boolean(completion);
   const isExecuting = phase === "loop" || phase === "done" || (phase === "error" && hasLoopContext);
-
-  const targetedTask = isExecuting
-    ? taskIssues.find(q => q.id === ticketKey) || taskIssues[selectedIndex]
-    : taskIssues[selectedIndex];
+  const selectedIssue =
+    issues[selectedIndex] ??
+    issues[0] ??
+    null;
+  const activePanel =
+    activeWorkspaceSection === "history"
+      ? "history"
+      : clarification
+        ? "clarification"
+        : preview
+          ? "preview"
+          : "work";
 
   return (
-    <main className={styles.workspace}>
-      {isExecuting ? (
-        <MonitorDashboard />
+    <main
+      className={styles.workspace}
+      data-surface={activeWorkspaceSection === "history" ? "history" : "work"}
+      data-running={isExecuting}
+      data-panel={activePanel}
+    >
+      {activeWorkspaceSection === "history" ? (
+        <GlobalMonitorView />
       ) : (
         <>
           <OmniPrompt
@@ -99,11 +84,25 @@ export function MasterWorkspace({
             inputLevel={inputLevel}
             recordingDurationMs={recordingDurationMs}
             errorMessage={errorMessage}
-            isExecuting={false}
-            targetedTask={targetedTask}
+            isExecuting={isExecuting}
+            targetedTask={selectedIssue}
+            issueCount={issues.length}
+            issueLoading={loading}
+            issueError={error}
           />
-          <div className={`${styles.canvas} ${styles.canvasIdle}`}>
-            <MissionDossier targetedTask={targetedTask} />
+
+          <div className={`${styles.canvas} ${activePanel !== "work" ? styles.canvasSingle : ""}`}>
+            <section className={styles.primaryColumn} aria-label="Current task">
+              {activePanel === "clarification" && <ClarificationReview />}
+              {activePanel === "preview" && <IntentReview />}
+              {activePanel === "work" && <MissionDossier targetedTask={selectedIssue} />}
+            </section>
+
+            {activePanel === "work" && (
+              <section className={styles.secondaryColumn} aria-label="Run status">
+                <MonitorDashboard />
+              </section>
+            )}
           </div>
         </>
       )}

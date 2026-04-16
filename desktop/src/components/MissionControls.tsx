@@ -9,7 +9,7 @@ export function MissionControls() {
   const [loading, setLoading] = useState(false);
 
   const handleAbort = async () => {
-    if (!sessionId || !confirm("Are you sure you want to ABORT the current mission? This will kill the loop immediately.")) return;
+    if (!sessionId || !confirm("Stop the active run immediately? This ends the current automation loop now.")) return;
     setLoading(true);
     await abortMission(monitorUrl, sessionId);
     reset(); // Return to command center immediately
@@ -36,39 +36,61 @@ export function MissionControls() {
 
   return (
     <div className={styles.controlsContainer}>
-      <div className={styles.controlHeader}>TACTICAL MISSION CONTROL</div>
+      <div className={styles.controlHeader}>RUN CONTROLS</div>
       
       <div className={styles.controlRow}>
-        <button 
-          className={styles.abortBtn} 
-          onClick={handleAbort} 
-          disabled={loading}
-          title="Kill active loop session"
-        >
-          ABORT MISSION
-        </button>
+        <div className={styles.actionCluster}>
+          <button
+            className={styles.abortBtn}
+            onClick={handleAbort}
+            disabled={loading}
+            title="Kill active loop session"
+            aria-describedby="cue-abort-mission"
+          >
+            STOP RUN
+          </button>
+          <span id="cue-abort-mission" className={styles.actionCue}>
+            <span aria-hidden="true">⚠</span> Immediately ends the active loop
+          </span>
+        </div>
 
         <form className={styles.instructionForm} onSubmit={handleSubmitInstruction}>
           <input 
             className={styles.instructionInput}
             value={instruction}
             onChange={e => setInstruction(e.target.value)}
-            placeholder="Send tactical instruction to Claude..."
+            placeholder="Send instruction to the agent…"
             disabled={loading}
           />
-          <button type="submit" className={styles.sendBtn} disabled={loading || !instruction.trim()}>
-            PIVOT
-          </button>
+          <div className={styles.actionCluster}>
+            <button
+              type="submit"
+              className={styles.sendBtn}
+              disabled={loading || !instruction.trim()}
+              aria-describedby="cue-pivot"
+            >
+              SEND
+            </button>
+            <span id="cue-pivot" className={styles.actionCue}>
+              <span aria-hidden="true">↗</span> Adjusts direction without restarting
+            </span>
+          </div>
         </form>
 
-        <button 
-          className={styles.checkpointBtn} 
-          onClick={handleCheckpoint} 
-          disabled={loading}
-          title="Force a git checkpoint"
-        >
-          CHECKPOINT
-        </button>
+        <div className={styles.actionCluster}>
+          <button
+            className={styles.checkpointBtn}
+            onClick={handleCheckpoint}
+            disabled={loading}
+            title="Force a git checkpoint"
+            aria-describedby="cue-checkpoint"
+          >
+            CHECKPOINT
+          </button>
+          <span id="cue-checkpoint" className={styles.actionCue}>
+            <span aria-hidden="true">✓</span> Creates a recovery save point
+          </span>
+        </div>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { Sidebar } from "./components/Sidebar";
 import { MasterWorkspace } from "./components/MasterWorkspace";
 import { CommandPalette } from "./components/CommandPalette";
+import { useAppStore } from "./stores/appStore";
 import { useConnections } from "./hooks/useConnections";
 import { useElapsedTimer } from "./hooks/useElapsedTimer";
 import { useMicrophone } from "./hooks/useMicrophone";
@@ -26,6 +27,9 @@ export default function App() {
   const [selectedTaskIndex, setSelectedTaskIndex] = useState(0);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const density = useAppStore((s) => s.density);
+  const activeWorkspaceSection = useAppStore((s) => s.activeWorkspaceSection);
+  const phase = useAppStore((s) => s.phase);
   const holdShortcutActive = useRef(false);
   const recordingRef = useRef(recording);
   const startRecordingRef = useRef(startRecording);
@@ -112,7 +116,12 @@ export default function App() {
   }, []);
 
   return (
-    <div className={styles.appRoot}>
+    <div
+      className={styles.appRoot}
+      data-density={density}
+      data-section={activeWorkspaceSection}
+      data-phase={phase}
+    >
       <div className={styles.dragRegion} />
       <Sidebar 
         selectedIndex={selectedTaskIndex}

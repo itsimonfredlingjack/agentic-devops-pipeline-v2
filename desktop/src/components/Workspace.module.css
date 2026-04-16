@@ -377,7 +377,10 @@
   cursor: pointer;
   letter-spacing: 0.05em;
   border: none;
-  transition: all 0.1s;
+  transition:
+    background-color var(--motion-fast),
+    color var(--motion-fast),
+    border-color var(--motion-fast);
 }
 
 .btnPrimary { background: #3B82F6; color: #fff; }

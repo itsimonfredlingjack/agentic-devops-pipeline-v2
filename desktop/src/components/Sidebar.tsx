@@ -1,58 +1,80 @@
-import { KeyboardEvent, useRef, useState } from "react";
+import { KeyboardEvent, type MutableRefObject, useMemo, useRef, useState } from "react";
 import { useAppStore } from "../stores/appStore";
-import { mockLinearCycle, mockMyIssues, mockProjects, Priority, Status, LinearIssue } from "../mockLinearData";
 import { useJiraIssues } from "../hooks/useJiraIssues";
+import type { LinearIssue, Priority, Status } from "../mockLinearData";
 import {
-  LinearUrgent, LinearHigh, LinearMedium, LinearLow, LinearNone,
-  LinearBacklog, LinearTodo, LinearInProgress, LinearReview, LinearDone, LinearCanceled
+  LinearUrgent,
+  LinearHigh,
+  LinearMedium,
+  LinearLow,
+  LinearNone,
+  LinearBacklog,
+  LinearTodo,
+  LinearInProgress,
+  LinearReview,
+  LinearDone,
+  LinearCanceled,
 } from "./icons/LinearIcons";
 import styles from "./Sidebar.module.css";
 
 const PriorityIcon = ({ priority }: { priority: Priority }) => {
   switch (priority) {
-    case "urgent": return <LinearUrgent className={styles.iconUrgent} />;
-    case "high": return <LinearHigh className={styles.iconStandard} />;
-    case "medium": return <LinearMedium className={styles.iconStandard} />;
-    case "low": return <LinearLow className={styles.iconStandard} />;
-    default: return <LinearNone className={styles.iconStandard} />;
+    case "urgent":
+      return <LinearUrgent className={styles.iconUrgent} />;
+    case "high":
+      return <LinearHigh className={styles.iconStandard} />;
+    case "medium":
+      return <LinearMedium className={styles.iconStandard} />;
+    case "low":
+      return <LinearLow className={styles.iconStandard} />;
+    default:
+      return <LinearNone className={styles.iconStandard} />;
   }
 };
 
 const StatusIcon = ({ status }: { status: Status }) => {
   switch (status) {
-    case "backlog": return <LinearBacklog className={styles.iconStandard} />;
-    case "todo": return <LinearTodo className={styles.iconStandard} />;
-    case "in-progress": return <LinearInProgress /> /* Colors built into SVG */;
-    case "review": return <LinearReview />;
-    case "done": return <LinearDone />;
-    case "canceled": return <LinearCanceled className={styles.iconStandard} />;
+    case "backlog":
+      return <LinearBacklog className={styles.iconStandard} />;
+    case "todo":
+      return <LinearTodo className={styles.iconStandard} />;
+    case "in-progress":
+      return <LinearInProgress />;
+    case "review":
+      return <LinearReview />;
+    case "done":
+      return <LinearDone />;
+    case "canceled":
+      return <LinearCanceled className={styles.iconStandard} />;
   }
 };
 
-const IssueItem = ({ 
-  issue, 
-  idx, 
-  selectedIndex, 
-  onSelectIndex, 
-  isCollapsed, 
-  issueButtonRefs, 
-  handleIssueKeyDown 
-}: { 
-  issue: LinearIssue, 
-  idx: number, 
-  selectedIndex: number, 
-  onSelectIndex: (i: number) => void, 
-  isCollapsed: boolean,
-  issueButtonRefs: any,
-  handleIssueKeyDown: any
-}) => {
+function IssueItem({
+  issue,
+  idx,
+  selectedIndex,
+  onSelectIndex,
+  isCollapsed,
+  issueButtonRefs,
+  handleIssueKeyDown,
+}: {
+  issue: LinearIssue;
+  idx: number;
+  selectedIndex: number;
+  onSelectIndex: (i: number) => void;
+  isCollapsed: boolean;
+  issueButtonRefs: MutableRefObject<Array<HTMLButtonElement | null>>;
+  handleIssueKeyDown: (event: KeyboardEvent<HTMLButtonElement>, currentIndex: number) => void;
+}) {
   return (
     <button
       type="button"
       onClick={() => onSelectIndex(idx)}
       onFocus={() => onSelectIndex(idx)}
       onKeyDown={(event) => handleIssueKeyDown(event, idx)}
-      ref={(element) => { issueButtonRefs.current[idx] = element; }}
+      ref={(element) => {
+        issueButtonRefs.current[idx] = element;
+      }}
       className={`${styles.queueItem} ${idx === selectedIndex ? styles.activeQueueItem : ""}`}
       aria-pressed={idx === selectedIndex}
       aria-current={idx === selectedIndex ? "true" : undefined}
@@ -60,67 +82,53 @@ const IssueItem = ({
       tabIndex={idx === selectedIndex ? 0 : -1}
     >
       <div className={styles.issueTopRow}>
-         <div className={styles.issueMetaLeft}>
-            <PriorityIcon priority={issue.priority} />
-            {!isCollapsed && <span className={styles.qId}>{issue.id}</span>}
-            {!isCollapsed && issue.estimate && <span className={styles.estimatePill}>{issue.estimate}</span>}
-         </div>
-         {!isCollapsed && (
-           <div className={styles.issueMetaRight}>
-              {issue.labels && issue.labels.length > 0 && (
-                <div className={styles.labelDots}>
-                  {issue.labels.slice(0, 2).map(l => (
-                    <div key={l} className={styles.labelDot} title={l} />
-                  ))}
-                </div>
-              )}
-              <StatusIcon status={issue.status} />
-           </div>
-         )}
+        <div className={styles.issueMetaLeft}>
+          <PriorityIcon priority={issue.priority} />
+          {!isCollapsed && <span className={styles.qId}>{issue.id}</span>}
+        </div>
+        {!isCollapsed && (
+          <div className={styles.issueMetaRight}>
+            <StatusIcon status={issue.status} />
+          </div>
+        )}
       </div>
       {!isCollapsed && <div className={styles.qTitle}>{issue.title}</div>}
+      {!isCollapsed && (
+        <div className={styles.issueFooter}>
+          <span className={styles.statusLabel}>{issue.status.replace("-", " ")}</span>
+          {issue.assignee && <span className={styles.assigneeLabel}>{issue.assignee}</span>}
+        </div>
+      )}
     </button>
   );
-};
+}
 
-export function Sidebar({ 
-  selectedIndex, 
-  onSelectIndex, 
-  isCollapsed, 
-  onToggleCollapse 
-}: { 
-  selectedIndex: number, 
-  onSelectIndex: (i: number) => void,
-  isCollapsed: boolean,
-  onToggleCollapse: () => void
+export function Sidebar({
+  selectedIndex,
+  onSelectIndex,
+  isCollapsed,
+  onToggleCollapse,
+}: {
+  selectedIndex: number;
+  onSelectIndex: (i: number) => void;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
 }) {
   const voiceConnected = useAppStore((s) => s.voiceConnected);
   const monitorConnected = useAppStore((s) => s.monitorConnected);
+  const activeWorkspaceSection = useAppStore((s) => s.activeWorkspaceSection);
+  const setActiveWorkspaceSection = useAppStore((s) => s.setActiveWorkspaceSection);
   const issueButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const [activeView, setActiveView] = useState<'cycle' | 'assigned' | 'projects'>('cycle');
-  const [expandedProjects, setExpandedProjects] = useState<string[]>([]);
-  const activeGlobalView = useAppStore((s) => s.activeGlobalView);
-  const setActiveGlobalView = useAppStore((s) => s.setActiveGlobalView);
-  const { issues: jiraIssues } = useJiraIssues();
+  const [activeView, setActiveView] = useState<"all" | "assigned">("all");
+  const { issues: jiraIssues, loading, error } = useJiraIssues();
 
-  const toggleProject = (name: string) => {
-    setExpandedProjects(prev =>
-      prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]
-    );
-  };
-
-  const liveIssues = jiraIssues.length > 0 ? jiraIssues : mockLinearCycle;
-
-  const getIssues = () => {
-    switch (activeView) {
-      case 'cycle': return liveIssues;
-      case 'assigned': return liveIssues.filter(i => i.assignee);
-      case 'projects': return []; // Handled separately
-      default: return [];
+  const issues = useMemo(() => {
+    if (activeView === "assigned") {
+      return jiraIssues.filter((issue) => Boolean(issue.assignee));
     }
-  };
+    return jiraIssues;
+  }, [activeView, jiraIssues]);
 
-  const issues = getIssues();
   const issuesSize = issues.length;
 
   const selectAndFocusIndex = (index: number) => {
@@ -132,149 +140,182 @@ export function Sidebar({
     event: KeyboardEvent<HTMLButtonElement>,
     currentIndex: number,
   ) => {
-    const size = activeView === 'projects' ? 0 : issuesSize; // Simple key nav for now
-    if (size === 0) return;
+    if (issuesSize === 0) return;
+
     switch (event.key) {
       case "ArrowDown":
-      case "ArrowRight": {
+      case "ArrowRight":
         event.preventDefault();
-        selectAndFocusIndex((currentIndex + 1) % size);
+        selectAndFocusIndex((currentIndex + 1) % issuesSize);
         break;
-      }
       case "ArrowUp":
-      case "ArrowLeft": {
+      case "ArrowLeft":
         event.preventDefault();
-        selectAndFocusIndex((currentIndex - 1 + size) % size);
+        selectAndFocusIndex((currentIndex - 1 + issuesSize) % issuesSize);
         break;
-      }
-      case "Home": {
+      case "Home":
         event.preventDefault();
         selectAndFocusIndex(0);
         break;
-      }
-      case "End": {
+      case "End":
         event.preventDefault();
-        selectAndFocusIndex(size - 1);
+        selectAndFocusIndex(issuesSize - 1);
         break;
-      }
     }
+  };
+
+  const renderQueueState = () => {
+    if (loading) {
+      return (
+        <li className={styles.emptyQueue}>
+          {isCollapsed ? "…" : (
+            <>
+              <strong>Loading issues…</strong>
+              <span>Fetching the latest work from Jira.</span>
+            </>
+          )}
+        </li>
+      );
+    }
+
+    if (error) {
+      return (
+        <li className={styles.emptyQueue}>
+          {isCollapsed ? "!" : (
+            <>
+              <strong>Jira unavailable</strong>
+              <span>{error}</span>
+            </>
+          )}
+        </li>
+      );
+    }
+
+    if (issues.length === 0) {
+      const message =
+        activeView === "assigned"
+          ? "No assigned issues."
+          : "No issues available.";
+      const detail =
+        activeView === "assigned"
+          ? "Switch to All Issues or assign work in Jira."
+          : "Create or sync an issue to start working here.";
+
+      return (
+        <li className={styles.emptyQueue}>
+          {isCollapsed ? "—" : (
+            <>
+              <strong>{message}</strong>
+              <span>{detail}</span>
+            </>
+          )}
+        </li>
+      );
+    }
+
+    return issues.map((issue, idx) => (
+      <li key={issue.id}>
+        <IssueItem
+          issue={issue}
+          idx={idx}
+          selectedIndex={selectedIndex}
+          onSelectIndex={onSelectIndex}
+          isCollapsed={isCollapsed}
+          issueButtonRefs={issueButtonRefs}
+          handleIssueKeyDown={handleIssueKeyDown}
+        />
+      </li>
+    ));
   };
 
   return (
     <nav className={`${styles.sidebar} ${isCollapsed ? styles.sidebarCollapsed : ""}`}>
       <div className={styles.macSpacer} />
-      
+
       <div className={styles.orgHeader}>
-        <button className={styles.orgLogomark} onClick={onToggleCollapse} aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"} type="button" />
-        {!isCollapsed && <span className={styles.orgTitle}>SEJFA COMMAND</span>}
+        <button
+          className={styles.orgLogomark}
+          onClick={onToggleCollapse}
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          type="button"
+        >
+          <span className={styles.toggleGlyph} aria-hidden="true">
+            {isCollapsed ? "»" : "«"}
+          </span>
+          {!isCollapsed && <span className={styles.toggleLabel}>Collapse</span>}
+        </button>
+        {!isCollapsed && <span className={styles.orgTitle}>SEJFA</span>}
       </div>
 
       {!isCollapsed && (
         <div className={styles.globalModeSwitcher}>
-          <button 
-            className={`${styles.modeBtn} ${activeGlobalView === 'command' ? styles.modeBtnActive : ""}`}
-            onClick={() => setActiveGlobalView('command')}
+          <button
+            className={`${styles.modeBtn} ${activeWorkspaceSection === "work" ? styles.modeBtnActive : ""}`}
+            onClick={() => setActiveWorkspaceSection("work")}
+            type="button"
           >
-            COMMAND
+            WORK
           </button>
-          <button 
-            className={`${styles.modeBtn} ${activeGlobalView === 'monitor' ? styles.modeBtnActive : ""}`}
-            onClick={() => setActiveGlobalView('monitor')}
+          <button
+            className={`${styles.modeBtn} ${activeWorkspaceSection === "history" ? styles.modeBtnActive : ""}`}
+            onClick={() => setActiveWorkspaceSection("history")}
+            type="button"
           >
-            MONITOR
+            HISTORY
           </button>
         </div>
       )}
 
       <div className={styles.navSection}>
-        {!isCollapsed && <h3 className={styles.sectionTitle}>SYSTEM TELEMETRY</h3>}
-        <div className={styles.telemetryItem} role="status" aria-label={`Voice Intake: ${voiceConnected ? "Connected" : "Disconnected"}`}>
+        {!isCollapsed && <h3 className={styles.sectionTitle}>Connections</h3>}
+        <div className={styles.telemetryItem} role="status" aria-label={`Voice intake: ${voiceConnected ? "Connected" : "Disconnected"}`}>
           <div className={`${styles.dot} ${voiceConnected ? styles.dotVoiceOn : ""}`} aria-hidden="true" />
-          {!isCollapsed && <span>Voice Intake</span>}
+          {!isCollapsed && <span>Voice intake ({voiceConnected ? "Connected" : "Disconnected"})</span>}
         </div>
-        <div className={styles.telemetryItem} role="status" aria-label={`Monitor Stream: ${monitorConnected ? "Connected" : "Disconnected"}`}>
+        <div className={styles.telemetryItem} role="status" aria-label={`Run monitor: ${monitorConnected ? "Connected" : "Disconnected"}`}>
           <div className={`${styles.dot} ${monitorConnected ? styles.dotMonitorOn : ""}`} aria-hidden="true" />
-          {!isCollapsed && <span>Monitor Stream</span>}
+          {!isCollapsed && <span>Run monitor ({monitorConnected ? "Connected" : "Disconnected"})</span>}
         </div>
       </div>
 
-      {!isCollapsed && (
+      {activeWorkspaceSection === "work" && !isCollapsed && (
         <div className={styles.viewSwitcher}>
-          <button 
-            className={`${styles.viewBtn} ${activeView === 'cycle' ? styles.viewBtnActive : ""}`}
-            onClick={() => setActiveView('cycle')}
+          <button
+            className={`${styles.viewBtn} ${activeView === "all" ? styles.viewBtnActive : ""}`}
+            onClick={() => setActiveView("all")}
+            type="button"
           >
-            CYCLE
+            ALL ISSUES
           </button>
-          <button 
-            className={`${styles.viewBtn} ${activeView === 'assigned' ? styles.viewBtnActive : ""}`}
-            onClick={() => setActiveView('assigned')}
+          <button
+            className={`${styles.viewBtn} ${activeView === "assigned" ? styles.viewBtnActive : ""}`}
+            onClick={() => setActiveView("assigned")}
+            type="button"
           >
-            MY ISSUES
-          </button>
-          <button 
-            className={`${styles.viewBtn} ${activeView === 'projects' ? styles.viewBtnActive : ""}`}
-            onClick={() => setActiveView('projects')}
-          >
-            PROJECTS
+            ASSIGNED
           </button>
         </div>
       )}
 
       <div className={styles.navSection}>
-        {!isCollapsed && <h3 className={styles.sectionTitle}>{activeView.toUpperCase()}</h3>}
-        
-        {activeView === 'projects' ? (
-           <div className={styles.projectList}>
-             {mockProjects.map(project => (
-               <div key={project.name} className={styles.projectFolder}>
-                 <button
-                   className={styles.projectHeader}
-                   onClick={() => toggleProject(project.name)}
-                   aria-expanded={expandedProjects.includes(project.name)}
-                 >
-                   <span className={`${styles.chevron} ${expandedProjects.includes(project.name) ? styles.chevronOpen : ""}`}>▸</span>
-                   <span className={styles.projectName}>{project.name}</span>
-                 </button>
-                 {expandedProjects.includes(project.name) && (
-                   <ul className={styles.projectBacklog}>
-                     {project.issues.map((issue, idx) => (
-                       <li key={issue.id}>
-                         <IssueItem 
-                           issue={issue}
-                           idx={idx}
-                           selectedIndex={selectedIndex}
-                           onSelectIndex={onSelectIndex}
-                           isCollapsed={isCollapsed}
-                           issueButtonRefs={issueButtonRefs}
-                           handleIssueKeyDown={handleIssueKeyDown}
-                         />
-                       </li>
-                     ))}
-                   </ul>
-                 )}
-               </div>
-             ))}
-           </div>
+        {!isCollapsed && (
+          <h3 className={styles.sectionTitle}>
+            {activeWorkspaceSection === "history" ? "Run History" : "Issues"}
+          </h3>
+        )}
+
+        {activeWorkspaceSection === "history" ? (
+          <div className={styles.historyHint}>
+            {isCollapsed ? "H" : (
+              <>
+                <strong>Recent runs</strong>
+                <span>Review outcomes, timestamps, and cost in the main panel.</span>
+              </>
+            )}
+          </div>
         ) : (
           <ul className={styles.queueList} aria-label="Issue list">
-            {issues.length === 0 ? (
-              <li className={styles.emptyQueue}>{isCollapsed ? "—" : "All issues complete."}</li>
-            ) : (
-              issues.map((issue, idx) => (
-                <li key={issue.id}>
-                  <IssueItem 
-                    issue={issue}
-                    idx={idx}
-                    selectedIndex={selectedIndex}
-                    onSelectIndex={onSelectIndex}
-                    isCollapsed={isCollapsed}
-                    issueButtonRefs={issueButtonRefs}
-                    handleIssueKeyDown={handleIssueKeyDown}
-                  />
-                </li>
-              ))
-            )}
+            {renderQueueState()}
           </ul>
         )}
       </div>

@@ -6,12 +6,28 @@ function ensureWindow(): any {
   if (!scope.window) {
     scope.window = {};
   }
+  if (!scope.window.localStorage) {
+    const bag = new Map<string, string>();
+    scope.window.localStorage = {
+      getItem: (key: string) => bag.get(key),
+      setItem: (key: string, value: string) => {
+        bag.set(key, value);
+      },
+      removeItem: (key: string) => {
+        bag.delete(key);
+      },
+      clear: () => {
+        bag.clear();
+      },
+    };
+  }
   return scope.window;
 }
 
 describe("appStore", () => {
   beforeEach(() => {
     delete ensureWindow().sejfa;
+    ensureWindow().localStorage?.removeItem("sejfa.ui.density");
     useAppStore.setState(useAppStore.getInitialState());
   });
 
@@ -135,5 +151,32 @@ describe("appStore", () => {
     expect(useAppStore.getState().phase).toBe("idle");
     expect(useAppStore.getState().ticketKey).toBeNull();
     expect(useAppStore.getState().loopActive).toBe(false);
+  });
+
+  it("defaults density to comfort", () => {
+    expect(useAppStore.getState().density).toBe("comfort");
+  });
+
+  it("defaults workspace section to work", () => {
+    expect(useAppStore.getState().activeWorkspaceSection).toBe("work");
+  });
+
+  it("updates workspace section", () => {
+    useAppStore.getState().setActiveWorkspaceSection("history");
+    expect(useAppStore.getState().activeWorkspaceSection).toBe("history");
+  });
+
+  it("updates and persists density", () => {
+    useAppStore.getState().setDensity("compact");
+    expect(useAppStore.getState().density).toBe("compact");
+    expect(ensureWindow().localStorage?.getItem("sejfa.ui.density")).toBe("compact");
+  });
+
+  it("keeps density when resetting mission state", () => {
+    useAppStore.getState().setDensity("compact");
+    useAppStore.getState().setLoopActive(true);
+    useAppStore.getState().reset();
+    expect(useAppStore.getState().density).toBe("compact");
+    expect(useAppStore.getState().phase).toBe("idle");
   });
 });

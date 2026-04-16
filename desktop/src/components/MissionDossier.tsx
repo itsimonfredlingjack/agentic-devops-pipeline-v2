@@ -6,7 +6,7 @@ export function MissionDossier({ targetedTask }: { targetedTask: LinearIssue | u
 
   return (
     <div className={styles.dossierContainer}>
-      <h3 className={styles.dossierHeader}>PRE-FLIGHT BRIEFING</h3>
+      <h3 className={styles.dossierHeader}>TASK BRIEF</h3>
       
       <div className={styles.dossierMeta}>
         <div className={styles.metaRow}>
@@ -52,7 +52,7 @@ export function MissionDossier({ targetedTask }: { targetedTask: LinearIssue | u
 
       {(targetedTask.branch || targetedTask.files) && (
         <div className={styles.briefingSection}>
-          <h4 className={styles.sectionHeader}>CONTEXT MAP</h4>
+          <h4 className={styles.sectionHeader}>CONTEXT</h4>
           {targetedTask.branch && (
              <div className={styles.contextRow}>
                 <span className={styles.contextLabel}>BRANCH</span>
@@ -74,7 +74,7 @@ export function MissionDossier({ targetedTask }: { targetedTask: LinearIssue | u
 
       <div className={styles.actionArea}>
         <div className={styles.ctaStatus} role="status" aria-live="polite">
-          Ready for voice command
+          Ready for voice input
         </div>
       </div>
     </div>

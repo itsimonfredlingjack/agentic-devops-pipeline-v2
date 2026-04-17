@@ -21,3 +21,4 @@ loop_queue.db-wal
 data/*.db
 
 ELECTRON-sejfa/
+.worktrees/

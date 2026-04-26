@@ -17,6 +17,8 @@ röst / Jira-ärende
 **Vad som är halvfärdigt / kräver egna credentials:** Jira-integrationen, röstpipelinen mot en extern Ollama-nod, desktop-appen mot en live backend.  
 **Vad som inte finns:** samlad root-level CI-pipeline (`.github/workflows/` innehåller workflows för desktop och Python separat, men ingen end-to-end CI-gate).
 
+![Command Desk — desktop control surface](docs/screenshots/desktop-ui-overview.png)
+
 ## Architecture Overview
 
 ```mermaid

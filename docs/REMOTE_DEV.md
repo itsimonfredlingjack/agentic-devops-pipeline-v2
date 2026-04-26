@@ -84,5 +84,5 @@ That older topology is now archive context only:
 
 ## Related Docs
 
-- [`/Users/coffeedev/Projects/03_AGENTIC-DEVOPS/agentic-devops-pipeline-v2/README.md`](../README.md)
-- [`/Users/coffeedev/Projects/03_AGENTIC-DEVOPS/agentic-devops-pipeline-v2/docs/ARCHITECTURE.md`](ARCHITECTURE.md)
+- [README.md](../README.md)
+- [docs/ARCHITECTURE.md](ARCHITECTURE.md)

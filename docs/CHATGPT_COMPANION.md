@@ -24,14 +24,14 @@ npm run build
 2. Start everything with one command:
 
 ```bash
-cd /Users/coffeedev/Projects/03_AGENTIC-DEVOPS/agentic-devops-pipeline-v2
+cd /path/to/agentic-devops-pipeline-v2
 ./scripts/start-chatgpt-companion.sh start
 ```
 
 If `8787` is already in use, set a different local port before starting:
 
 ```bash
-cd /Users/coffeedev/Projects/03_AGENTIC-DEVOPS/agentic-devops-pipeline-v2
+cd /path/to/agentic-devops-pipeline-v2
 SEJFA_CHATGPT_COMPANION_PORT=8788 ./scripts/start-chatgpt-companion.sh start
 ```
 

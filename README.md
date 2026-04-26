@@ -1,17 +1,54 @@
-# SEJFA
+# SEJFA — Agentic Software-Delivery Loop
 
-SEJFA is an agentic software-delivery loop.
+**Portfolio / learning project.** SEJFA är ett autonomt mjukvaruleveransflöde byggt för att utforska hur AI-agenter kan stänga hela DevOps-slingan — från uppgift till verifierat kodresultat — med minimalt manuellt ingripande.
 
-Its core idea is simple: an incoming task becomes an autonomous execution cycle where the system plans, implements, verifies, reviews, and feeds the result back into the next task. Voice is an input layer into that loop. Monitoring is a companion layer around that loop. The loop itself is the product.
+Kärnan: en inkommande uppgift (via Jira eller röst) blir ett autonomt exekveringscykel (Ralph Loop) som planerar, implementerar, testar och skickar för granskning. Röst är ett intakslager. Monitoring är ett observerbarhetsflöde runt loopen.
 
 ```text
-voice start or Jira context
-  -> task creation / queueing
-  -> Claude Code execution (Ralph Loop)
-  -> verification gates
-  -> review feedback
-  -> deploy / close the task
-  -> new feedback becomes new work
+röst / Jira-ärende
+  → uppgiftskö
+  → Ralph Loop (Claude Code kör autonomt)
+  → verifikationsgrindarna (ruff + pytest)
+  → granskningsfeedback
+  → leverans / nytt ärende
+```
+
+**Vad som faktiskt körs:** Python-backend (FastAPI), monitor-API, Electron-skrivbordsapp (Command Desk), ChatGPT-companion.  
+**Vad som är halvfärdigt / kräver egna credentials:** Jira-integrationen, röstpipelinen mot en extern Ollama-nod, desktop-appen mot en live backend.  
+**Vad som inte finns:** samlad root-level CI-pipeline (`.github/workflows/` innehåller workflows för desktop och Python separat, men ingen end-to-end CI-gate).
+
+## Architecture Overview
+
+```mermaid
+graph LR
+    subgraph Input
+        V[🎤 Voice / REST]
+        J[Jira ticket]
+    end
+
+    subgraph Voice Pipeline :8000
+        W[Whisper\ntranscription]
+        O[Ollama\nintent extract]
+        JC[Jira issue\ncreation]
+        Q[(Loop Queue\nSQLite)]
+    end
+
+    subgraph Ralph Loop
+        CC[Claude Code\n/start-task]
+        Tests[ruff + pytest]
+        PR[GitHub PR]
+    end
+
+    subgraph Monitoring :8100
+        H[Hook bridge\n.claude/hooks]
+        M[Monitor API]
+        D[Desktop\nElectron app]
+    end
+
+    V --> W --> O --> JC --> Q
+    J --> Q
+    Q --> CC --> Tests --> PR
+    CC -- hook events --> H --> M --> D
 ```
 
 ## What SEJFA Is
@@ -29,10 +66,11 @@ The repository currently contains:
 - the loop-facing backend split across `services/` and `src/`
 - a voice pipeline backend in `services/voice-pipeline/src/voice_pipeline/`
 - a monitor API in `services/monitor-api/src/monitor/`
+- an Electron desktop control surface in `desktop/`
 - shared frontend packages in `packages/`
 - helper scripts for Jira, Jules, queueing, and loop operations in `scripts/`
 
-The repository does not currently contain root GitHub Actions workflows. Old documents that describe those workflows as already present are kept as archive material only.
+The repository does not currently contain a root GitHub Actions workflow. Old documents that describe those workflows as already present are kept as archive material only.
 
 ## System Roles
 
@@ -65,7 +103,9 @@ In the current repo it includes:
 - the monitor API in `services/monitor-api/src/monitor/`
 - Claude hook event forwarding in `.claude/hooks/`
 
-`ELECTRON-sejfa/` is a separate companion app with its own nested `.git` repository. It is not the root identity of this repo.
+### Desktop App (Command Desk)
+
+An Electron + React 18 + Vite desktop companion in `desktop/`. Provides a control surface with monitor dashboard, command palette, mission dossier, and terminal feed. Connects to the voice pipeline and monitor API over localhost.
 
 ## Machine Topology
 
@@ -74,7 +114,7 @@ In the current repo it includes:
 The Mac is the orchestration machine.
 
 - runs the FastAPI backend on `:8000`
-- runs the Tauri voice app
+- runs the Electron desktop app (`desktop/`)
 - runs Claude Code and the Ralph Loop
 - can run the monitor API on `:8100`
 
@@ -96,29 +136,32 @@ Hetzner is a demo/deployment host, not the loop core.
 
 - [README.md](README.md)
 - [CLAUDE.md](CLAUDE.md)
-- [docs/README.md](docs/README.md)
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- [docs/GUIDELINES.md](docs/GUIDELINES.md)
+- [docs/RALHP-LOOP-GUIDELINES.md](docs/RALHP-LOOP-GUIDELINES.md)
 - [docs/REMOTE_DEV.md](docs/REMOTE_DEV.md)
+- [docs/CHATGPT_COMPANION.md](docs/CHATGPT_COMPANION.md)
 
 ### Service surfaces
 
 - `services/voice-pipeline/` is the voice start backend
 - `services/monitor-api/` is the observability and session API
 - `services/loop-engine/` is the execution-layer boundary, not a UI
+- `desktop/` is the Electron control surface
 
 ### Archive / speculative / companion references
 
-- [docs/SPEC-pipeline-monitor-v2.md](docs/SPEC-pipeline-monitor-v2.md)
-- [docs/PLAN-pipeline-monitor-v2.md](docs/PLAN-pipeline-monitor-v2.md)
 - [docs/JULES_INTEGRATION.md](docs/JULES_INTEGRATION.md)
 - [docs/jules-playbook.md](docs/jules-playbook.md)
+- [docs/plans/2026-03-14-sejfa-desktop-app.md](docs/plans/2026-03-14-sejfa-desktop-app.md)
 
 ## What Exists In The Repo
 
 ```text
 .
-├── .claude/hooks/          # Hook-to-monitor bridge in the root repo
+├── .claude/hooks/          # Hook-to-monitor bridge
+├── .claude/commands/       # Ralph Loop /start-task and /finish-task commands
+├── .github/workflows/      # Python CI + desktop build workflows
+├── desktop/                # Electron + React control surface (Command Desk)
 ├── docs/                   # Canonical docs plus archive references
 ├── packages/               # Shared UI, contracts, and frontend data clients
 ├── services/
@@ -127,8 +170,7 @@ Hetzner is a demo/deployment host, not the loop core.
 │   └── voice-pipeline/     # Voice pipeline source
 ├── scripts/                # Queue, Jira, Jules, systemd, loop helpers
 ├── src/sejfa/              # Shared utilities
-├── tests/                  # Python test suites
-└── ELECTRON-sejfa/         # Separate nested companion repo
+└── tests/                  # Python test suites
 ```
 
 ## Run The Current Repo
@@ -165,6 +207,12 @@ Default local ports:
 
 You can override any of them with environment variables such as
 `SEJFA_MONITOR_PORT=8120` or `SEJFA_CHATGPT_COMPANION_PORT=8790`.
+
+### Desktop app
+
+```bash
+npm --workspace desktop run electron:dev
+```
 
 ### Tests
 

@@ -55,7 +55,7 @@ The root `package.json` defines an npm workspace covering `packages/*` and `desk
 What does NOT exist in this repo:
 
 - No `.github/workflows/` directory
-- No `.claude/skills/` or `.claude/commands/`
+- No `.claude/skills/`
 - No `voice-app/` (deleted Tauri desktop app)
 - No `ELECTRON-sejfa/` in the working tree
 

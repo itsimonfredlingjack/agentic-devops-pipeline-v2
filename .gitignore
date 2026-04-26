@@ -21,3 +21,24 @@ loop_queue.db-wal
 data/*.db
 
 ELECTRON-sejfa/
+
+# Playwright MCP session artefacts
+.playwright-mcp/
+
+# Gemini tooling
+.gemini/
+
+# Compiled Electron output
+desktop/dist-electron/
+apps/desktop/dist-electron/
+dist-electron/
+
+# Binary planning docs
+*.docx
+
+# Agent state files
+CURRENT_TASK.md
+GEMINI_DESIGN_REVIEW_PROMPT.md
+
+# Serena LSP tooling
+.serena/

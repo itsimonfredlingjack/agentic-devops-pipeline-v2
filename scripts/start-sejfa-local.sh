@@ -175,7 +175,7 @@ start_companion() {
 
 start_desktop() {
   local existing_pid
-  existing_pid="$(find_existing_pid "npm --workspace desktop run electron:dev")"
+  existing_pid="$(find_existing_pid "npm --workspace @sejfa/desktop run electron:dev")"
   if [[ -n "${existing_pid}" ]]; then
     echo "${existing_pid}" > "${DESKTOP_PID_FILE}"
     log "Desktop app already running (pid ${existing_pid})"
@@ -194,7 +194,7 @@ start_desktop() {
       SEJFA_MONITOR_API_URL="${SEJFA_MONITOR_API_URL}" \
       VITE_SEJFA_VOICE_URL="${SEJFA_VOICE_URL}" \
       VITE_SEJFA_MONITOR_URL="${SEJFA_MONITOR_API_URL}" \
-      npm --workspace desktop run electron:dev -- --host 127.0.0.1 --port "${DESKTOP_PORT}"
+      npm --workspace @sejfa/desktop run electron:dev -- --host 127.0.0.1 --port "${DESKTOP_PORT}"
   ) >"${DESKTOP_LOG_FILE}" 2>&1 &
   echo "$!" > "${DESKTOP_PID_FILE}"
   log "Started desktop app (pid $(cat "${DESKTOP_PID_FILE}"))"

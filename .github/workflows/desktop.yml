@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - "desktop/**"
+      - "apps/desktop/**"
       - "packages/**"
       - "package.json"
       - "package-lock.json"
@@ -31,7 +31,7 @@ jobs:
         run: npm run build --workspaces --if-present
 
       - name: Desktop tests
-        run: npm --workspace desktop run test
+        run: npm --workspace @sejfa/desktop run test
 
       - name: Desktop TypeScript check
-        run: npm --workspace desktop run build
+        run: npm --workspace @sejfa/desktop run build

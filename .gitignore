@@ -30,6 +30,8 @@ ELECTRON-sejfa/
 
 # Compiled Electron output
 desktop/dist-electron/
+apps/desktop/dist-electron/
+dist-electron/
 
 # Binary planning docs
 *.docx

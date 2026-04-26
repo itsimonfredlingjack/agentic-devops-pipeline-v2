@@ -36,3 +36,4 @@ desktop/dist-electron/
 
 # Agent state files
 CURRENT_TASK.md
+GEMINI_DESIGN_REVIEW_PROMPT.md

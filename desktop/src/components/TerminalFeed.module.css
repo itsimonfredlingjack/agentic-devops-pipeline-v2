@@ -1,273 +1,131 @@
 .feedWrapper {
   flex: 1;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  mask-image: linear-gradient(to bottom, transparent, black 24px);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, black 24px);
-}
-
-.logContainer {
-  display: flex;
-  flex-direction: column;
+  background: var(--bg-panel);
 }
 
 .logRow {
   display: grid;
-  grid-template-columns: 86px 140px minmax(0, 1fr) 72px;
-  align-items: flex-start;
+  grid-template-columns: 70px 120px 1fr 80px;
   gap: 12px;
   padding: 10px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  font-family: var(--font-mono);
-  font-size: var(--type-meta-size);
-  line-height: var(--type-meta-line);
-  animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  opacity: 0;
-  transform: translateY(10px);
-  cursor: default;
-  transition:
-    background-color var(--motion-fast),
-    border-left-color var(--motion-fast);
+  border-bottom: 1px solid var(--border-default);
   border-left: 2px solid transparent;
-}
-
-@keyframes slideUpFade {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  transition: all var(--motion-fast);
 }
 
 .logRow:hover {
-  background-color: rgba(255, 255, 255, 0.015);
+  background: var(--bg-hover);
 }
 
-.expandable {
-  cursor: pointer;
+.logSuccess {
+  border-left-color: var(--neon-green);
+  background: var(--neon-green-dim);
 }
 
-.expandable:hover {
-  background-color: rgba(255, 255, 255, 0.03);
+.logError {
+  border-left-color: var(--neon-red);
+  background: var(--neon-red-dim);
 }
 
 .logTime {
-  color: var(--text-muted);
-  font-size: var(--type-meta-size);
-  line-height: var(--type-meta-line);
-  font-variant-numeric: tabular-nums;
-  padding-top: 2px;
-}
-
-.logToolGroup {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
+  color: var(--text-dim);
 }
 
 .logTool {
-  color: var(--text-primary);
-  font-weight: 500;
-  font-size: var(--type-body-size);
-  line-height: var(--type-body-line);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.expandIndicator {
-  font-size: 8px;
-  color: var(--text-muted);
-  transition: transform var(--motion-fast);
+  color: var(--neon-cyan);
+  font-weight: 600;
 }
 
 .logArgs {
   color: var(--text-secondary);
-  font-size: var(--type-meta-size);
-  line-height: var(--type-meta-line);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+}
+
+.logArgs::before {
+  content: "> ";
+  color: var(--text-dim);
 }
 
 .logMeta {
-  color: var(--text-secondary);
-  font-size: var(--type-meta-size);
-  line-height: var(--type-meta-line);
   text-align: right;
-  font-variant-numeric: tabular-nums;
-  padding-top: 2px;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
+  color: var(--text-muted);
 }
 
 .statusText {
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 10px;
-  color: var(--text-tertiary);
+  letter-spacing: 0.08em;
+  font-size: 9px;
   font-weight: 600;
+  color: var(--text-dim);
 }
 
-.logSuccess {
-  border-left-color: var(--status-success);
-  background-color: rgba(126, 178, 145, 0.06);
+.logSuccess .statusText {
+  color: var(--neon-green);
 }
 
-.logError {
-  border-left-color: var(--status-danger);
-  background-color: rgba(214, 120, 131, 0.08);
+.logError .statusText {
+  color: var(--neon-red);
 }
 
 .emptyState {
-  padding: 24px 18px;
-  border-bottom: 1px solid var(--surface-monitor-border);
-  background: rgba(255, 255, 255, 0.01);
-  color: var(--text-muted);
-  font-size: var(--type-section-size);
-  line-height: var(--type-section-line);
+  padding: 32px;
+  text-align: center;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 12px;
 }
 
-.emptyState strong,
-.emptyState span {
+.emptyState strong {
   display: block;
-}
-
-.emptyState span {
-  margin-top: 4px;
-}
-
-/* Detail View */
-.logDetail {
-  background: var(--surface-monitor-panel-strong);
-  border-bottom: 1px solid var(--surface-monitor-border);
-  padding: 16px 16px 16px 110px;
-  animation: expandDetail var(--motion-fast);
-}
-
-@keyframes expandDetail {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.detailHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.detailHeader span {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  color: var(--text-muted);
-  letter-spacing: 0.1em;
-  font-weight: 600;
-}
-
-.copyBtn {
-  background: transparent;
-  border: 1px solid var(--surface-monitor-border);
   color: var(--text-secondary);
-  font-family: var(--font-mono);
-  font-size: 9px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition:
-    background-color var(--motion-fast),
-    color var(--motion-fast),
-    border-color var(--motion-fast);
-}
-
-.copyBtn:hover {
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text-primary);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.codeBlock {
-  margin: 0;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
-  color: #d1d5db;
-  font-family: var(--font-mono);
-  font-size: var(--type-meta-size);
-  line-height: 1.6;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.codeError {
-  color: var(--status-danger);
-  background: rgba(239, 68, 68, 0.02);
-  border-color: var(--status-danger-border);
-}
-
-.noDetail {
-  margin: 0;
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px dashed rgba(148, 163, 184, 0.28);
-  background: rgba(15, 19, 24, 0.6);
-  color: var(--text-tertiary);
-  font-family: var(--font-mono);
-  font-size: var(--type-meta-size);
-  line-height: 1.6;
+  margin-bottom: 6px;
 }
 
 .activeStep {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 20px 20px;
+  gap: 10px;
+  padding: 14px 16px;
+  border-top: 1px solid var(--border-default);
+  border-left: 2px solid var(--neon-green);
+  background: var(--neon-green-dim);
   font-family: var(--font-mono);
-  font-size: var(--type-body-size);
-  line-height: var(--type-body-line);
-  border-left: 2px solid var(--status-info);
-  background: var(--status-info-bg);
+  font-size: 11px;
+  color: var(--neon-green);
 }
 
 .spinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid var(--status-info);
-  border-right-color: transparent;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  background: var(--neon-green);
+  box-shadow: var(--glow-green);
+  animation: pulse 1.5s infinite;
 }
 
-.activeText {
-  color: var(--text-secondary);
-  font-size: var(--type-body-size);
-  line-height: var(--type-body-line);
-  animation: pulse 2s infinite ease-in-out;
+@keyframes pulse {
+  50% { opacity: 0.3; }
 }
 
-@keyframes spin { 100% { transform: rotate(360deg); } }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-.feedBottomBuffer {
-  height: 40px;
-  flex-shrink: 0;
-}
-
-.feedWrapper[data-density="compact"] .logRow {
-  grid-template-columns: 74px 120px minmax(0, 1fr) 64px;
-  gap: 10px;
-  padding: 7px 12px;
-}
-
-.feedWrapper[data-density="compact"] .logDetail {
-  padding: 10px 12px 10px 90px;
-}
-
-.feedWrapper[data-density="compact"] .activeStep {
+.codeBlock {
+  margin: 0;
   padding: 12px;
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-default);
+  border-left: 2px solid var(--neon-green);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.codeError {
+  border-left-color: var(--neon-red);
+  color: var(--neon-red);
 }

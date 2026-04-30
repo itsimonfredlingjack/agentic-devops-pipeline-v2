@@ -37,8 +37,18 @@ export function TerminalFeed() {
       {events.length === 0 && !processingStep && (
         <div className={styles.emptyState}>
           <strong>No execution events yet.</strong>
-          <span>Start a mission to populate this timeline with tool activity and outcomes.</span>
+          <span>Start a task run to populate this timeline with tool activity and outcomes.</span>
         </div>
+      )}
+      {events.length === 0 && processingStep && (
+        Array.from({ length: 3 }).map((_, i) => (
+          <div key={`skeleton-${i}`} className={styles.skeletonRow}>
+            <div className={styles.skeletonLineNarrow} />
+            <div className={styles.skeletonLineNarrow} />
+            <div className={styles.skeletonLineWide} />
+            <div className={styles.skeletonLineNarrow} />
+          </div>
+        ))
       )}
       {events.map((e) => {
         const isExpanded = expandedId === e.event_id;

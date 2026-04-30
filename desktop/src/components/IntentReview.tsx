@@ -8,11 +8,25 @@ import styles from "./IntentReview.module.css";
 const ISSUE_TYPES = ["Story", "Bug", "Task", "Sub-task", "Epic"];
 const PRIORITIES = ["Highest", "High", "Medium", "Low", "Lowest"];
 
-function confidenceColor(score: number): string {
-  if (score >= 0.7) return "#10b981";
-  if (score >= 0.4) return "#f59e0b";
-  return "#ef4444";
+type ConfidenceTone = "high" | "medium" | "low";
+
+function confidenceTone(score: number): ConfidenceTone {
+  if (score >= 0.7) return "high";
+  if (score >= 0.4) return "medium";
+  return "low";
 }
+
+const CONFIDENCE_FILL_CLASS: Record<ConfidenceTone, string> = {
+  high: styles.confidenceBarFillHigh,
+  medium: styles.confidenceBarFillMedium,
+  low: styles.confidenceBarFillLow,
+};
+
+const CONFIDENCE_VALUE_CLASS: Record<ConfidenceTone, string> = {
+  high: styles.confidenceValueHigh,
+  medium: styles.confidenceValueMedium,
+  low: styles.confidenceValueLow,
+};
 
 export function IntentReview() {
   const {
@@ -22,7 +36,7 @@ export function IntentReview() {
     setPipelineStatus,
     setProcessingStep,
     setClarification,
-    setTicketKey,
+    setTaskRef,
     reset,
   } = useAppStore();
   const [submitting, setSubmitting] = useState(false);
@@ -39,12 +53,13 @@ export function IntentReview() {
   if (!preview || !intent) return null;
 
   const confidence = 1 - intent.ambiguityScore;
+  const confidenceState = confidenceTone(confidence);
 
   const handleApprove = async () => {
     setSubmitting(true);
     setErrorMessage(null);
     setPipelineStatus("processing");
-    setProcessingStep("Creating Jira ticket…");
+    setProcessingStep("Creating task record…");
     try {
       // Compute overrides: only send fields that changed
       const overrides: Record<string, unknown> = {};
@@ -76,19 +91,19 @@ export function IntentReview() {
         setProcessingStep,
         setClarification,
         setPreview,
-        setTicketKey,
+        setTaskRef,
       });
 
       if (result === "unknown") {
         setErrorMessage("Approve response had an unknown format.");
         setPipelineStatus("error");
         setSubmitting(false);
-      } else if (result !== "ticket_created") {
+      } else if (result !== "task_created") {
         setSubmitting(false);
       }
     } catch (e) {
       console.error("Approve failed:", e);
-      setErrorMessage("Could not approve and build ticket.");
+      setErrorMessage("Could not approve and create the task record.");
       setPipelineStatus("error");
       setSubmitting(false);
     }
@@ -129,7 +144,10 @@ export function IntentReview() {
     <div className={styles.reviewContainer}>
       {/* Header */}
       <div className={styles.header}>
-        <span className={styles.headerTitle}>INTENT REVIEW</span>
+        <div className={styles.headerGroup}>
+          <span className={styles.headerTitle}>INTENT VERIFICATION</span>
+          <span className={styles.headerMeta}>Session {preview.sessionId.slice(0, 8)}</span>
+        </div>
         <span className={styles.phasePill}>VERIFY</span>
       </div>
 
@@ -137,13 +155,13 @@ export function IntentReview() {
 
       {/* Transcript */}
       <div className={styles.section}>
-        <span className={styles.sectionLabel}>TRANSCRIPT</span>
+        <span className={styles.sectionLabel}>WHAT WE HEARD</span>
         <div className={styles.transcriptBlock}>{preview.transcribedText}</div>
       </div>
 
       {/* Extracted intent — editable */}
       <div className={styles.section}>
-        <span className={styles.sectionLabel}>DRAFT TICKET FIELDS</span>
+        <span className={styles.sectionLabel}>EXTRACTED INTENT</span>
         <div className={styles.intentGrid}>
           <div className={styles.fieldRow}>
             <label className={styles.fieldLabel} htmlFor="review-summary">SUMMARY</label>
@@ -228,17 +246,13 @@ export function IntentReview() {
         <span className={styles.confidenceLabel}>CONFIDENCE</span>
         <div className={styles.confidenceBarTrack}>
           <div
-            className={styles.confidenceBarFill}
+            className={`${styles.confidenceBarFill} ${CONFIDENCE_FILL_CLASS[confidenceState]}`}
             style={{
               width: `${Math.round(confidence * 100)}%`,
-              backgroundColor: confidenceColor(confidence),
             }}
           />
         </div>
-        <span
-          className={styles.confidenceValue}
-          style={{ color: confidenceColor(confidence) }}
-        >
+        <span className={`${styles.confidenceValue} ${CONFIDENCE_VALUE_CLASS[confidenceState]}`}>
           {Math.round(confidence * 100)}%
         </span>
       </div>
@@ -280,7 +294,7 @@ export function IntentReview() {
             disabled={submitting || !summary.trim()}
             aria-describedby="cue-approve-build"
           >
-            APPROVE AND CREATE TICKET
+            APPROVE AND CREATE TASK
           </button>
           <span id="cue-approve-build" className={styles.actionCue}>
             <span aria-hidden="true">✓</span> Submit validated scope and continue pipeline

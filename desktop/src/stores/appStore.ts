@@ -4,6 +4,7 @@ import type {
   ClarificationState,
   CompletionSummary,
   CostEntry,
+  LoopConversationMessage,
   EventRecord,
   PipelineStatus,
   PreviewState,
@@ -57,6 +58,7 @@ interface AppState {
   monitorConnected: boolean;
   voiceUrl: string;
   monitorUrl: string;
+  apiToken: string;
 
   // Pipeline
   pipelineStatus: PipelineStatus;
@@ -66,12 +68,13 @@ interface AppState {
 
   // Loop
   loopActive: boolean;
-  ticketKey: string | null;
+  taskRef: string | null;
   sessionId: string | null;
   elapsedMs: number;
 
   // Events
   events: EventRecord[];
+  conversationMessages: LoopConversationMessage[];
 
   // Monitor data
   cost: CostEntry | null;
@@ -87,14 +90,18 @@ interface AppState {
   setClarification: (clarification: ClarificationState | null) => void;
   setPreview: (preview: PreviewState | null) => void;
   setLoopActive: (active: boolean) => void;
-  setTicketKey: (key: string | null) => void;
+  setTaskRef: (taskRef: string | null) => void;
   setSessionId: (id: string | null) => void;
   setElapsedMs: (ms: number) => void;
   appendEvent: (event: EventRecord) => void;
+  appendConversationMessage: (message: LoopConversationMessage) => void;
+  setConversationMessages: (messages: LoopConversationMessage[]) => void;
+  clearConversationMessages: () => void;
   setCost: (cost: CostEntry) => void;
   setStuckAlert: (alert: StuckAlert) => void;
   clearStuckAlert: () => void;
   setCompletion: (completion: CompletionSummary) => void;
+  clearCompletion: () => void;
   setQueue: (queue: QueueItem[]) => void;
   setActiveWorkspaceSection: (view: "work" | "history") => void;
   setDensity: (density: UiDensity) => void;
@@ -114,6 +121,11 @@ export function getDefaultServiceUrls() {
       bridgeConfig?.monitorUrl ??
       import.meta.env.VITE_SEJFA_MONITOR_URL ??
       "http://localhost:8100",
+    apiToken:
+      bridgeConfig?.apiToken ??
+      import.meta.env.VITE_SEJFA_LOCAL_API_TOKEN ??
+      import.meta.env.VITE_MONITOR_API_SECRET ??
+      "",
   };
 }
 
@@ -156,10 +168,11 @@ const initialState = {
   clarification: null,
   preview: null,
   loopActive: false,
-  ticketKey: null,
+  taskRef: null,
   sessionId: null,
   elapsedMs: 0,
   events: [] as EventRecord[],
+  conversationMessages: [] as LoopConversationMessage[],
   cost: null,
   stuckAlert: null,
   completion: null,
@@ -212,9 +225,39 @@ export const useAppStore = create<AppState>()((set) => ({
       return { loopActive: active, phase: derivePhase(next) };
     }),
 
-  setTicketKey: (key) => set({ ticketKey: key }),
+  setTaskRef: (taskRef) => set({ taskRef }),
 
-  setSessionId: (id) => set({ sessionId: id }),
+  setSessionId: (id) =>
+    set((state) => ({
+      sessionId: id,
+      conversationMessages: id && id === state.sessionId ? state.conversationMessages : [],
+      taskRef: id && id === state.sessionId ? state.taskRef : null,
+    })),
+
+  appendConversationMessage: (message) => {
+    if (!message || !message.message_id || !message.session_id) {
+      return;
+    }
+
+    set((state) => {
+      const existing = state.conversationMessages.find((entry) => entry.message_id === message.message_id);
+      if (existing) return state;
+
+      const merged = [...state.conversationMessages, message].sort((a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+      );
+      return { conversationMessages: merged };
+    });
+  },
+
+  setConversationMessages: (messages) =>
+    set({
+      conversationMessages: [...messages].sort((a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+      ),
+    }),
+
+  clearConversationMessages: () => set({ conversationMessages: [] }),
 
   setElapsedMs: (ms) => set({ elapsedMs: ms }),
 
@@ -244,6 +287,12 @@ export const useAppStore = create<AppState>()((set) => ({
       return { completion, phase: derivePhase(next) };
     }),
 
+  clearCompletion: () =>
+    set((state) => {
+      const next = { ...state, completion: null };
+      return { completion: null, phase: derivePhase(next) };
+    }),
+
   setQueue: (queue) => set({ queue }),
 
   setActiveWorkspaceSection: (view: "work" | "history") => set({ activeWorkspaceSection: view }),
@@ -257,5 +306,6 @@ export const useAppStore = create<AppState>()((set) => ({
     set((state) => ({
       ...initialState,
       density: state.density,
+      conversationMessages: [],
     })),
 }));

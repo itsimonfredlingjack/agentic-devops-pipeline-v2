@@ -4,15 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Identity
 
-SEJFA is an agentic software-delivery loop. The loop is the product — voice and monitoring are layers around it.
+SEJFA is an agentic software-delivery loop. The loop is the product. Voice, desktop, and monitoring are layers around that loop.
 
 ```text
-voice start or Jira context
-  -> task creation / queueing
+existing Linear task or voice/text draft
+  -> structured task review
+  -> save to Linear
+  -> manual start-task
   -> Ralph Loop execution in Claude Code
   -> verification gates
   -> review feedback
-  -> deploy / close the loop
+  -> done / failed / blocked / aborted
 ```
 
 Key terms:
@@ -21,28 +23,29 @@ Key terms:
 |------|---------|
 | **SEJFA** | The loop-first system |
 | **Ralph Loop** | The autonomous execution cycle inside SEJFA |
-| **Voice start layer** | Audio/transcription/intent subsystem that feeds the loop |
-| **Monitor companion** | Observability and control tooling around the loop |
+| **Desktop command desk** | Active operator surface for inbox, dossier, live run, and blockers |
+| **Voice start layer** | Voice/text intake plus task draft and Linear bridge |
+| **Monitor companion** | Run-status and control-plane tooling around the loop |
 
-Do not redefine the repo as primarily a voice app or a monitor product.
+Do not redefine the repo as primarily a voice app, monitor product, or companion app.
 
 ## Repo Layout
 
 ```text
 services/
-  voice-pipeline/src/voice_pipeline/   # FastAPI voice-to-Jira backend (:8000)
-  monitor-api/src/monitor/             # Monitor API companion (:8100)
+  voice-pipeline/src/voice_pipeline/   # FastAPI intake + Linear bridge + queue backend (:8000)
+  monitor-api/src/monitor/             # Monitor API companion (:8100 standalone)
   loop-engine/                         # Execution-layer boundary, loop runner home
 src/
   sejfa/                               # Shared Python utilities (integrations, monitor, utils)
-  chatgpt_companion/                   # ChatGPT Developer Mode MCP companion
-desktop/                               # Electron + React 18 + Vite desktop app (Command Desk)
+  chatgpt_companion/                   # Secondary ChatGPT Developer Mode MCP companion
+desktop/                               # Electron + React 18 + Vite desktop command desk
 chatgpt-companion/web/                 # React widget UI for the ChatGPT companion
 packages/
   data-client/                         # TS API client for voice backend
   shared-types/                        # Shared TS interfaces
   ui-system/                           # Shared UI component library
-scripts/                               # Loop, Jira, Jules, systemd, deployment helpers
+scripts/                               # Loop, Jules, systemd, deployment helpers
 tests/                                 # pytest suites mirroring source structure
 data/                                  # SQLite databases (monitor.db, companion metrics)
 .claude/hooks.json                     # Hook config registering monitor_hook.py
@@ -65,10 +68,13 @@ Archive docs may describe planned or historical workflows not present here.
 
 ### Mac (primary)
 
+- Active desktop command desk
 - FastAPI voice backend on `:8000`
 - Claude Code / Ralph Loop execution
-- Optional monitor API on `:8100`
-- ChatGPT companion on `:8787`
+- Standalone monitor API on `:8100`
+- Standalone ChatGPT companion on `:8787`
+- Local stack monitor API on `:8110`
+- Local stack companion on `:8788`
 
 ### ai-server2 (inference node)
 
@@ -116,7 +122,7 @@ cd chatgpt-companion/web && npm install && npm run build && cd ../..
 ./scripts/start-chatgpt-companion.sh status|stop|restart|logs
 ```
 
-The companion runs via `uvicorn src.chatgpt_companion.mcp_server:app` on port `${SEJFA_CHATGPT_COMPANION_PORT:-8787}`.
+The companion runs via `uvicorn src.chatgpt_companion.mcp_server:app` on port `${SEJFA_CHATGPT_COMPANION_PORT:-8787}`. It is not the v1 critical path.
 
 ### Desktop app (Electron)
 
@@ -138,6 +144,8 @@ Runs voice pipeline, monitor API, and ChatGPT companion together with non-collid
 
 Default ports: voice `8000`, monitor `8110`, companion `8788`. Override with `SEJFA_VOICE_PORT`, `SEJFA_MONITOR_PORT`, `SEJFA_CHATGPT_COMPANION_PORT`.
 
+Use the local stack when you want the default integrated dev surface. Use standalone commands when you need one service in isolation.
+
 ### Loop runner
 
 ```bash
@@ -146,7 +154,20 @@ bash scripts/loop-runner.sh
 bash services/loop-engine/scripts/loop-runner.sh
 ```
 
-Polls `/api/loop/queue` for pending tickets, runs `claude --print "/start-task $ticket_key"` for each. Env vars: `LOOP_RUNNER_BACKEND_URL`, `LOOP_RUNNER_REPO_DIR`, `LOOP_RUNNER_POLL_INTERVAL`.
+Polls `/api/loop/queue` for pending tasks, runs `claude --print "/start-task $task_ref"` for each. Env vars: `LOOP_RUNNER_BACKEND_URL`, `LOOP_RUNNER_REPO_DIR`, `LOOP_RUNNER_POLL_INTERVAL`.
+
+## Current V1 Operator Flow
+
+The intended v1 lane is:
+
+1. Select an existing Linear task or create a new draft from voice or text.
+2. Review and edit the task in the desktop command desk.
+3. Save it to Linear.
+4. Start execution manually with `/start-task $task_ref`.
+5. Follow the run through monitor-backed desktop surfaces.
+6. Use only real interventions: abort, persisted operator instruction, clarify, and retry.
+
+Voice is optional input. Manual start after review/save is the recommended v1 behavior.
 
 ## Verification
 
@@ -183,20 +204,18 @@ pytest is configured with `asyncio_mode = "auto"` in pyproject.toml. Markers: `u
 
 ### Voice Pipeline (`services/voice-pipeline/src/voice_pipeline/`)
 
-FastAPI app that converts voice/text input into Jira tickets and queues work for the Ralph Loop.
-
+FastAPI app that converts voice/text input into structured task drafts, bridges to Linear, and queues work for the Ralph Loop.
 - `main.py` — HTTP/WS endpoints
 - `config.py` — Pydantic Settings from env vars
 - `transcriber/` — pluggable backends: `whisper_local.py` (CPU/GPU), `remote.py` (ai-server2), `openai_api.py`
 - `intent/` — Ollama-based intent extraction with structured prompts
-- `jira/` — Jira issue creation from extracted intent
-- `pipeline/` — orchestrator that chains transcription → extraction → ticket creation, with ambiguity clarification loop
+- `pipeline/` — orchestrator that chains transcription → extraction → task draft review → save-to-Linear, with ambiguity clarification loop
 - `loop_queue.py` / `persistent_loop_queue.py` — SQLite-backed queue for dispatching work to the Ralph Loop
 - `security/sanitizer.py` — input sanitization (prompt injection defense)
 
 ### Monitor API (`services/monitor-api/src/monitor/`)
 
-Companion service that receives Claude Code hook events and provides session observability.
+Companion service that receives Claude Code hook events and provides run status, session observability, and intervention handling.
 
 - `api.py` — receives `/events`, exposes `/sessions`, `/status`
 - `models.py` — SQLite-backed session and event persistence
@@ -206,7 +225,7 @@ Companion service that receives Claude Code hook events and provides session obs
 
 ### Desktop App (`desktop/`)
 
-Electron + React 18 + Vite desktop companion (Command Desk). Uses Zustand for state, consumes `@sejfa/data-client`, `@sejfa/shared-types`, and `@sejfa/ui-system` from the monorepo. Key views: MonitorDashboard, CommandPalette, MissionDossier, TerminalFeed, BlockersView.
+Electron + React 18 + Vite desktop command desk. Uses Zustand for state and consumes `@sejfa/data-client`, `@sejfa/shared-types`, and `@sejfa/ui-system`. This is the active operator surface for inbox, draft review, dossier editing, blockers, run controls, and live monitor views.
 
 ### Hook Bridge (`.claude/hooks/`)
 
@@ -214,23 +233,22 @@ Electron + React 18 + Vite desktop companion (Command Desk). Uses Zustand for st
 
 ### ChatGPT Companion (`src/chatgpt_companion/`)
 
-Read-only MCP server for inspecting SEJFA from ChatGPT Developer Mode. Provides tools: `search`, `fetch`, `get_active_mission`, `list_recent_sessions`, `get_session_events`, `get_jira_issue`, `search_workspace`, `fetch_workspace_file`, `get_project_context`, `render_mission_dashboard`. No file mutation, no shell execution, no Jira writes.
+Read-only MCP server for inspecting SEJFA from ChatGPT Developer Mode. Secondary surface, not the main v1 path.
 
 ### Shared Utilities (`src/sejfa/`)
 
-- `integrations/jira_client.py` — Jira API client
 - `monitor/monitor_service.py` — monitor service client
 - `utils/health_check.py`, `utils/security.py` — health checks and security helpers
 
 ### Loop Engine (`services/loop-engine/`)
 
-Execution-layer boundary. Currently owns the loop-runner script that polls for pending tickets and dispatches them to Claude Code.
+Execution-layer boundary. Currently owns the loop-runner script that polls for pending tasks and dispatches them to Claude Code.
 
 ### Agent Scripts (`scripts/`)
 
 - `loop-runner.sh` — delegates to `services/loop-engine/scripts/loop-runner.sh`
 - `classify_failure.py` — classifies CI failures into a taxonomy (AUTH, TEST_FAIL, LINT_FAIL, etc.) for self-healing
-- `jules_payload.py`, `jules_review_api.py`, `jules_to_jira.py` — Jules (Google) code review integration
+- `jules_payload.py`, `jules_review_api.py` — Jules (Google) code review integration
 - `create-branch.sh`, `create-pr.sh` — git workflow helpers
 - `preflight.sh`, `ci_check.sh` — pre-flight and CI validation
 - `systemd/` — service definitions for loop-runner and voice-pipeline
@@ -243,12 +261,18 @@ Execution-layer boundary. Currently owns the loop-runner script that polls for p
 |----------|--------|---------|
 | `/health` | GET | Health check |
 | `/api/transcribe` | POST | Audio to text |
-| `/api/extract` | POST | Text to Jira intent |
-| `/api/pipeline/run` | POST | Full voice intake pipeline |
+| `/api/extract` | POST | Text to task intent |
+| `/api/pipeline/run` | POST | Voice/text draft intake pipeline |
+| `/api/pipeline/run/audio` | POST | Audio-first intake pipeline |
 | `/api/pipeline/clarify` | POST | Ambiguity clarification follow-up |
+| `/api/pipeline/approve` | POST | Approve and save a reviewed task |
+| `/api/pipeline/discard` | POST | Discard a draft |
+| `/api/tasks` | GET | List Linear-backed tasks |
+| `/api/tasks/{task_id}` | GET | Fetch task details |
 | `/api/loop/queue` | GET | Pending loop work |
 | `/api/loop/started` | POST | Mark work as started |
 | `/api/loop/completed` | POST | Mark work as completed |
+| `/api/loop/failed` | POST | Mark work as failed |
 | `/ws/status` | WS | Pipeline status updates |
 
 ### Monitor (`:8100`)
@@ -259,6 +283,9 @@ Execution-layer boundary. Currently owns the loop-runner script that polls for p
 | `/events` | GET | Query stored events |
 | `/sessions` | GET | List monitor sessions |
 | `/sessions/{id}` | GET | Inspect one session |
+| `/sessions/{id}/abort` | POST | Abort an active run |
+| `/sessions/{id}/instruction` | POST | Persist operator instruction |
+| `/sessions/{id}/actions` | POST | Clarify or retry |
 | `/status` | GET | Current monitor status |
 | `/reset` | POST | Reset in-memory analyzers |
 
@@ -273,11 +300,11 @@ Execution-layer boundary. Currently owns the loop-runner script that polls for p
 
 ### Git
 
-- Branch: `{type}/{JIRA-ID}-{slug}` (e.g. `feature/DEV-42-oauth-login`)
+- Branch: `{type}/{TASK-REF}-{slug}` (e.g. `feature/SEJ-42-oauth-login`)
 - Commit: `DEV-42: Add OAuth login endpoint`
 - Stage with `git add -u`
 - Use `./scripts/create-branch.sh PROJ-123 feature "short description"` and `./scripts/create-pr.sh PROJ-123` for consistent naming
-- Run `bash scripts/preflight.sh` before starting ticket work (validates git state, Jira/GitHub connectivity, required files)
+- Run `bash scripts/preflight.sh` before starting task work (validates git state, GitHub connectivity, required files)
 
 ### TDD (Ralph Loop)
 
@@ -313,10 +340,10 @@ Do not modify without explicit instruction:
 | `WHISPER_REMOTE_URL` | Remote transcription base URL |
 | `WHISPER_MODEL` | Whisper model size |
 | `WHISPER_DEVICE` | Whisper device (`cpu` or `cuda`) |
-| `JIRA_URL` | Jira base URL |
-| `JIRA_EMAIL` | Jira account email |
-| `JIRA_API_TOKEN` | Jira API token |
-| `JIRA_PROJECT_KEY` | Default Jira project |
+| `LINEAR_API_KEY` | Linear personal API key |
+| `LINEAR_TEAM_ID` | Default Linear team UUID |
+| `LINEAR_TEAM_KEY` | Default Linear team key |
+| `AUTO_DISPATCH_LOOP` | Whether approved tasks auto-queue after save |
 | `APP_PORT` | Backend port (default `8000`) |
 | `SEJFA_CHATGPT_COMPANION_PORT` | Companion port (default `8787`) |
 | `LOOP_RUNNER_BACKEND_URL` | Loop runner backend URL (default `http://localhost:8000`) |

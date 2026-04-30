@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+html,body{margin:0;padding:0}
+body{background:var(--bg);padding:16px;font-family:var(--font-sans)}
+.t{background:var(--bg-raised);border:1px solid var(--ink-200);border-radius:6px;overflow:hidden;font-family:var(--font-mono);font-size:12px}
+.t .row{display:grid;grid-template-columns:70px 1fr 100px 70px 80px;gap:0;padding:8px 12px;align-items:center;border-bottom:1px solid var(--ink-200)}
+.t .row:last-child{border-bottom:0}
+.t .head{background:#F7F3E7;color:var(--fg3);text-transform:uppercase;letter-spacing:0.1em;font-size:10px;font-weight:500}
+.t .row:not(.head):hover{background:#FBF8EC}
+.tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;letter-spacing:0.04em}
+.ok{background:#EDFAE2;color:#1D420A}
+.run{background:#FDF4E2;color:#8F5E14}
+.fail{background:#FBE9E6;color:#4a0e08}
+</style></head>
+<body>
+<div class="t">
+  <div class="row head"><div>RUN</div><div>WORKFLOW</div><div>BRANCH</div><div>TIME</div><div>STATUS</div></div>
+  <div class="row"><div>#1284</div><div>ci.yml · pytest + ruff</div><div>GE-42</div><div>2m 14s</div><div><span class="tag ok">passed</span></div></div>
+  <div class="row"><div>#1283</div><div>jules_review.yml</div><div>GE-41</div><div>0m 48s</div><div><span class="tag ok">passed</span></div></div>
+  <div class="row"><div>#1282</div><div>deploy.yml</div><div>main</div><div>3m 52s</div><div><span class="tag run">running</span></div></div>
+  <div class="row"><div>#1281</div><div>self_healing.yml</div><div>fix/GE-39</div><div>4m 10s</div><div><span class="tag fail">failed</span></div></div>
+</div>
+</body></html>

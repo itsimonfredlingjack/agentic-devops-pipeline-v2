@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+html,body{margin:0;padding:0}
+body{background:var(--bg);padding:14px;font-family:var(--font-sans);display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:var(--bg-raised);border:1px solid var(--ink-200);border-radius:6px;padding:14px;box-shadow:var(--shadow-sm)}
+.card .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.card .title{font-family:var(--font-mono);font-weight:500;font-size:14px}
+.card .meta{font-family:var(--font-mono);font-size:10px;color:var(--fg3);text-transform:uppercase;letter-spacing:0.12em}
+.card .body{font-size:13px;color:var(--fg2);line-height:1.5}
+.card .foot{margin-top:10px;display:flex;gap:8px;font-family:var(--font-mono);font-size:11px;color:var(--fg3)}
+.card-agent{background:var(--vault-950);color:var(--vault-100);border:1px solid var(--vault-700);border-left:3px solid var(--loop-500)}
+.card-agent .title{color:var(--vault-50)}
+.card-agent .body{color:var(--vault-200)}
+.card-agent .meta{color:var(--vault-400)}
+</style></head>
+<body>
+<div class="card">
+  <div class="head"><div class="title">GE-42 · Subscriber CRUD</div><div class="meta">#done</div></div>
+  <div class="body">Implement create/read/update/delete for Subscriber, with 80% coverage.</div>
+  <div class="foot"><span>pytest · 12 passed</span><span>·</span><span>ruff · clean</span></div>
+</div>
+<div class="card card-agent">
+  <div class="head"><div class="title">Ralph loop · iter 7</div><div class="meta">green</div></div>
+  <div class="body">tests 243/243 · coverage 87% · safety clean · ready to open PR</div>
+  <div class="foot"><span>2m 14s</span><span>·</span><span>claude-code</span></div>
+</div>
+</body></html>

@@ -1,17 +1,17 @@
 #!/bin/bash
-# Create a properly named branch for a Jira ticket
-# Usage: ./create-branch.sh <JIRA-ID> <branch-type> <description>
+# Create a properly named branch for a task ref.
+# Usage: ./create-branch.sh <TASK-REF> <branch-type> <description>
 # Example: ./create-branch.sh PROJ-123 feature "add user authentication"
 
 set -e
 
-JIRA_ID="${1:?Error: JIRA_ID required (e.g., PROJ-123)}"
+TASK_REF="${1:?Error: TASK_REF required (e.g., PROJ-123)}"
 BRANCH_TYPE="${2:-feature}"
 DESCRIPTION="${3:-implementation}"
 
-# Validate JIRA ID format
-if ! [[ "$JIRA_ID" =~ ^[A-Z]+-[0-9]+$ ]]; then
-    echo "Error: JIRA_ID must match format PROJECT-123 (e.g., PROJ-123)"
+# Validate task ref format
+if ! [[ "$TASK_REF" =~ ^[A-Z][A-Z0-9]*-[0-9]+$ ]]; then
+    echo "Error: TASK_REF must match format PROJECT-123 (e.g., PROJ-123)"
     exit 1
 fi
 
@@ -29,7 +29,7 @@ esac
 SLUG=$(echo "$DESCRIPTION" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd 'a-z0-9-' | cut -c1-50)
 
 # Full branch name
-BRANCH_NAME="${BRANCH_TYPE}/${JIRA_ID}-${SLUG}"
+BRANCH_NAME="${BRANCH_TYPE}/${TASK_REF}-${SLUG}"
 
 # Check for uncommitted changes
 if ! git diff-index --quiet HEAD --; then
@@ -53,5 +53,5 @@ echo "   Based on: $DEFAULT_BRANCH"
 echo ""
 echo "Next steps:"
 echo "  1. Make your changes"
-echo "  2. Commit with: git commit -m \"$JIRA_ID: <description>\""
+echo "  2. Commit with: git commit -m \"$TASK_REF: <description>\""
 echo "  3. Push with: git push -u origin $BRANCH_NAME"

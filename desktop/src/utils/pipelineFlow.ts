@@ -10,13 +10,13 @@ export interface PipelineFlowActions {
   setProcessingStep: (step: string) => void;
   setClarification: (clarification: ClarificationState | null) => void;
   setPreview: (preview: PreviewState | null) => void;
-  setTicketKey: (key: string | null) => void;
+  setTaskRef: (taskRef: string | null) => void;
 }
 
 export type PipelineResultKind =
   | "clarification_needed"
   | "preview_needed"
-  | "ticket_created"
+  | "task_created"
   | "unknown";
 
 interface RawIntentPayload {
@@ -38,7 +38,7 @@ interface RawPipelinePayload {
   questions?: unknown;
   partial_summary?: unknown;
   round?: unknown;
-  ticket_key?: unknown;
+  task_ref?: unknown;
 }
 
 function asString(value: unknown, fallback = ""): string {
@@ -113,13 +113,15 @@ export function applyPipelineServerResult(
     return "preview_needed";
   }
 
-  if (typeof data.ticket_key === "string" && data.ticket_key.trim()) {
+  const taskRef = typeof data.task_ref === "string" && data.task_ref.trim() ? data.task_ref : null;
+
+  if (taskRef) {
     actions.setClarification(null);
     actions.setPreview(null);
-    actions.setTicketKey(data.ticket_key);
+    actions.setTaskRef(taskRef);
     actions.setProcessingStep("");
     actions.setPipelineStatus("done");
-    return "ticket_created";
+    return "task_created";
   }
 
   return "unknown";

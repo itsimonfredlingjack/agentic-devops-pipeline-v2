@@ -181,7 +181,10 @@ def test_mission_service_derives_queued_phase(
     mission = service.get_active_mission()
 
     assert mission["mission_phase"] == "queued"
+    assert mission["task"]["task_ref"] == "DEV-7"
     assert mission["ticket"]["key"] == "DEV-7"
+    assert mission["queue"]["latest_pending"]["task_ref"] == "DEV-7"
+    assert mission["queue"]["has_pending_task"] is True
     assert mission["queue"]["has_pending_ticket"] is True
 
 
@@ -423,3 +426,233 @@ def test_mission_share_payload_generates_public_link_and_tracks_requests(
     assert "DEV-42" in payload["share"]["text"]
     assert "phase:" in payload["share"]["text"].lower()
     assert payload["share"]["metrics"]["mission_share_requested"] == 1
+
+
+def test_mission_service_get_session_events_prefers_task_ref(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo_root = tmp_path / "repo"
+    write_text(repo_root / "README.md", "# SEJFA")
+    write_text(repo_root / "docs" / "ARCHITECTURE.md", "Agentic loop")
+    write_text(repo_root / "CLAUDE.md", "workflow")
+    write_text(
+        repo_root / "services" / "voice-pipeline" / "src" / "voice_pipeline" / "main.py",
+        "def health():\n    return {'status': 'ok'}\n",
+    )
+    write_text(
+        repo_root / "services" / "monitor-api" / "src" / "monitor" / "api.py",
+        "def mission_overview():\n    return {'status': 'ok'}\n",
+    )
+    monitor_db = repo_root / "data" / "monitor.db"
+    queue_db = repo_root / "loop_queue.db"
+    create_monitor_db(monitor_db)
+    create_queue_db(queue_db)
+
+    with sqlite3.connect(monitor_db) as conn:
+        conn.execute(
+            """
+            INSERT INTO sessions (session_id, ticket_id, started_at, ended_at, total_cost_usd, total_events, outcome)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            ("sess-taskref", "SEJ-21", "2026-03-17T12:00:00+00:00", None, 0.42, 1, None),
+        )
+        conn.execute(
+            """
+            INSERT INTO events (event_id, session_id, ticket_id, timestamp, event_type, tool_name, tool_args_hash, tool_args_summary, success, duration_ms, cost_usd, error)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                "evt-taskref",
+                "sess-taskref",
+                "SEJ-21",
+                "2026-03-17T12:01:00+00:00",
+                "tool",
+                "Bash",
+                "hash-1",
+                "pytest tests/chatgpt_companion -q",
+                1,
+                900,
+                0.08,
+                None,
+            ),
+        )
+        conn.commit()
+
+    monkeypatch.setattr(
+        "src.chatgpt_companion.service.config",
+        CompanionConfig(
+            repo_root=repo_root,
+            monitor_db_path=monitor_db,
+            queue_db_path=queue_db,
+            docs_root=repo_root / "docs",
+            widget_dist=repo_root / "chatgpt-companion" / "web" / "dist",
+        ),
+    )
+
+    service = MissionService()
+    payload = service.get_session_events(task_ref="SEJ-21")
+
+    assert payload["task_ref"] == "SEJ-21"
+    assert payload["ticket_id"] == "SEJ-21"
+    assert payload["session_id"] == "sess-taskref"
+    assert payload["events"][0]["ticket_id"] == "SEJ-21"
+
+    alias_payload = service.get_session_events(ticket_id="SEJ-21")
+
+    assert alias_payload == payload
+
+
+def test_mission_service_prefers_physical_task_ref_columns_when_present(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo_root = tmp_path / "repo"
+    write_text(repo_root / "README.md", "# SEJFA")
+    write_text(repo_root / "docs" / "ARCHITECTURE.md", "Agentic loop")
+    write_text(repo_root / "CLAUDE.md", "workflow")
+    write_text(
+        repo_root / "services" / "voice-pipeline" / "src" / "voice_pipeline" / "main.py",
+        "def health():\n    return {'status': 'ok'}\n",
+    )
+    write_text(
+        repo_root / "services" / "monitor-api" / "src" / "monitor" / "api.py",
+        "def mission_overview():\n    return {'status': 'ok'}\n",
+    )
+    monitor_db = repo_root / "data" / "monitor.db"
+    queue_db = repo_root / "loop_queue.db"
+    create_monitor_db(monitor_db)
+    create_queue_db(queue_db)
+
+    with sqlite3.connect(monitor_db) as conn:
+        conn.execute("ALTER TABLE sessions ADD COLUMN task_ref TEXT")
+        conn.execute("ALTER TABLE events ADD COLUMN task_ref TEXT")
+        conn.execute(
+            """
+            INSERT INTO sessions (session_id, task_ref, ticket_id, started_at, ended_at, total_cost_usd, total_events, outcome)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            ("sess-new", "SEJ-301", "DEV-301", "2026-03-17T12:00:00+00:00", None, 0.42, 1, None),
+        )
+        conn.execute(
+            """
+            INSERT INTO events (event_id, session_id, task_ref, ticket_id, timestamp, event_type, tool_name, tool_args_hash, tool_args_summary, success, duration_ms, cost_usd, error)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                "evt-new",
+                "sess-new",
+                "SEJ-301",
+                "DEV-301",
+                "2026-03-17T12:01:00+00:00",
+                "tool",
+                "Bash",
+                "hash-1",
+                "pytest tests/chatgpt_companion -q",
+                1,
+                900,
+                0.08,
+                None,
+            ),
+        )
+        conn.commit()
+
+    monkeypatch.setattr(
+        "src.chatgpt_companion.service.config",
+        CompanionConfig(
+            repo_root=repo_root,
+            monitor_db_path=monitor_db,
+            queue_db_path=queue_db,
+            docs_root=repo_root / "docs",
+            widget_dist=repo_root / "chatgpt-companion" / "web" / "dist",
+        ),
+    )
+
+    service = MissionService()
+    monkeypatch.setattr(service, "_probe_connections", lambda: {"monitor": {"reachable": True}})
+
+    mission = service.get_active_mission()
+    events_payload = service.get_session_events(task_ref="SEJ-301")
+
+    assert mission["task"]["task_ref"] == "SEJ-301"
+    assert mission["ticket"]["key"] == "SEJ-301"
+    assert mission["active_session"]["task_ref"] == "SEJ-301"
+    assert mission["active_session"]["ticket_id"] == "DEV-301"
+    assert events_payload["task_ref"] == "SEJ-301"
+    assert events_payload["events"][0]["task_ref"] == "SEJ-301"
+    assert events_payload["events"][0]["ticket_id"] == "DEV-301"
+
+
+def test_mission_service_derives_ticket_id_for_new_task_ref_only_rows(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo_root = tmp_path / "repo"
+    write_text(repo_root / "README.md", "# SEJFA")
+    write_text(repo_root / "docs" / "ARCHITECTURE.md", "Agentic loop")
+    write_text(repo_root / "CLAUDE.md", "workflow")
+    write_text(
+        repo_root / "services" / "voice-pipeline" / "src" / "voice_pipeline" / "main.py",
+        "def health():\n    return {'status': 'ok'}\n",
+    )
+    write_text(
+        repo_root / "services" / "monitor-api" / "src" / "monitor" / "api.py",
+        "def mission_overview():\n    return {'status': 'ok'}\n",
+    )
+    monitor_db = repo_root / "data" / "monitor.db"
+    queue_db = repo_root / "loop_queue.db"
+    create_monitor_db(monitor_db)
+    create_queue_db(queue_db)
+
+    with sqlite3.connect(monitor_db) as conn:
+        conn.execute("ALTER TABLE sessions ADD COLUMN task_ref TEXT")
+        conn.execute("ALTER TABLE events ADD COLUMN task_ref TEXT")
+        conn.execute(
+            """
+            INSERT INTO sessions (session_id, task_ref, ticket_id, started_at, ended_at, total_cost_usd, total_events, outcome)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            ("sess-task-only", "SEJ-401", None, "2026-03-17T12:00:00+00:00", None, 0.42, 1, None),
+        )
+        conn.execute(
+            """
+            INSERT INTO events (event_id, session_id, task_ref, ticket_id, timestamp, event_type, tool_name, tool_args_hash, tool_args_summary, success, duration_ms, cost_usd, error)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                "evt-task-only",
+                "sess-task-only",
+                "SEJ-401",
+                None,
+                "2026-03-17T12:01:00+00:00",
+                "tool",
+                "Bash",
+                "hash-1",
+                "pytest tests/chatgpt_companion -q",
+                1,
+                900,
+                0.08,
+                None,
+            ),
+        )
+        conn.commit()
+
+    monkeypatch.setattr(
+        "src.chatgpt_companion.service.config",
+        CompanionConfig(
+            repo_root=repo_root,
+            monitor_db_path=monitor_db,
+            queue_db_path=queue_db,
+            docs_root=repo_root / "docs",
+            widget_dist=repo_root / "chatgpt-companion" / "web" / "dist",
+        ),
+    )
+
+    service = MissionService()
+    payload = service.get_session_events(ticket_id="SEJ-401")
+
+    assert payload["session_id"] == "sess-task-only"
+    assert payload["task_ref"] == "SEJ-401"
+    assert payload["ticket_id"] == "SEJ-401"
+    assert payload["events"][0]["task_ref"] == "SEJ-401"
+    assert payload["events"][0]["ticket_id"] == "SEJ-401"

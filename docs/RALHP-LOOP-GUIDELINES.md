@@ -102,7 +102,7 @@ For subsystem work, run the matching subsystem checks too.
 
 ## Git Discipline
 
-- branch format: `{type}/{JIRA-ID}-{slug}`
+- branch format: `{type}/{TASK-REF}-{slug}`
 - commit format: `DEV-42: Implement feature X`
 - stage intentionally with `git add -u`
 - avoid sweeping unrelated files into a loop task

@@ -6,6 +6,10 @@ const runtimeConfig = {
     process.env.SEJFA_MONITOR_API_URL ??
     process.env.SEJFA_MONITOR_URL ??
     "http://localhost:8100",
+  apiToken:
+    process.env.SEJFA_LOCAL_API_TOKEN ??
+    process.env.MONITOR_API_SECRET ??
+    "",
 };
 
 contextBridge.exposeInMainWorld("sejfa", {

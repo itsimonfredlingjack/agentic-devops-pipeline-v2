@@ -32,7 +32,7 @@ This keeps the loop and orchestration local while offloading heavy inference wor
 
 ### 3. Exercise the backend locally
 
-Use API calls or the ChatGPT companion when you want to inspect or drive the local system surface. There is no canonical desktop app checked into this repo right now.
+Use API calls, the ChatGPT companion, or the checked-in desktop app in `desktop/` when you want to inspect or drive the local system surface. The desktop is part of the current repo, but it should still be understood as a control-plane companion around the loop rather than the home of the backend.
 
 ## What ai-server2 Is For
 

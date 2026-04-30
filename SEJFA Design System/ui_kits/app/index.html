@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SEJFA — App Kit</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="style.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body class="sejfa-reset">
+<div id="root"></div>
+
+<script type="text/babel" src="Components.jsx"></script>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+function Dashboard() {
+  return (
+    <div className="page-grid">
+      <div className="kpi-row">
+        <KPI label="RUN · 24h" value="99.98%" sub="p95 · 142ms" tone="ok"
+             spark={[0.6,0.72,0.55,0.8,0.68,0.74,0.9,0.62,0.7,0.88,0.66,0.78,0.72,0.82,0.6,0.92]} />
+        <KPI label="SUBSCRIBERS" value="1,284" sub="+42 this week" />
+        <KPI label="EXPENSES · MO" value="€4,820" sub="12 entries" />
+        <KPI label="AGENT RUNS" value="18" sub="17 passed · 1 healing" tone="heal" />
+      </div>
+
+      <Panel title="Latest pipeline runs" meta="ci.yml · deploy.yml · jules_review.yml"
+             action={<Button variant="ghost" icon="external-link">GitHub</Button>}>
+        <Table cols={["RUN","WORKFLOW","BRANCH","TIME","STATUS"]}
+          rows={[
+            ["#1284","ci.yml · pytest + ruff","GE-42","2m 14s", <StatusPill status="ok">passed</StatusPill>],
+            ["#1283","jules_review.yml","GE-41","0m 48s", <StatusPill status="ok">passed</StatusPill>],
+            ["#1282","deploy.yml","main","3m 52s", <StatusPill status="run">running</StatusPill>],
+            ["#1281","self_healing.yml","fix/GE-39","4m 10s", <StatusPill status="fail">failed</StatusPill>],
+            ["#1280","ci.yml","GE-39","1m 58s", <StatusPill status="ok">passed</StatusPill>],
+          ]}/>
+      </Panel>
+
+      <div className="two-col">
+        <Panel title="Agent · Ralph loop" meta="GE-42 · iter 7">
+          <pre className="agent-log">
+<span className="dim">→</span> fetching issue… <span className="ok">ok</span>{`
+`}<span className="dim">→</span> branch feature/GE-42-subscriber-crud{`
+`}iter <span className="ok">7</span> · tests <span className="ok">243/243</span> · cov <span className="ok">87%</span>{`
+`}<span className="warn">⟳</span> self-heal: flaky test retried (1/25){`
+`}<span className="ok">✓</span> ready to open PR<span className="caret">▮</span>
+          </pre>
+        </Panel>
+        <Panel title="Monitor" meta="/health · polled every 30s">
+          <ul className="check-list">
+            <li><span className="dot ok"/>app · 200 OK · 34ms</li>
+            <li><span className="dot ok"/>db · azure-sql · 12ms</li>
+            <li><span className="dot ok"/>acr · reachable</li>
+            <li><span className="dot warn"/>safety · 1 CVE (non-blocking)</li>
+          </ul>
+        </Panel>
+      </div>
+    </div>
+  );
+}
+
+function Newsflash() {
+  const [items] = useState([
+    { id: 102, title: "Release v1.4.0 — self-healing lands", status: "published", subs: 1284, date: "2026-02-18" },
+    { id: 101, title: "Ralph Wiggum Loop: why it never gives up", status: "draft", subs: 0, date: "2026-02-16" },
+    { id:  99, title: "Azure OIDC federation, no-secrets deploy", status: "published", subs: 1242, date: "2026-02-09" },
+    { id:  97, title: "Jules + Claude = HiveMind review", status: "published", subs: 1198, date: "2026-02-01" },
+  ]);
+  return (
+    <div className="page-grid">
+      <div className="newsflash-head">
+        <div>
+          <div className="meta">newsflash · SQLAlchemy</div>
+          <h2 className="ty-h2" style={{margin:"4px 0 0"}}>Articles</h2>
+        </div>
+        <Button icon="plus">New article</Button>
+      </div>
+      <Panel title="All articles" meta={items.length + " entries"}>
+        <Table cols={["ID","TITLE","STATUS","SUBSCRIBERS","DATE"]}
+          rows={items.map(i => [
+            "#"+i.id,
+            <a className="lnk" href="#">{i.title}</a>,
+            <StatusPill status={i.status==="published"?"ok":"todo"}>{i.status}</StatusPill>,
+            i.subs.toLocaleString(),
+            <span className="mono-dim">{i.date}</span>,
+          ])}/>
+      </Panel>
+      <Panel title="Draft a new article" meta="POST /api/articles">
+        <div className="form-grid">
+          <Field label="Title" placeholder="Release v1.5.0 — dynamic MCP…" icon="type"/>
+          <Field label="Slug" placeholder="release-v1-5-0" icon="link"/>
+          <Field label="Tags" placeholder="release, mcp, azure" icon="tag"/>
+          <Field label="Publish at" placeholder="2026-03-01T09:00Z" icon="calendar"/>
+        </div>
+        <div className="form-actions">
+          <Button variant="secondary">Save draft</Button>
+          <Button variant="loop" icon="send">Publish</Button>
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
+function Expenses() {
+  const rows = [
+    ["2026-02-14","Azure Container Apps","infra","€312.40"],
+    ["2026-02-12","ACR storage","infra","€18.90"],
+    ["2026-02-10","Anthropic API","agent","€240.00"],
+    ["2026-02-08","Atlassian (Jira)","tools","€72.00"],
+    ["2026-02-03","Gemini API (Jules)","agent","€88.20"],
+  ];
+  return (
+    <div className="page-grid">
+      <div className="kpi-row">
+        <KPI label="MONTH TO DATE" value="€4,820" sub="+€312 today" />
+        <KPI label="AGENT SPEND" value="€328.20" sub="Claude + Jules" tone="heal" />
+        <KPI label="INFRA SPEND" value="€1,480" sub="Azure + ACR" />
+        <KPI label="BUDGET USED" value="62%" sub="of €7,800" tone="ok" />
+      </div>
+      <Panel title="Recent expenses" meta="expense_tracker · in-memory"
+             action={<Button icon="plus">Log expense</Button>}>
+        <Table cols={["DATE","VENDOR","CATEGORY","AMOUNT"]}
+          rows={rows.map(r => [<span className="mono-dim">{r[0]}</span>, r[1], <StatusPill status="todo">{r[2]}</StatusPill>, <strong>{r[3]}</strong>])}/>
+      </Panel>
+    </div>
+  );
+}
+
+function Monitor() {
+  return (
+    <div className="page-grid">
+      <div className="kpi-row">
+        <KPI label="UPTIME · 30d" value="99.98%" sub="21m downtime" tone="ok"
+             spark={Array.from({length:16}, () => 0.6 + Math.random()*0.35)} />
+        <KPI label="P95 LATENCY" value="142ms" sub="target · 200ms" tone="ok" />
+        <KPI label="ERR RATE" value="0.04%" sub="over 1h" />
+        <KPI label="ACTIVE CONTAINERS" value="4" sub="Azure Container Apps" />
+      </div>
+      <Panel title="Health checks" meta="GET /health · every 30s">
+        <ul className="check-list big">
+          <li><span className="dot ok"/><div><div className="ty-h4">app</div><div className="meta">gunicorn · 4 workers · 200 OK · 34ms</div></div></li>
+          <li><span className="dot ok"/><div><div className="ty-h4">db</div><div className="meta">azure-sql · pool 3/10 · 12ms</div></div></li>
+          <li><span className="dot ok"/><div><div className="ty-h4">acr</div><div className="meta">registry reachable · last push 2m ago</div></div></li>
+          <li><span className="dot warn"/><div><div className="ty-h4">safety</div><div className="meta">urllib3@1.26.4 · CVE-2024-xxxx · non-blocking</div></div></li>
+        </ul>
+      </Panel>
+    </div>
+  );
+}
+
+function App() {
+  const [route, setRoute] = useState(() => localStorage.getItem("sejfa.route") || "dashboard");
+  useEffect(() => { localStorage.setItem("sejfa.route", route); }, [route]);
+  useEffect(() => { if (window.lucide) window.lucide.createIcons(); });
+
+  const title = { dashboard:"Overview", newsflash:"Newsflash", expenses:"Expenses", monitor:"Monitor", admin:"Admin" }[route];
+  const crumb = { dashboard:"sejfa", newsflash:"sejfa · newsflash", expenses:"sejfa · expenses", monitor:"sejfa · monitor", admin:"sejfa · core" }[route];
+
+  return (
+    <div className="app-shell" data-screen-label={"App · "+title}>
+      <AppSidebar route={route} onNav={setRoute} />
+      <main className="app-main">
+        <AppTopbar title={title} crumb={crumb}/>
+        <div className="app-content">
+          {route==="dashboard" && <Dashboard/>}
+          {route==="newsflash" && <Newsflash/>}
+          {route==="expenses" && <Expenses/>}
+          {route==="monitor" && <Monitor/>}
+          {route==="admin" && (
+            <Panel title="Admin · core module" meta="Flask-Login · session auth">
+              <div className="form-grid">
+                <Field label="Admin email" value="simon@sejfa.dev" icon="mail"/>
+                <Field label="Role" value="owner" icon="shield"/>
+                <Field label="Last login" value="2026-02-18 14:32Z" icon="clock"/>
+                <Field label="MFA" value="enrolled · TOTP" icon="key"/>
+              </div>
+              <div className="form-actions"><Button variant="secondary">Rotate key</Button><Button>Save</Button></div>
+            </Panel>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body></html>

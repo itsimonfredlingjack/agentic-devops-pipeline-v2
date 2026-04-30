@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+html,body{margin:0;padding:0}
+body{background:var(--bg);padding:16px;font-family:var(--font-sans);display:flex;gap:14px;flex-wrap:wrap}
+.chip{background:var(--bg-raised);border:1px solid var(--ink-200);padding:14px;display:flex;flex-direction:column;gap:8px;align-items:center}
+.shape{width:60px;height:44px;background:var(--vault-900)}
+.lbl{font-family:var(--font-mono);font-size:10px;color:var(--fg3);text-transform:uppercase;letter-spacing:0.1em}
+.val{font-family:var(--font-mono);font-size:11px;color:var(--fg1)}
+</style></head>
+<body>
+<div class="chip"><div class="shape" style="border-radius:0"></div><div class="lbl">r-0</div><div class="val">0</div></div>
+<div class="chip"><div class="shape" style="border-radius:2px"></div><div class="lbl">r-xs</div><div class="val">2</div></div>
+<div class="chip"><div class="shape" style="border-radius:4px"></div><div class="lbl">r-sm</div><div class="val">4</div></div>
+<div class="chip"><div class="shape" style="border-radius:6px"></div><div class="lbl">r-md</div><div class="val">6</div></div>
+<div class="chip"><div class="shape" style="border-radius:10px"></div><div class="lbl">r-lg</div><div class="val">10</div></div>
+<div class="chip"><div class="shape" style="border-radius:16px"></div><div class="lbl">r-xl</div><div class="val">16</div></div>
+<div class="chip"><div class="shape" style="border-radius:999px;width:80px"></div><div class="lbl">r-pill</div><div class="val">999</div></div>
+</body></html>

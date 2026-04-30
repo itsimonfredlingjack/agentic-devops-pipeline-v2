@@ -22,7 +22,7 @@ Use these terms consistently across the repo:
 ## Architecture At A Glance
 
 ```text
-voice start or Jira context
+voice start or task context
   -> task intake and queueing
   -> Ralph Loop execution in Claude Code
   -> verification gates
@@ -40,7 +40,7 @@ The core loop is the product identity of SEJFA.
 
 Its responsibilities are:
 
-- receive work from Jira or a voice-driven intake path
+- receive work from Linear or a voice-driven intake path
 - establish execution context for the task
 - run the Ralph Loop through implementation and verification
 - surface completion, blockage, or failure
@@ -52,7 +52,7 @@ The voice start layer is a subsystem that helps start or feed the loop.
 
 In this repo it consists of:
 
-- `services/voice-pipeline/src/voice_pipeline/` for transcription, intent extraction, Jira issue creation, and queueing
+- `services/voice-pipeline/src/voice_pipeline/` for transcription, intent extraction, Linear task creation, and queueing
 
 This layer is important, but it does not redefine SEJFA as "the voice app."
 
@@ -102,7 +102,6 @@ Representative scripts that support the loop and its integrations:
 - `scripts/create-pr.sh`
 - `scripts/jules_payload.py`
 - `scripts/jules_review_api.py`
-- `scripts/jules_to_jira.py`
 - `scripts/classify_failure.py`
 
 ## Machine Topology
@@ -146,7 +145,7 @@ incoming work
 voice input or task text on Mac
   -> FastAPI backend on Mac
   -> remote Whisper / Ollama on ai-server2 when configured
-  -> Jira issue creation
+  -> Linear task creation
   -> loop queue and pipeline status updates
 ```
 

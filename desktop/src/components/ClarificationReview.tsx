@@ -13,7 +13,7 @@ export function ClarificationReview() {
     setPreview,
     setPipelineStatus,
     setProcessingStep,
-    setTicketKey,
+    setTaskRef,
     reset,
   } = useAppStore();
   const [answer, setAnswer] = useState("");
@@ -51,7 +51,7 @@ export function ClarificationReview() {
         setProcessingStep,
         setClarification,
         setPreview,
-        setTicketKey,
+        setTaskRef,
       });
 
       if (result === "unknown") {
@@ -104,14 +104,20 @@ export function ClarificationReview() {
   return (
     <div className={styles.reviewContainer}>
       <div className={styles.header}>
-        <span className={styles.headerTitle}>CLARIFICATION RESPONSE</span>
+        <div className={styles.headerGroup}>
+          <span className={styles.headerTitle}>CLARIFICATION RESPONSE</span>
+          <span className={styles.headerMeta}>Session {clarification.sessionId.slice(0, 8)}</span>
+        </div>
         <span className={styles.phasePill}>VERIFY</span>
       </div>
 
       <PipelineStageRail className={styles.stageRail} />
 
       <div className={styles.section}>
-        <span className={styles.sectionLabel}>ROUND {clarification.round}</span>
+        <span className={styles.sectionLabel}>
+          ROUND {clarification.round} - {clarification.questions.length} OPEN QUESTION
+          {clarification.questions.length === 1 ? "" : "S"}
+        </span>
         <p className={styles.summaryText}>{clarification.partialSummary}</p>
         <ol className={styles.questionList}>
           {clarification.questions.map((question, index) => (
@@ -129,10 +135,11 @@ export function ClarificationReview() {
           className={styles.answerInput}
           value={answer}
           onChange={(event) => setAnswer(event.target.value)}
-          placeholder="Add tactical detail so we can produce a precise ticket."
+          placeholder="Add tactical detail so we can produce a precise task."
           disabled={submitting}
           autoFocus
         />
+        <p className={styles.inputMeta}>{answer.length} characters</p>
 
         {errorMessage && <div className={styles.errorText}>{errorMessage}</div>}
 
@@ -178,7 +185,7 @@ export function ClarificationReview() {
               SEND CLARIFICATION
             </button>
             <span id="cue-send-clarification" className={styles.actionCue}>
-              <span aria-hidden="true">✓</span> Apply details and continue ticket refinement
+              <span aria-hidden="true">✓</span> Apply details and continue task refinement
             </span>
           </div>
         </div>

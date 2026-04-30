@@ -38,7 +38,7 @@ def test_render_dashboard_returns_structured_payload(monkeypatch) -> None:
     )
     monkeypatch.setattr(
         "src.chatgpt_companion.mcp_server.mission_service.build_dashboard_payload",
-        lambda session_id=None, ticket_id=None: fake_payload,
+        lambda session_id=None, task_ref=None: fake_payload,
     )
 
     result = render_mission_dashboard()
@@ -97,14 +97,14 @@ def test_flat_tools_call_is_rewritten_to_standard_params() -> None:
             "jsonrpc": "2.0",
             "id": "compat-2",
             "method": "tools/call",
-            "name": "get_jira_issue",
-            "arguments": {"issue_key": "DEV-40"},
+            "name": "get_session_events",
+            "arguments": {"task_ref": "SEJ-40"},
         }
     )
 
     assert payload["method"] == "tools/call"
-    assert payload["params"]["name"] == "get_jira_issue"
-    assert payload["params"]["arguments"] == {"issue_key": "DEV-40"}
+    assert payload["params"]["name"] == "get_session_events"
+    assert payload["params"]["arguments"] == {"task_ref": "SEJ-40"}
 
 
 def test_search_tool_uses_standard_wrapper(monkeypatch) -> None:
@@ -164,13 +164,34 @@ def test_get_mission_share_returns_structured_payload(monkeypatch) -> None:
     }
     monkeypatch.setattr(
         "src.chatgpt_companion.mcp_server.mission_service.build_share_payload",
-        lambda session_id=None, ticket_id=None, event_name=None: fake_payload,
+        lambda session_id=None, task_ref=None, event_name=None: fake_payload,
     )
 
     result = get_mission_share(session_id="sess-viral")
 
     assert result.structuredContent == fake_payload
     assert result.meta["shareUrl"] == fake_payload["share"]["url"]
+
+
+def test_render_dashboard_prefers_task_ref_argument(monkeypatch) -> None:
+    fake_payload = {"mission_phase": "queued"}
+    captured: dict[str, object] = {}
+
+    def fake_build_dashboard_payload(session_id=None, task_ref=None, ticket_id=None):
+        captured["session_id"] = session_id
+        captured["task_ref"] = task_ref
+        captured["ticket_id"] = ticket_id
+        return fake_payload
+
+    monkeypatch.setattr(
+        "src.chatgpt_companion.mcp_server.mission_service.build_dashboard_payload",
+        fake_build_dashboard_payload,
+    )
+
+    result = render_mission_dashboard(session_id="sess-1", task_ref="SEJ-11")
+
+    assert result.structuredContent == fake_payload
+    assert captured == {"session_id": "sess-1", "task_ref": "SEJ-11", "ticket_id": None}
 
 
 def test_wrapper_friendly_alias_tools_return_default_payloads(monkeypatch) -> None:
@@ -184,11 +205,11 @@ def test_wrapper_friendly_alias_tools_return_default_payloads(monkeypatch) -> No
     )
     monkeypatch.setattr(
         "src.chatgpt_companion.mcp_server.mission_service.build_dashboard_payload",
-        lambda session_id=None, ticket_id=None: {"mission_phase": "queued"},
+        lambda session_id=None, task_ref=None: {"mission_phase": "queued"},
     )
     monkeypatch.setattr(
         "src.chatgpt_companion.mcp_server.mission_service.build_share_payload",
-        lambda session_id=None, ticket_id=None, event_name=None: {
+        lambda session_id=None, task_ref=None, event_name=None: {
             "share": {"url": "https://example.test/share/current", "text": "SEJFA mission update"}
         },
     )
@@ -210,3 +231,70 @@ def test_share_session_route_serves_public_snapshot(monkeypatch) -> None:
 
     assert response.status_code == 200
     assert "Shared SEJFA mission" in response.text
+
+
+def test_get_session_events_normalizes_ticket_id_alias_to_task_ref(monkeypatch) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_get_session_events(session_id=None, task_ref=None, limit=25):
+        captured["session_id"] = session_id
+        captured["task_ref"] = task_ref
+        captured["limit"] = limit
+        return {"events": [], "count": 0}
+
+    monkeypatch.setattr(
+        "src.chatgpt_companion.mcp_server.mission_service.get_session_events",
+        fake_get_session_events,
+    )
+
+    from src.chatgpt_companion.mcp_server import get_session_events
+
+    result = get_session_events(ticket_id="SEJ-77", limit=12)
+
+    assert result == {"events": [], "count": 0}
+    assert captured == {"session_id": None, "task_ref": "SEJ-77", "limit": 12}
+
+
+def test_render_dashboard_normalizes_ticket_id_alias_to_task_ref(monkeypatch) -> None:
+    fake_payload = {"mission_phase": "queued"}
+    captured: dict[str, object] = {}
+
+    def fake_build_dashboard_payload(session_id=None, task_ref=None):
+        captured["session_id"] = session_id
+        captured["task_ref"] = task_ref
+        return fake_payload
+
+    monkeypatch.setattr(
+        "src.chatgpt_companion.mcp_server.mission_service.build_dashboard_payload",
+        fake_build_dashboard_payload,
+    )
+
+    result = render_mission_dashboard(session_id="sess-2", ticket_id="SEJ-88")
+
+    assert result.structuredContent == fake_payload
+    assert captured == {"session_id": "sess-2", "task_ref": "SEJ-88"}
+
+
+def test_get_mission_share_normalizes_ticket_id_alias_to_task_ref(monkeypatch) -> None:
+    fake_payload = {"share": {"url": "https://example.test/share/current", "text": "brief"}}
+    captured: dict[str, object] = {}
+
+    def fake_build_share_payload(session_id=None, task_ref=None, event_name=None):
+        captured["session_id"] = session_id
+        captured["task_ref"] = task_ref
+        captured["event_name"] = event_name
+        return fake_payload
+
+    monkeypatch.setattr(
+        "src.chatgpt_companion.mcp_server.mission_service.build_share_payload",
+        fake_build_share_payload,
+    )
+
+    result = get_mission_share(session_id="sess-3", ticket_id="SEJ-99")
+
+    assert result.structuredContent == fake_payload
+    assert captured == {
+        "session_id": "sess-3",
+        "task_ref": "SEJ-99",
+        "event_name": "mission_share_requested",
+    }

@@ -1,10 +1,37 @@
 import { useAppStore } from "../stores/appStore";
 import { TerminalFeed } from "./TerminalFeed";
 import { BlockersView } from "./BlockersView";
-import { MissionControls } from "./MissionControls";
-import { PipelineStageRail } from "./PipelineStageRail";
 import { useSessionIntelligence } from "../hooks/useSessionIntelligence";
 import styles from "./MonitorDashboard.module.css";
+
+const LOOP_STAGES = [
+  "Task",
+  "Branch",
+  "TDD Loop",
+  "PR",
+  "Review",
+  "Deploy",
+];
+
+function StallRiskGauge({ probability }: { probability: string }) {
+  const levels = ["LOW", "MEDIUM", "HIGH"];
+  const currentIdx = levels.indexOf(probability);
+
+  return (
+    <div className={styles.riskGauge} aria-label={`Stall risk: ${probability}`}>
+      {levels.map((level, idx) => {
+        const isActive = idx <= currentIdx;
+        return (
+          <div
+            key={level}
+            className={`${styles.riskSegment} ${isActive ? styles.riskSegmentActive : ""}`}
+            data-risk={isActive ? (currentIdx === 0 ? "LOW" : currentIdx === 1 ? "MEDIUM" : "HIGH") : "none"}
+          />
+        );
+      })}
+    </div>
+  );
+}
 
 function formatCost(usd: number): string {
   if (usd < 0.01) return `$${usd.toFixed(4)}`;
@@ -37,13 +64,29 @@ function deriveLoopLane(phase: string, toolName?: string): string {
   return "Plan";
 }
 
+function deriveLoopStageIndex(loopLane: string): number {
+  switch (loopLane) {
+    case "Complete":
+      return 5;
+    case "Review":
+      return 4;
+    case "Verify":
+    case "Implement":
+      return 2;
+    case "Intake":
+      return 0;
+    default:
+      return 1;
+  }
+}
+
 export function MonitorDashboard() {
   const {
     phase,
     events,
     cost,
     elapsedMs,
-    ticketKey,
+    taskRef,
     processingStep,
     density,
     setDensity,
@@ -52,15 +95,16 @@ export function MonitorDashboard() {
   const intelligence = useSessionIntelligence();
   const lastEvent = events[0];
   const loopLane = deriveLoopLane(phase, lastEvent?.tool_name);
+  const activeLoopStageIndex = deriveLoopStageIndex(loopLane);
 
   return (
     <div className={styles.monitorDash} data-density={density}>
       <div className={styles.dashHeader}>
         <div className={styles.headerLeft}>
-          <button className={styles.exitBtn} onClick={() => reset()} aria-label="Exit mission view">✕</button>
+          <button className={styles.exitBtn} onClick={() => reset()} aria-label="Close run view">✕</button>
           <div className={styles.pulseActive} aria-hidden="true"></div>
           <div className={styles.missionInfo}>
-            <span className={styles.missionId}>{ticketKey || "ACTIVE-MISSION"}</span>
+            <span className={styles.missionId}>{taskRef || "TASK-PENDING"}</span>
             <span className={styles.missionStatus}>AUTOMATED RUN ACTIVE</span>
           </div>
         </div>
@@ -79,29 +123,50 @@ export function MonitorDashboard() {
                 <span className={styles.telVal}>${intelligence.burnRatePerMin.toFixed(3)}/m</span>
              </div>
            )}
-           <div className={styles.densitySwitcher} role="group" aria-label="Display density">
-             <button
-               type="button"
-               onClick={() => setDensity("comfort")}
-               aria-pressed={density === "comfort"}
-               className={`${styles.densityBtn} ${density === "comfort" ? styles.densityBtnActive : ""}`}
-             >
-               Comfort
-             </button>
-             <button
-               type="button"
-               onClick={() => setDensity("compact")}
-               aria-pressed={density === "compact"}
-               className={`${styles.densityBtn} ${density === "compact" ? styles.densityBtnActive : ""}`}
-             >
-               Compact
-             </button>
-           </div>
+            <div className={styles.densityWrapper}>
+              <span className={styles.densityLabel}>Density</span>
+              <div className={styles.densitySwitcher} role="group" aria-label="Display density">
+                <button
+                  type="button"
+                  onClick={() => setDensity("comfort")}
+                  aria-pressed={density === "comfort"}
+                  className={`${styles.densityBtn} ${density === "comfort" ? styles.densityBtnActive : ""}`}
+                >
+                  Comfort
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDensity("compact")}
+                  aria-pressed={density === "compact"}
+                  className={`${styles.densityBtn} ${density === "compact" ? styles.densityBtnActive : ""}`}
+                >
+                  Compact
+                </button>
+              </div>
+            </div>
         </div>
       </div>
 
       <div className={styles.progressRail}>
-        <PipelineStageRail className={styles.monitorStageRail} />
+        <div className={styles.agentLoopRail} role="group" aria-label="Agentic DevOps loop stages">
+          {LOOP_STAGES.map((stage, index) => {
+            const isActive = index === activeLoopStageIndex;
+            const isComplete = index < activeLoopStageIndex;
+            return (
+              <div
+                key={stage}
+                className={`${styles.loopNode} ${isActive ? styles.loopNodeActive : ""} ${isComplete ? styles.loopNodeComplete : ""}`.trim()}
+                aria-label={`${stage}: ${isComplete ? "complete" : isActive ? "active" : "pending"}`}
+              >
+                <span className={styles.loopNodeKey}>
+                  {String(index + 1).padStart(2, "0")}
+                  {isActive ? " · now" : ""}
+                </span>
+                <span className={styles.loopNodeLabel}>{stage}</span>
+              </div>
+            );
+          })}
+        </div>
         <div className={styles.loopLane} aria-live="polite">
           Current loop lane: <span className={styles.loopLaneValue}>{loopLane}</span>
         </div>
@@ -118,7 +183,7 @@ export function MonitorDashboard() {
         
         <div className={styles.insightPanel}>
            <div className={styles.panelHeader}>
-              <span className={styles.panelTitle}>ISSUES AND ACTIONS</span>
+              <span className={styles.panelTitle}>BLOCKERS AND HEALTH</span>
            </div>
            <BlockersView />
            
@@ -133,11 +198,14 @@ export function MonitorDashboard() {
                  </div>
                  <div className={styles.metricRow}>
                     <span>STALL RISK</span>
-                    <span className={`${styles.metricVal} ${
-                      intelligence.stallProbability === 'HIGH' ? styles.valDanger : 
-                      intelligence.stallProbability === 'MEDIUM' ? styles.valWarn : ""
-                    }`}>
-                      {intelligence.stallProbability}
+                    <span className={styles.metricVal}>
+	                      <StallRiskGauge probability={intelligence.stallProbability} />
+	                      <span className={
+	                        intelligence.stallProbability === 'HIGH' ? styles.valDanger :
+	                        intelligence.stallProbability === 'MEDIUM' ? styles.valWarn : ""
+	                      }>
+                        {intelligence.stallProbability}
+                      </span>
                     </span>
                  </div>
                  <div className={styles.metricRow}>
@@ -150,12 +218,10 @@ export function MonitorDashboard() {
                       <div className={styles.toolList}>
                         {intelligence.failedTools.map(t => <span key={t} className={styles.toolPill}>{t}</span>)}
                       </div>
-                   </div>
-                 )}
+                  </div>
+                )}
               </div>
            </div>
-
-           <MissionControls />
         </div>
       </div>
     </div>

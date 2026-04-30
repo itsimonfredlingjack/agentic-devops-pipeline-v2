@@ -1,10 +1,6 @@
-"""System and user prompts for Ollama intent extraction.
+"""System and user prompts for Ollama intent extraction."""
 
-The system prompt instructs the LLM to act as a senior business analyst
-and extract structured Jira ticket information from voice input.
-"""
-
-SYSTEM_PROMPT = """You are a senior Business Analyst. Your task is to extract structured Jira ticket information from a user's voice description.
+SYSTEM_PROMPT = """You are a senior Business Analyst. Your task is to extract a structured software task draft from a user's voice description.
 
 The user has spoken a feature request, bug report, or task description. Extract the following fields and respond ONLY with valid JSON — no markdown fences, no explanation.
 
@@ -18,7 +14,7 @@ Required JSON fields:
 - "clarification_questions": Array of strings. If ambiguity_score > 0.3, list 1-3 specific questions that would help clarify the request. If clear, use empty array [].
 - "labels": Array of relevant label strings
 
-If the request is clear (ambiguity_score <= 0.3), produce a full ticket with empty clarification_questions.
+If the request is clear (ambiguity_score <= 0.3), produce a full task draft with empty clarification_questions.
 If ambiguous (ambiguity_score > 0.3), set the score accordingly and provide specific clarification_questions to ask the user.
 
 Language and naming rules:
@@ -64,7 +60,7 @@ def build_extraction_prompt(voice_text: str) -> str:
     Returns:
         User message to send to Ollama.
     """
-    return f"""Extract Jira ticket information from this voice recording:
+    return f"""Extract a structured task draft from this voice recording:
 
 {voice_text}
 
@@ -99,4 +95,4 @@ The user responded with:
 
 {answer_text}
 
-Now extract the complete Jira ticket information using both the original request and the clarification. Respond with JSON only."""
+Now extract the complete task draft using both the original request and the clarification. Respond with JSON only."""

@@ -3,7 +3,7 @@
   background:
     radial-gradient(circle at top center, rgba(82, 210, 255, 0.12), transparent 35%),
     linear-gradient(180deg, #070b16 0%, #0b1327 46%, #121934 100%);
-  font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
 }
 
 * {
@@ -49,7 +49,7 @@ body {
 
 .eyebrow,
 .sectionTitle {
-  font-family: "IBM Plex Mono", "SF Mono", monospace;
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   text-transform: uppercase;
   letter-spacing: 0.18em;
   color: rgba(210, 219, 244, 0.72);
@@ -81,7 +81,7 @@ body {
   border-radius: 999px;
   padding: 9px 12px;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  font-family: "IBM Plex Mono", "SF Mono", monospace;
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 12px;
   text-transform: uppercase;
 }
@@ -214,13 +214,20 @@ body {
 }
 
 button {
-  border: 1px solid rgba(82, 210, 255, 0.22);
-  background: rgba(82, 210, 255, 0.12);
+  border: 1px solid rgba(82, 210, 255, 0.35);
+  background: rgba(82, 210, 255, 0.22);
   color: #d9f7ff;
   border-radius: 999px;
   padding: 10px 14px;
   cursor: pointer;
   font: inherit;
+  transition: background 180ms ease, border-color 180ms ease, transform 120ms ease;
+}
+
+button:hover:not(:disabled) {
+  background: rgba(82, 210, 255, 0.3);
+  border-color: rgba(82, 210, 255, 0.45);
+  transform: translateY(-1px);
 }
 
 button:disabled {

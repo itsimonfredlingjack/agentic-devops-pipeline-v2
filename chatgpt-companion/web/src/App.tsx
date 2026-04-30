@@ -23,6 +23,7 @@ type JsonRpcResponse = {
 type MissionPayload = {
   mission_phase?: string;
   phase_label?: string;
+  task?: { task_ref?: string; key?: string; summary?: string; status?: string } | null;
   ticket?: { key?: string; summary?: string; status?: string } | null;
   share?: {
     id?: string;
@@ -32,6 +33,7 @@ type MissionPayload = {
   } | null;
   active_session?: {
     session_id?: string;
+    task_ref?: string;
     ticket_id?: string;
     total_cost_usd?: number;
     total_events?: number;
@@ -39,6 +41,7 @@ type MissionPayload = {
   } | null;
   latest_session?: {
     session_id?: string;
+    task_ref?: string;
     ticket_id?: string;
     total_cost_usd?: number;
     total_events?: number;
@@ -55,7 +58,11 @@ type MissionPayload = {
   gates?: Array<{ name: string; status: string }>;
   alerts?: string[];
   connections?: Record<string, { reachable?: boolean; status_code?: number; error?: string }>;
-  queue?: { has_pending_ticket?: boolean; latest_pending?: { key?: string; summary?: string } | null };
+  queue?: {
+    has_pending_task?: boolean;
+    has_pending_ticket?: boolean;
+    latest_pending?: { task_ref?: string; key?: string; summary?: string } | null;
+  };
 };
 
 type OpenAICompat = {
@@ -206,8 +213,10 @@ export default function App() {
 
   const latestSession = payload?.active_session ?? payload?.latest_session ?? null;
   const headline = useMemo(() => {
-    if (payload?.ticket?.key) {
-      return `${payload.ticket.key} ${payload.ticket.summary ? `· ${payload.ticket.summary}` : ""}`;
+    const taskRef = payload?.task?.task_ref ?? payload?.task?.key ?? payload?.ticket?.key;
+    const summary = payload?.task?.summary ?? payload?.ticket?.summary;
+    if (taskRef) {
+      return `${taskRef} ${summary ? `· ${summary}` : ""}`;
     }
     return "No active objective";
   }, [payload]);
@@ -246,7 +255,7 @@ export default function App() {
     try {
       const result = await callTool("get_mission_share", {
         session_id: latestSession?.session_id,
-        ticket_id: payload?.ticket?.key,
+        task_ref: latestSession?.task_ref ?? payload?.task?.task_ref ?? payload?.task?.key ?? payload?.ticket?.key,
       });
       const share = result?.structuredContent?.share ?? payload?.share;
       const shareText = share?.text;
@@ -325,7 +334,7 @@ export default function App() {
                 </div>
               ))}
               {(!payload?.gates || payload.gates.length === 0) && (
-                <div className="empty">No evidence cards yet.</div>
+                <div className="empty">Sentinels appear after your first gate runs.</div>
               )}
             </div>
           </article>
@@ -340,7 +349,7 @@ export default function App() {
                 </div>
               ))}
               {Object.keys(payload?.connections ?? {}).length === 0 && (
-                <div className="empty">No connection probes available.</div>
+                <div className="empty">Connections will show once the monitor API is reachable.</div>
               )}
             </div>
           </article>
@@ -363,7 +372,7 @@ export default function App() {
                 </div>
               ))}
               {(!payload?.latest_events || payload.latest_events.length === 0) && (
-                <div className="empty">No timeline events yet.</div>
+                <div className="empty">Events appear as the loop progresses.</div>
               )}
             </div>
           </article>

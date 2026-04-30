@@ -1,0 +1,207 @@
+/* =========================================================================
+   SEJFA Command — colors & type
+   Source of truth: agentic-devops-pipeline-v2 (packages/ui-system, desktop/src)
+   Every value in this file is lifted from, or synthesized directly against,
+   the production styles in that repo. Do not invent tokens — extend.
+   ========================================================================= */
+
+/* ---- FONTS ---------------------------------------------------------------
+   The repo's CSS declares three font stacks:
+    • --sejfa-font-sans:    "Avenir Next" / "Segoe UI Variable" / "Segoe UI"
+    • --sejfa-font-display: "Avenir Next Condensed" / "Avenir Next" / ...
+    • --sejfa-font-mono:    "IBM Plex Mono" / "SF Mono" / "Cascadia Code"
+   The desktop components use "Inter" for UI and "Geist Mono" for every
+   label/status/metric. In practice, shipping Avenir Next / IBM Plex Mono
+   everywhere is impossible (both are proprietary), and Geist Mono is on
+   nearly every surface. We unify on Inter + Geist Mono for all new work,
+   with JetBrains Mono as a free fallback close to IBM Plex Mono for the
+   few places the shell theme still wants it.
+--------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/Inter-Variable.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/GeistMono-Variable.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("fonts/JetBrainsMono-Variable.woff2") format("woff2-variations");
+}
+
+:root {
+  /* ---- TYPE ------------------------------------------------------------- */
+  --font-ui:      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono:    "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-code:    "JetBrains Mono", "Geist Mono", ui-monospace, monospace;
+
+  /* type scale — matches real sizes observed in the app */
+  --fs-mono-xs:   9px;   /* view-switcher, priority pills                  */
+  --fs-mono-sm:   10px;  /* section labels, phase pills, status-badge copy */
+  --fs-mono-md:   11px;  /* queue id, timestamps, button text              */
+  --fs-ui-sm:     12px;  /* body secondary                                  */
+  --fs-ui-md:     13px;  /* body primary (sidebar item title, etc.)         */
+  --fs-ui-lg:     15px;  /* transcript / lead paragraph                     */
+  --fs-ui-h3:     16px;  /* task summary in top-bar                         */
+  --fs-ui-h2:     20px;  /* workspace summary                               */
+  --fs-ui-h1:     32px;  /* Omni prompt headline                            */
+
+  --tracking-wide: 0.08em;  /* every Geist Mono label uppercases with this */
+  --tracking-brand: 0.02em; /* SEJFA COMMAND wordmark                      */
+  --tracking-tight: -0.02em;/* large display headings                      */
+
+  /* ---- SURFACES (composed bg, dark) -----------------------------------
+     The shell has THREE coexisting black levels because multiple radial
+     glows sit on the canvas. Order matters: canvas < elevated < panel.
+  ---------------------------------------------------------------------- */
+  --bg-canvas:      #030407;                       /* workspace floor    */
+  --bg-shell:       #060912;                       /* shell root         */
+  --bg-rail:        #0b0c0f;                       /* sidebar            */
+  --bg-elevated:    #0a1120;                       /* top-bar, card      */
+  --bg-panel:       rgba(10, 16, 30, 0.90);
+  --bg-panel-soft:  rgba(14, 22, 40, 0.78);
+  --bg-panel-strong:rgba(18, 27, 47, 0.96);
+  --bg-input:       rgba(0, 0, 0, 0.40);           /* form field         */
+  --bg-chip:        rgba(255, 255, 255, 0.04);     /* pill / tag         */
+  --bg-hover:       rgba(255, 255, 255, 0.02);
+
+  /* the signature radial-mesh — drop into `background:` on the shell */
+  --bg-mesh:
+    radial-gradient(circle at top right,    rgba(121, 212, 255, 0.11), transparent 30%),
+    radial-gradient(circle at bottom left,  rgba(255, 125, 136, 0.08), transparent 28%),
+    linear-gradient(180deg, #05070f, #08101e 45%, #060912);
+
+  /* the animated Omni-prompt glow — sized 600×400, blur 40, drifts 12s */
+  --bg-omni-glow:
+    radial-gradient(circle at 10% 30%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 60% 10%, rgba(16, 185, 129, 0.08) 0%, transparent 40%);
+
+  /* ---- BORDERS --------------------------------------------------------- */
+  --border-subtle:   rgba(139, 160, 202, 0.12);
+  --border-medium:   rgba(139, 160, 202, 0.20);
+  --border-strong:   rgba(139, 160, 202, 0.30);
+  --border-hairline: rgba(255, 255, 255, 0.05);     /* desktop sidebar   */
+  --border-panel:    rgba(255, 255, 255, 0.08);
+  --border-input:    rgba(255, 255, 255, 0.12);
+
+  /* ---- TEXT ------------------------------------------------------------ */
+  --fg-primary:    rgba(244, 247, 255, 0.96);
+  --fg-secondary:  rgba(201, 213, 236, 0.78);
+  --fg-tertiary:   rgba(153, 169, 201, 0.72);
+  --fg-muted:      rgba(129, 144, 175, 0.56);
+  --fg-label:      #71717a;  /* the ubiquitous mono-label gray         */
+  --fg-id:         #a1a1aa;  /* queue id / secondary mono              */
+
+  /* ---- BRAND & STATE COLORS ------------------------------------------
+     The product uses TWO accents in tension:
+       brand / logomark  = green (#10b981 → #059669 gradient)
+       primary / agent   = blue   (#3b82f6) — 'agent is active'
+     Rest are status lanes. Do not reassign.
+  ---------------------------------------------------------------------- */
+
+  /* Brand — the 14px logomark square only */
+  --brand-500:   #10b981;
+  --brand-600:   #059669;
+  --brand-grad:  linear-gradient(135deg, #10b981, #059669);
+  --brand-glow:  0 0 12px rgba(16, 185, 129, 0.30);
+
+  /* Primary — agent-active, CTA, focus */
+  --primary-400: #60a5fa;
+  --primary-500: #3b82f6;
+  --primary-600: #2563eb;
+  --primary-soft:rgba(59, 130, 246, 0.14);
+  --primary-focus:0 0 0 2px rgba(59, 130, 246, 0.20);
+
+  /* Status lanes — every dashboard uses these exactly */
+  --ok-500:      #10b981;   /* success — same hex as brand */
+  --ok-soft:     rgba(16, 185, 129, 0.08);
+  --warn-500:    #f59e0b;   /* processing / stale        */
+  --warn-soft:   rgba(245, 158, 11, 0.08);
+  --fail-500:    #ef4444;   /* error                     */
+  --fail-soft:   rgba(239, 68, 68, 0.04);
+  --review-500:  #8b5cf6;   /* monitor / in-review       */
+  --review-soft: rgba(139, 92, 246, 0.10);
+  --voice-500:   #30b0c7;   /* voice / recording         */
+  --voice-soft:  rgba(48, 176, 199, 0.14);
+
+  /* Legacy shell palette (kept for panels that use softer tints) */
+  --cyan-500:    #79d4ff;
+  --cyan-soft:   rgba(121, 212, 255, 0.14);
+  --green-500:   #78e0a6;
+  --green-soft:  rgba(120, 224, 166, 0.14);
+  --amber-500:   #ffce73;
+  --amber-soft:  rgba(255, 206, 115, 0.14);
+  --red-500:     #ff7d88;
+  --red-soft:    rgba(255, 125, 136, 0.14);
+
+  /* phase-pill backgrounds (from Workspace.module.css) */
+  --phase-listening:  #0EA5E9;
+  --phase-processing: #F59E0B;
+  --phase-loop:       #8B5CF6;
+  --phase-verify:     #EAB308;
+  --phase-error:      #EF4444;
+  --phase-done:       #10B981;
+
+  /* ---- RADII & SHADOWS -------------------------------------------------
+     Shell panels lean bigger (14–20), desktop UI leans smaller (6–8).
+     Both ship. Use shell radii on the main shell/marketing panels; use
+     desktop radii on inputs, buttons, and sidebar rows.
+  ---------------------------------------------------------------------- */
+  --r-xs:  4px;    /* kbd, badge                    */
+  --r-sm:  6px;    /* button, input                 */
+  --r-md:  8px;    /* card, section                 */
+  --r-lg:  12px;   /* intent-grid section           */
+  --r-xl:  16px;   /* metric tile                   */
+  --r-2xl: 20px;   /* shell panel (sejfa-radius-lg) */
+  --r-pill:999px;
+
+  --shadow-xs:    0 1px 3px rgba(0, 0, 0, 0.20);
+  --shadow-md:    0 4px 12px rgba(0, 0, 0, 0.40);
+  --shadow-lg:    0 20px 60px rgba(0, 0, 0, 0.45);
+  --shadow-primary:0 4px 12px rgba(59, 130, 246, 0.25);
+  --shadow-focus: 0 0 0 1px rgba(132, 203, 255, 0.45);
+
+  /* ---- MOTION ---------------------------------------------------------- */
+  --ease-snap:    cubic-bezier(0.16, 1, 0.3, 1);   /* log slide-in        */
+  --ease-smooth:  cubic-bezier(0.4, 0, 0.2, 1);    /* sidebar collapse    */
+  --dur-fast:     120ms;
+  --dur-med:      200ms;
+  --dur-slow:     400ms;
+
+  /* ---- LAYOUT ---------------------------------------------------------- */
+  --rail-w:        260px;  /* desktop Sidebar      */
+  --rail-w-shell:  240px;  /* shell Nav            */
+  --rail-w-collapsed: 68px;
+  --mac-spacer:    48px;   /* electron drag region */
+}
+
+/* --------- Base reset for artifacts built on this system --------------- */
+.sejfa, .sejfa-reset {
+  background-color: var(--bg-shell);
+  color: var(--fg-primary);
+  font-family: var(--font-ui);
+  letter-spacing: var(--tracking-tight);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --------- Utility: the mono-label style used EVERYWHERE --------------- */
+.sejfa-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  font-weight: 600;
+  color: var(--fg-label);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}

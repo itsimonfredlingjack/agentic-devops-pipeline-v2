@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEJFA Command - Visual Mockup</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #000000;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, #0a0a1a 0%, #050510 100%);
+  border-right: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, #00d4ff, #0099cc);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+.sidebar-header {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-dot {
+  width: 10px;
+  height: 10px;
+  background: #00d4ff;
+  border-radius: 3px;
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
+}
+
+.brand-text {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+}
+
+.mode-switch {
+  margin: 16px 16px 0;
+  display: flex;
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+  padding: 3px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 7px 0;
+  border: none;
+  background: transparent;
+  color: #606080;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.mode-btn.active {
+  background: rgba(0, 212, 255, 0.15);
+  color: #00d4ff;
+}
+
+.section-title {
+  padding: 20px 20px 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #404060;
+}
+
+.telemetry-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 20px;
+  color: #606080;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.telemetry-item:hover {
+  color: #a0a0c0;
+  background: rgba(255,255,255,0.02);
+}
+
+.telemetry-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #404060;
+}
+
+.telemetry-dot.active {
+  background: #ff9f43;
+  box-shadow: 0 0 8px rgba(255, 159, 67, 0.6);
+}
+
+.view-switch {
+  margin: 0 16px;
+  display: flex;
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+  padding: 3px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.view-btn {
+  flex: 1;
+  padding: 6px 0;
+  border: none;
+  background: transparent;
+  color: #606080;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.view-btn.active {
+  background: rgba(0, 212, 255, 0.15);
+  color: #00d4ff;
+}
+
+.task-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px;
+}
+
+.task-item {
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 2px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.task-item:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.task-item.active {
+  background: rgba(0, 212, 255, 0.08);
+  border-left-color: #00d4ff;
+}
+
+.task-id {
+  font-family: 'SF Mono', monospace;
+  font-size: 10px;
+  color: #404060;
+  margin-bottom: 2px;
+}
+
+.task-title {
+  font-size: 12px;
+  color: #a0a0c0;
+  line-height: 1.3;
+}
+
+.task-item.active .task-title {
+  color: #ffffff;
+}
+
+.sidebar-footer {
+  padding: 14px 20px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.footer-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #404060;
+  margin-bottom: 6px;
+}
+
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #606080;
+}
+
+.footer-row strong {
+  color: #00d4ff;
+  font-weight: 600;
+}
+
+/* WORKSPACE */
+.workspace {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #08081a;
+  position: relative;
+}
+
+/* Top bar with phase indicator */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(8, 8, 26, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.breadcrumb-item {
+  color: #606080;
+}
+
+.breadcrumb-item.current {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.breadcrumb-sep {
+  color: #404060;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.phase-badge {
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  background: rgba(0, 212, 255, 0.1);
+  color: #00d4ff;
+  font-family: 'SF Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.15);
+}
+
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a1a3a, #2a2a4a);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: grid;
+  place-items: center;
+  font-family: 'SF Mono', monospace;
+  font-size: 10px;
+  color: #a0a0c0;
+}
+
+/* Main Content */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+/* Metrics */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(135deg, #0c0c20, #101028);
+  transition: all 0.2s;
+}
+
+.metric-card:hover {
+  border-color: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+
+.metric-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #404060;
+  margin-bottom: 8px;
+}
+
+.metric-value {
+  font-family: 'SF Mono', monospace;
+  font-size: 32px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.metric-value.success {
+  color: #00d68f;
+  text-shadow: 0 0 20px rgba(0, 214, 143, 0.3);
+}
+
+.metric-value.warning {
+  color: #ff9f43;
+  text-shadow: 0 0 20px rgba(255, 159, 67, 0.3);
+}
+
+/* Grid Layout */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 20px;
+}
+
+/* Panels */
+.panel {
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(135deg, #0c0c20, #101028);
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.02);
+}
+
+.panel-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #404060;
+}
+
+.panel-body {
+  padding: 18px;
+}
+
+/* Terminal */
+.terminal {
+  background: #050510;
+  border-radius: 6px;
+  padding: 12px;
+  font-family: 'SF Mono', monospace;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.terminal-row {
+  display: grid;
+  grid-template-columns: 60px 100px 1fr 60px;
+  gap: 12px;
+  padding: 6px 8px;
+  border-left: 2px solid transparent;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+.terminal-row:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+.terminal-row.success {
+  border-left-color: #00d68f;
+  background: rgba(0, 214, 143, 0.05);
+}
+
+.terminal-row.error {
+  border-left-color: #ff4757;
+  background: rgba(255, 71, 87, 0.05);
+}
+
+.term-time {
+  color: #404060;
+}
+
+.term-tool {
+  color: #00d4ff;
+  font-weight: 600;
+}
+
+.term-args {
+  color: #a0a0c0;
+}
+
+.term-status {
+  text-align: right;
+  text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.term-status.success {
+  color: #00d68f;
+}
+
+.term-status.error {
+  color: #ff4757;
+}
+
+/* Right Column */
+.intake-panel {
+  padding: 20px;
+}
+
+.intake-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.intake-desc {
+  font-size: 13px;
+  color: #606080;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.context-box {
+  padding: 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+  margin-bottom: 20px;
+}
+
+.context-label {
+  font-family: 'SF Mono', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #404060;
+  margin-bottom: 6px;
+}
+
+.context-value {
+  font-size: 13px;
+  color: #a0a0c0;
+  line-height: 1.4;
+}
+
+.context-meta {
+  font-family: 'SF Mono', monospace;
+  font-size: 11px;
+  color: #404060;
+  margin-top: 4px;
+}
+
+.mic-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: #a0a0c0;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mic-btn:hover {
+  border-color: rgba(0, 212, 255, 0.4);
+  background: rgba(0, 212, 255, 0.1);
+  color: #00d4ff;
+}
+
+.mic-hint {
+  text-align: center;
+  font-family: 'SF Mono', monospace;
+  font-size: 11px;
+  color: #404060;
+  line-height: 1.5;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-dot"></div>
+        <div class="brand-text">SEJFA COMMAND</div>
+      </div>
+      <div class="mode-switch">
+        <button class="mode-btn active">Task Loop</button>
+        <button class="mode-btn">History</button>
+      </div>
+    </div>
+
+    <div class="section-title">System Telemetry</div>
+    <div class="telemetry-item">
+      <div class="telemetry-dot active"></div>
+      <span>Run Monitor</span>
+    </div>
+    <div class="telemetry-item">
+      <div class="telemetry-dot"></div>
+      <span>Voice Intake</span>
+    </div>
+
+    <div style="margin-top: 8px;">
+      <div class="view-switch">
+        <button class="view-btn active">Tasks</button>
+        <button class="view-btn">My Tasks</button>
+        <button class="view-btn">Projects</button>
+      </div>
+    </div>
+
+    <div class="section-title">Task Loop</div>
+    <div class="task-list">
+      <div class="task-item active">
+        <div class="task-id">PROJ-124</div>
+        <div class="task-title">Implement user authentication flow with OAuth</div>
+      </div>
+      <div class="task-item">
+        <div class="task-id">PROJ-125</div>
+        <div class="task-title">Refactor database connection pooling</div>
+      </div>
+      <div class="task-item">
+        <div class="task-id">PROJ-126</div>
+        <div class="task-title">Add caching layer for API responses</div>
+      </div>
+      <div class="task-item">
+        <div class="task-id">PROJ-127</div>
+        <div class="task-title">Update monitoring dashboards</div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="footer-label">Logged in as</div>
+      <div class="footer-row">
+        <span>sejfa</span>
+        <strong>IDLE</strong>
+      </div>
+      <div class="footer-row" style="margin-top: 4px;">
+        <span>Inbox</span>
+        <strong>4</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORKSPACE -->
+  <div class="workspace">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="breadcrumb">
+        <span class="breadcrumb-item">SEJFA</span>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-item">Task Loop</span>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-item current">PROJ-124</span>
+      </div>
+      <div class="top-actions">
+        <div class="phase-badge">IDLE</div>
+        <div class="user-avatar">AI</div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <!-- Metrics -->
+      <div class="metrics-row">
+        <div class="metric-card">
+          <div class="metric-label">Tool Calls</div>
+          <div class="metric-value success">24</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Cost Estimate</div>
+          <div class="metric-value warning">$1.24</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Duration</div>
+          <div class="metric-value">2m 14s</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Success Rate</div>
+          <div class="metric-value success">96%</div>
+        </div>
+      </div>
+
+      <!-- Main Grid -->
+      <div class="main-grid">
+        <!-- Left: Terminal -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Execution Log</span>
+            <span style="font-family: 'SF Mono', monospace; font-size: 10px; color: #00d68f;">● LIVE</span>
+          </div>
+          <div class="panel-body">
+            <div class="terminal">
+              <div class="terminal-row success">
+                <span class="term-time">14:32:01</span>
+                <span class="term-tool">git.clone</span>
+                <span class="term-args">repository: sejfa/core</span>
+                <span class="term-status success">OK</span>
+              </div>
+              <div class="terminal-row success">
+                <span class="term-time">14:32:15</span>
+                <span class="term-tool">lint.run</span>
+                <span class="term-args">files: 24, errors: 0</span>
+                <span class="term-status success">OK</span>
+              </div>
+              <div class="terminal-row error">
+                <span class="term-time">14:32:44</span>
+                <span class="term-tool">test.run</span>
+                <span class="term-args">suite: auth, failed: 2</span>
+                <span class="term-status error">FAIL</span>
+              </div>
+              <div class="terminal-row success">
+                <span class="term-time">14:33:02</span>
+                <span class="term-tool">deploy.staging</span>
+                <span class="term-args">target: api-staging-01</span>
+                <span class="term-status success">OK</span>
+              </div>
+              <div class="terminal-row">
+                <span class="term-time">14:33:18</span>
+                <span class="term-tool">verify.health</span>
+                <span class="term-args">endpoint: /health</span>
+                <span class="term-status">...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Intake -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Voice Intake</span>
+          </div>
+          <div class="panel-body">
+            <div class="intake-panel">
+              <div class="intake-title">Add intake</div>
+              <div class="intake-desc">Add task context by text or voice without changing the selected loop target.</div>
+
+              <div class="context-box">
+                <div class="context-label">Selected Task</div>
+                <div class="context-value">PROJ-124: Implement user authentication</div>
+                <div class="context-meta">Branch: feature/PROJ-124-auth</div>
+              </div>
+
+              <div class="mic-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                  <line x1="12" y1="19" x2="12" y2="23"/>
+                  <line x1="8" y1="23" x2="16" y2="23"/>
+                </svg>
+              </div>
+              <div class="mic-hint">Hold cmd+shift+V<br>to record</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

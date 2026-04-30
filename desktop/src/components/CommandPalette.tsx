@@ -1,88 +1,125 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, type KeyboardEvent } from "react";
+import type { TaskSummary } from "@sejfa/shared-types";
 import { useAppStore } from "../stores/appStore";
-import { useJiraIssues } from "../hooks/useJiraIssues";
+import { Dialog } from "./Dialog";
 import styles from "./CommandPalette.module.css";
 
-interface Command {
+export interface Command {
   id: string;
   label: string;
   icon: string;
-  group: "Navigation" | "Issues";
+  group: "Navigation" | "Tasks";
   isQuickJump?: boolean;
   shortcut?: string;
   action: () => void;
 }
 
+interface BuildCommandPaletteCommandsOptions {
+  tasks: TaskSummary[];
+  selectedTaskId: string | null;
+  phase: string;
+  setActiveWorkspaceSection: (section: "work" | "history") => void;
+  onSelectTaskId: (taskId: string) => void;
+}
+
+export function buildCommandPaletteCommands({
+  tasks,
+  selectedTaskId,
+  phase,
+  setActiveWorkspaceSection,
+  onSelectTaskId,
+}: BuildCommandPaletteCommandsOptions): Command[] {
+  const list: Command[] = [
+    {
+      id: "nav-work",
+      label: "Open Task Loop",
+      icon: "WRK",
+      group: "Navigation",
+      action: () => setActiveWorkspaceSection("work"),
+    },
+    {
+      id: "nav-history",
+      label: "Open Run History",
+      icon: "HIS",
+      group: "Navigation",
+      action: () => setActiveWorkspaceSection("history"),
+    },
+  ];
+
+  if (phase === "loop" || phase === "verify" || phase === "done" || phase === "error") {
+    list.push({
+      id: "nav-current-run",
+      label: "Focus Current Run",
+      icon: "RUN",
+      group: "Navigation",
+      isQuickJump: true,
+      action: () => setActiveWorkspaceSection("work"),
+    });
+  }
+
+  const selectedTask = selectedTaskId
+    ? tasks.find((task) => task.id === selectedTaskId)
+    : null;
+
+  if (selectedTask) {
+    list.push({
+      id: "quick-selected-task",
+      label: "Open Selected Task Context",
+      icon: "JMP",
+      group: "Navigation",
+      isQuickJump: true,
+      action: () => {
+        setActiveWorkspaceSection("work");
+        onSelectTaskId(selectedTask.id);
+      },
+    });
+  }
+
+  tasks.forEach((task) => {
+    list.push({
+      id: `task-${task.id}`,
+      label: `Open ${task.id}: ${task.title}`,
+      icon: "TSK",
+      group: "Tasks",
+      action: () => onSelectTaskId(task.id),
+    });
+  });
+
+  return list;
+}
+
 const RECENT_COMMANDS_STORAGE_KEY = "sejfa.commandPalette.recent";
 const MAX_RECENT_COMMANDS = 5;
+const LISTBOX_ID = "command-palette-listbox";
+const TITLE_ID = "command-palette-title";
 
-export function CommandPalette({ isOpen, onClose, onSelectTask }: { 
-  isOpen: boolean; 
+function optionId(commandId: string): string {
+  return `command-palette-option-${commandId.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
+}
+
+export function CommandPalette({ isOpen, onClose, tasks, selectedTaskId, onSelectTaskId }: {
+  isOpen: boolean;
   onClose: () => void;
-  onSelectTask: (idx: number) => void;
+  tasks: TaskSummary[];
+  selectedTaskId: string | null;
+  onSelectTaskId: (taskId: string) => void;
 }) {
   const { setActiveWorkspaceSection, phase } = useAppStore();
-  const { issues: jiraIssues } = useJiraIssues();
   const [search, setSearch] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [recentCommandIds, setRecentCommandIds] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
 
-  const taskIssues = jiraIssues;
-
   const commands: Command[] = useMemo(() => {
-    const list: Command[] = [
-      {
-        id: "nav-work",
-        label: "Open Work View",
-        icon: "WRK",
-        group: "Navigation",
-        action: () => setActiveWorkspaceSection("work"),
-      },
-      {
-        id: "nav-history",
-        label: "Open Run History",
-        icon: "HIS",
-        group: "Navigation",
-        action: () => setActiveWorkspaceSection("history"),
-      },
-    ];
-
-    if (phase === "loop" || phase === "verify" || phase === "done" || phase === "error") {
-      list.push({
-        id: "nav-current-run",
-        label: "Focus Current Run",
-        icon: "RUN",
-        group: "Navigation",
-        isQuickJump: true,
-        action: () => setActiveWorkspaceSection("work"),
-      });
-    }
-
-    if (taskIssues.length > 0) {
-      list.push({
-        id: "quick-selected-issue",
-        label: "Jump to Selected Issue",
-        icon: "JMP",
-        group: "Navigation",
-        isQuickJump: true,
-        action: () => onSelectTask(0),
-      });
-    }
-
-    taskIssues.forEach((issue, idx) => {
-      list.push({
-        id: `task-${issue.id}`,
-        label: `Open ${issue.id}: ${issue.title}`,
-        icon: "TSK",
-        group: "Issues",
-        action: () => onSelectTask(idx)
-      });
+    return buildCommandPaletteCommands({
+      tasks,
+      selectedTaskId,
+      phase,
+      setActiveWorkspaceSection,
+      onSelectTaskId,
     });
-
-    return list;
-  }, [setActiveWorkspaceSection, phase, onSelectTask, taskIssues]);
+  }, [setActiveWorkspaceSection, phase, onSelectTaskId, selectedTaskId, tasks]);
 
   const orderedCommands = useMemo(() => {
     const recentSet = new Set(recentCommandIds);
@@ -115,10 +152,10 @@ export function CommandPalette({ isOpen, onClose, onSelectTask }: {
     const navigation = filteredCommands.filter(
       (command) => command.group === "Navigation" && !recentCommandIds.includes(command.id),
     );
-    const issues = filteredCommands.filter(
-      (command) => command.group === "Issues" && !recentCommandIds.includes(command.id),
+    const tasks = filteredCommands.filter(
+      (command) => command.group === "Tasks" && !recentCommandIds.includes(command.id),
     );
-    return { recents, navigation, issues };
+    return { recents, navigation, tasks };
   }, [filteredCommands, recentCommandIds]);
 
   useEffect(() => {
@@ -139,9 +176,6 @@ export function CommandPalette({ isOpen, onClose, onSelectTask }: {
       triggerRef.current = document.activeElement as HTMLElement;
       setSearch("");
       setSelectedIndex(0);
-      setTimeout(() => inputRef.current?.focus(), 10);
-    } else {
-      triggerRef.current?.focus();
     }
   }, [isOpen]);
 
@@ -163,7 +197,13 @@ export function CommandPalette({ isOpen, onClose, onSelectTask }: {
     }
   }, [filteredCommands, selectedIndex]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const executeCommand = (command: Command) => {
+    command.action();
+    persistRecentCommand(command.id);
+    onClose();
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (filteredCommands.length === 0) {
       if (e.key === "Escape") onClose();
       return;
@@ -178,21 +218,58 @@ export function CommandPalette({ isOpen, onClose, onSelectTask }: {
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (filteredCommands[selectedIndex]) {
-        const selectedCommand = filteredCommands[selectedIndex];
-        selectedCommand.action();
-        persistRecentCommand(selectedCommand.id);
-        onClose();
+        executeCommand(filteredCommands[selectedIndex]);
       }
     } else if (e.key === "Escape") {
       onClose();
     }
   };
 
+  const activeOptionId =
+    filteredCommands.length > 0 && filteredCommands[selectedIndex]
+      ? optionId(filteredCommands[selectedIndex].id)
+      : undefined;
+
+  const renderCommand = (cmd: Command, meta: string) => {
+    const idx = filteredCommands.findIndex((command) => command.id === cmd.id);
+    const isActive = idx === selectedIndex;
+
+    return (
+      <div
+        key={cmd.id}
+        id={optionId(cmd.id)}
+        role="option"
+        aria-selected={isActive}
+        tabIndex={-1}
+        className={`${styles.commandItem} ${isActive ? styles.activeItem : ""}`}
+        onClick={() => executeCommand(cmd)}
+        onMouseEnter={() => {
+          if (idx >= 0) setSelectedIndex(idx);
+        }}
+      >
+        <div className={styles.itemLeft}>
+          <span className={styles.itemIcon}>{cmd.icon}</span>
+          <span className={styles.itemLabel}>{cmd.label}</span>
+        </div>
+        <span className={styles.itemMeta}>{meta}</span>
+      </div>
+    );
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()} role="dialog" aria-label="Command palette" aria-modal="true">
+    <Dialog
+      open={isOpen}
+      titleId={TITLE_ID}
+      onClose={onClose}
+      initialFocusRef={inputRef}
+      restoreFocusRef={triggerRef}
+    >
+      <div className={styles.modal}>
+        <h2 id={TITLE_ID} className={styles.paletteTitle}>
+          Command palette
+        </h2>
         <div className={styles.searchContainer}>
           <span className={styles.searchIcon}>⠿</span>
           <input 
@@ -200,93 +277,37 @@ export function CommandPalette({ isOpen, onClose, onSelectTask }: {
             className={styles.searchInput}
             placeholder="Type a command or search tasks…"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={e => {
+              setSearch(e.target.value);
+              setSelectedIndex(0);
+            }}
             onKeyDown={handleKeyDown}
+            role="combobox"
+            aria-autocomplete="list"
+            aria-controls={LISTBOX_ID}
+            aria-expanded="true"
+            aria-activedescendant={activeOptionId}
             aria-label="Search commands"
           />
         </div>
 
-        <div className={styles.commandList} role="listbox" aria-label="Commands">
+        <div id={LISTBOX_ID} className={styles.commandList} role="listbox" aria-label="Commands">
           {groupedCommands.recents.length > 0 && (
             <div className={styles.groupLabel}>RECENT</div>
           )}
-          {groupedCommands.recents.map((cmd) => {
-            const idx = filteredCommands.findIndex((command) => command.id === cmd.id);
-            return (
-              <button
-                key={cmd.id}
-                role="option"
-                aria-selected={idx === selectedIndex}
-                className={`${styles.commandItem} ${idx === selectedIndex ? styles.activeItem : ""}`}
-                onClick={() => {
-                  cmd.action();
-                  persistRecentCommand(cmd.id);
-                  onClose();
-                }}
-                onMouseEnter={() => setSelectedIndex(idx)}
-              >
-                <div className={styles.itemLeft}>
-                  <span className={styles.itemIcon}>{cmd.icon}</span>
-                  <span className={styles.itemLabel}>{cmd.label}</span>
-                </div>
-                <span className={styles.itemMeta}>Recent</span>
-              </button>
-            );
-          })}
+          {groupedCommands.recents.map((cmd) => renderCommand(cmd, "Recent"))}
 
           {groupedCommands.navigation.length > 0 && (
             <div className={styles.groupLabel}>NAVIGATION</div>
           )}
-          {groupedCommands.navigation.map((cmd) => {
-            const idx = filteredCommands.findIndex((command) => command.id === cmd.id);
-            return (
-              <button
-                key={cmd.id}
-                role="option"
-                aria-selected={idx === selectedIndex}
-                className={`${styles.commandItem} ${idx === selectedIndex ? styles.activeItem : ""}`}
-                onClick={() => {
-                  cmd.action();
-                  persistRecentCommand(cmd.id);
-                  onClose();
-                }}
-                onMouseEnter={() => setSelectedIndex(idx)}
-              >
-                <div className={styles.itemLeft}>
-                  <span className={styles.itemIcon}>{cmd.icon}</span>
-                  <span className={styles.itemLabel}>{cmd.label}</span>
-                </div>
-                <span className={styles.itemMeta}>{cmd.isQuickJump ? "Quick jump" : cmd.group}</span>
-              </button>
-            );
-          })}
-
-          {groupedCommands.issues.length > 0 && (
-            <div className={styles.groupLabel}>ISSUES</div>
+          {groupedCommands.navigation.map((cmd) =>
+            renderCommand(cmd, cmd.isQuickJump ? "Quick jump" : cmd.group),
           )}
-          {groupedCommands.issues.map((cmd) => {
-            const idx = filteredCommands.findIndex((command) => command.id === cmd.id);
-            return (
-              <button
-                key={cmd.id}
-                role="option"
-                aria-selected={idx === selectedIndex}
-                className={`${styles.commandItem} ${idx === selectedIndex ? styles.activeItem : ""}`}
-                onClick={() => {
-                  cmd.action();
-                  persistRecentCommand(cmd.id);
-                  onClose();
-                }}
-                onMouseEnter={() => setSelectedIndex(idx)}
-              >
-                <div className={styles.itemLeft}>
-                  <span className={styles.itemIcon}>{cmd.icon}</span>
-                  <span className={styles.itemLabel}>{cmd.label}</span>
-                </div>
-                <span className={styles.itemMeta}>{cmd.group}</span>
-              </button>
-            );
-          })}
+
+          {groupedCommands.tasks.length > 0 && (
+            <div className={styles.groupLabel}>TASKS</div>
+          )}
+          {groupedCommands.tasks.map((cmd) => renderCommand(cmd, cmd.group))}
           {filteredCommands.length === 0 && (
             <div className={styles.emptyState}>
               <strong>No matching command found.</strong>
@@ -295,7 +316,7 @@ export function CommandPalette({ isOpen, onClose, onSelectTask }: {
           )}
         </div>
 
-        <div className={styles.footer}>
+        <footer className={styles.footer}>
           <div className={styles.instruction}>
             <kbd>↵</kbd> <span>to select</span>
           </div>
@@ -305,8 +326,8 @@ export function CommandPalette({ isOpen, onClose, onSelectTask }: {
           <div className={styles.instruction}>
             <kbd>esc</kbd> <span>to close</span>
           </div>
-        </div>
+        </footer>
       </div>
-    </div>
+    </Dialog>
   );
 }

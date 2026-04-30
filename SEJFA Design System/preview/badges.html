@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+html,body{margin:0;padding:0}
+body{background:var(--bg);padding:16px;font-family:var(--font-sans);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.badge{font-family:var(--font-mono);font-size:11px;font-weight:500;padding:3px 8px;border-radius:3px;letter-spacing:0.04em;display:inline-flex;align-items:center;gap:5px;line-height:1.4;border:1px solid transparent}
+.dot{width:6px;height:6px;border-radius:50%}
+.todo   { background:#ECE8DB; color:#55513F; border-color:#C9C3AA }
+.progress{ background:#FDF4E2; color:#8F5E14; border-color:#F2C96A }
+.review  { background:#E8F1FA; color:#0b2a47; border-color:#A9C6E4 }
+.done    { background:#EDFAE2; color:#1D420A; border-color:#A7E674 }
+.fail    { background:#FBE9E6; color:#4a0e08; border-color:#E6A69D }
+.agent   { background:var(--vault-950); color:var(--loop-300); border-color:var(--vault-800) }
+</style></head>
+<body>
+<span class="badge todo"><span class="dot" style="background:#7C7660"></span>TODO</span>
+<span class="badge progress"><span class="dot" style="background:#D9992A"></span>IN PROGRESS</span>
+<span class="badge review"><span class="dot" style="background:#3E7FBF"></span>IN REVIEW</span>
+<span class="badge done"><span class="dot" style="background:#43A314"></span>DONE</span>
+<span class="badge fail"><span class="dot" style="background:#C8372E"></span>FAILED</span>
+<span class="badge agent"><span class="dot" style="background:#7ED647;box-shadow:0 0 6px #7ED647"></span>AGENT · ITER 7</span>
+<span class="badge todo">GE-42</span>
+<span class="badge todo">py 3.12</span>
+<span class="badge todo">#done</span>
+</body></html>

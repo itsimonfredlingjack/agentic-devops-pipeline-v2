@@ -14,7 +14,6 @@ from urllib.parse import quote
 import httpx
 
 from src.chatgpt_companion.config import config
-from src.sejfa.integrations.jira_client import JiraClient
 
 MissionPhase = Literal[
     "idle",
@@ -362,11 +361,10 @@ class WorkspaceService:
 
 
 class MissionService:
-    """Aggregates read-only SEJFA mission, Jira, and workspace context."""
+    """Aggregates read-only SEJFA mission and workspace context."""
 
     def __init__(self) -> None:
         self.workspace = WorkspaceService(config.repo_root)
-        self._jira_client: JiraClient | None = None
         self.share_metrics = ShareMetricsStore(config.share_metrics_db_path)
 
     def _monitor_data_status(self, *required_tables: str) -> dict[str, Any]:
@@ -407,11 +405,19 @@ class MissionService:
         status["reason"] = "ready"
         return status
 
+    def _table_has_column(self, table_name: str, column_name: str) -> bool:
+        db_path = config.monitor_db_path
+        if not db_path.exists():
+            return False
+        with sqlite3.connect(db_path) as conn:
+            rows = conn.execute(f"PRAGMA table_info({table_name})").fetchall()
+        return any(str(row[1]) == column_name for row in rows)
+
     def get_active_mission(self) -> dict[str, Any]:
         monitor_data = self._monitor_data_status("sessions", "events")
         active_session = self._query_single_session(active_only=True)
         latest_session = active_session or self._query_single_session(active_only=False)
-        queued_ticket = self._query_latest_queue_entry()
+        queued_task = self._query_latest_queue_entry()
         session_id = (
             active_session["session_id"]
             if active_session
@@ -420,20 +426,22 @@ class MissionService:
             else None
         )
         events = self._query_events(session_id=session_id, limit=12) if session_id else []
-        ticket_key = (
-            active_session.get("ticket_id")
+        task_ref = (
+            active_session.get("task_ref")
             if active_session
-            else queued_ticket.get("key")
-            if queued_ticket
-            else latest_session.get("ticket_id")
+            else queued_task.get("task_ref")
+            if queued_task
+            else latest_session.get("task_ref")
             if latest_session
             else None
         )
-        mission_phase = self._derive_phase(active_session, latest_session, queued_ticket, events)
+        task_summary = self._build_task_summary(task_ref, queued_task)
+        mission_phase = self._derive_phase(active_session, latest_session, queued_task, events)
         return {
             "mission_phase": mission_phase,
             "phase_label": mission_phase.replace("_", " ").title(),
-            "ticket": self._build_ticket_summary(ticket_key, queued_ticket),
+            "task": task_summary,
+            "ticket": task_summary,
             "active_session": active_session,
             "latest_session": latest_session,
             "connections": self._probe_connections(),
@@ -442,8 +450,9 @@ class MissionService:
             "gates": self._derive_gates(events),
             "alerts": self._derive_alerts(events, latest_session, monitor_data),
             "queue": {
-                "has_pending_ticket": queued_ticket is not None,
-                "latest_pending": queued_ticket,
+                "has_pending_task": queued_task is not None,
+                "has_pending_ticket": queued_task is not None,
+                "latest_pending": queued_task,
             },
         }
 
@@ -459,64 +468,28 @@ class MissionService:
     def get_session_events(
         self,
         session_id: str | None = None,
+        task_ref: str | None = None,
         ticket_id: str | None = None,
         limit: int = 25,
     ) -> dict[str, Any]:
         limit = max(1, min(limit, config.max_event_results))
+        resolved_task_ref = task_ref or ticket_id
         resolved_session_id = session_id
-        if resolved_session_id is None and ticket_id:
-            matching = self._query_single_session(ticket_id=ticket_id, active_only=False)
+        if resolved_session_id is None and resolved_task_ref:
+            matching = self._query_single_session(task_ref=resolved_task_ref, active_only=False)
             resolved_session_id = matching["session_id"] if matching else None
         events = self._query_events(
-            session_id=resolved_session_id, ticket_id=ticket_id, limit=limit
+            session_id=resolved_session_id, task_ref=resolved_task_ref, limit=limit
         )
+        if resolved_task_ref is None and events:
+            resolved_task_ref = events[0].get("task_ref")
         return {
             "session_id": resolved_session_id,
-            "ticket_id": ticket_id,
+            "task_ref": resolved_task_ref,
+            "ticket_id": resolved_task_ref,
             "events": events,
             "count": len(events),
             "monitor_data": self._monitor_data_status("events"),
-        }
-
-    def get_jira_issue(self, issue_key: str) -> dict[str, Any]:
-        client = self._get_jira_client()
-        issue = client.get_issue(issue_key)
-        comments = client._request("GET", f"/rest/api/3/issue/{issue_key}/comment")
-        fields = issue.raw.get("fields", {})
-        parent = fields.get("parent")
-        subtasks = fields.get("subtasks", [])
-        return {
-            "key": issue.key,
-            "summary": issue.summary,
-            "description": issue.description,
-            "status": issue.status,
-            "issue_type": issue.issue_type,
-            "priority": issue.priority,
-            "assignee": issue.assignee,
-            "reporter": issue.reporter,
-            "labels": issue.labels,
-            "parent": {
-                "key": parent.get("key"),
-                "summary": parent.get("fields", {}).get("summary"),
-            }
-            if parent
-            else None,
-            "subtasks": [
-                {
-                    "key": subtask.get("key"),
-                    "summary": subtask.get("fields", {}).get("summary"),
-                    "status": subtask.get("fields", {}).get("status", {}).get("name"),
-                }
-                for subtask in subtasks
-            ],
-            "comment_summary": [
-                {
-                    "author": item.get("author", {}).get("displayName"),
-                    "created": item.get("created"),
-                    "body_preview": self._extract_comment_preview(item.get("body")),
-                }
-                for item in comments.get("comments", [])[:6]
-            ],
         }
 
     def search_workspace(
@@ -555,18 +528,22 @@ class MissionService:
     def build_dashboard_payload(
         self,
         session_id: str | None = None,
+        task_ref: str | None = None,
         ticket_id: str | None = None,
     ) -> dict[str, Any]:
         mission = self.get_active_mission()
+        resolved_task_ref = task_ref or ticket_id
         resolved_session_id = session_id
         if resolved_session_id is None and mission["active_session"]:
             resolved_session_id = mission["active_session"]["session_id"]
-        if session_id or ticket_id:
-            mission["latest_events"] = self.get_session_events(
-                session_id=resolved_session_id,
-                ticket_id=ticket_id,
-                limit=16,
-            )["events"]
+        if session_id or resolved_task_ref:
+            event_kwargs: dict[str, Any] = {
+                "session_id": resolved_session_id,
+                "limit": 16,
+            }
+            if resolved_task_ref is not None:
+                event_kwargs["task_ref"] = resolved_task_ref
+            mission["latest_events"] = self.get_session_events(**event_kwargs)["events"]
         mission["project_context"] = {
             "overview_path": "README.md",
             "architecture_path": "docs/ARCHITECTURE.md",
@@ -576,21 +553,26 @@ class MissionService:
         mission["share"] = self._build_share_data(
             mission,
             session_id=resolved_session_id,
-            ticket_id=ticket_id,
+            task_ref=resolved_task_ref,
         )
         return mission
 
     def build_share_payload(
         self,
         session_id: str | None = None,
+        task_ref: str | None = None,
         ticket_id: str | None = None,
         event_name: str | None = None,
     ) -> dict[str, Any]:
-        payload = self.build_dashboard_payload(session_id=session_id, ticket_id=ticket_id)
+        resolved_task_ref = task_ref or ticket_id
+        dashboard_kwargs: dict[str, Any] = {"session_id": session_id}
+        if resolved_task_ref is not None:
+            dashboard_kwargs["task_ref"] = resolved_task_ref
+        payload = self.build_dashboard_payload(**dashboard_kwargs)
         payload["share"] = self._build_share_data(
             payload,
             session_id=session_id,
-            ticket_id=ticket_id,
+            task_ref=resolved_task_ref,
             event_name=event_name,
         )
         return payload
@@ -816,11 +798,18 @@ class MissionService:
         if not self._monitor_data_status("sessions")["available"]:
             return []
         db_path = config.monitor_db_path
+        task_ref_expr = (
+            "COALESCE(task_ref, ticket_id)"
+            if self._table_has_column("sessions", "task_ref")
+            else "ticket_id"
+        )
         with sqlite3.connect(db_path) as conn:
             conn.row_factory = sqlite3.Row
             rows = conn.execute(
                 """
-                SELECT session_id, ticket_id, started_at, ended_at, total_cost_usd,
+                SELECT session_id, """
+                + task_ref_expr
+                + """ AS task_ref, ticket_id, started_at, ended_at, total_cost_usd,
                        total_events, outcome
                 FROM sessions
                 ORDER BY started_at DESC
@@ -828,19 +817,28 @@ class MissionService:
                 """,
                 (limit,),
             ).fetchall()
-        return [dict(row) for row in rows]
+        return [self._normalize_runtime_identity(row) for row in rows]
 
     def _query_single_session(
         self,
         *,
         active_only: bool,
+        task_ref: str | None = None,
         ticket_id: str | None = None,
     ) -> dict[str, Any] | None:
         if not self._monitor_data_status("sessions")["available"]:
             return None
         db_path = config.monitor_db_path
+        resolved_task_ref = task_ref or ticket_id
+        task_ref_expr = (
+            "COALESCE(task_ref, ticket_id)"
+            if self._table_has_column("sessions", "task_ref")
+            else "ticket_id"
+        )
         query = """
-            SELECT session_id, ticket_id, started_at, ended_at, total_cost_usd,
+            SELECT session_id, """
+        query += task_ref_expr
+        query += """ AS task_ref, ticket_id, started_at, ended_at, total_cost_usd,
                    total_events, outcome
             FROM sessions
         """
@@ -848,29 +846,38 @@ class MissionService:
         params: list[Any] = []
         if active_only:
             clauses.append("ended_at IS NULL")
-        if ticket_id:
-            clauses.append("ticket_id = ?")
-            params.append(ticket_id)
+        if resolved_task_ref:
+            clauses.append(f"{task_ref_expr} = ?")
+            params.append(resolved_task_ref)
         if clauses:
             query += " WHERE " + " AND ".join(clauses)
         query += " ORDER BY started_at DESC LIMIT 1"
         with sqlite3.connect(db_path) as conn:
             conn.row_factory = sqlite3.Row
             row = conn.execute(query, params).fetchone()
-        return dict(row) if row else None
+        return self._normalize_runtime_identity(row) if row else None
 
     def _query_events(
         self,
         *,
         session_id: str | None = None,
+        task_ref: str | None = None,
         ticket_id: str | None = None,
         limit: int,
     ) -> list[dict[str, Any]]:
         if not self._monitor_data_status("events")["available"]:
             return []
         db_path = config.monitor_db_path
+        resolved_task_ref = task_ref or ticket_id
+        task_ref_expr = (
+            "COALESCE(task_ref, ticket_id)"
+            if self._table_has_column("events", "task_ref")
+            else "ticket_id"
+        )
         query = """
-            SELECT event_id, session_id, ticket_id, timestamp, event_type, tool_name,
+            SELECT event_id, session_id, """
+        query += task_ref_expr
+        query += """ AS task_ref, ticket_id, timestamp, event_type, tool_name,
                    tool_args_summary, success, duration_ms, cost_usd, error
             FROM events
         """
@@ -879,9 +886,9 @@ class MissionService:
         if session_id:
             clauses.append("session_id = ?")
             params.append(session_id)
-        if ticket_id:
-            clauses.append("ticket_id = ?")
-            params.append(ticket_id)
+        if resolved_task_ref:
+            clauses.append(f"{task_ref_expr} = ?")
+            params.append(resolved_task_ref)
         if clauses:
             query += " WHERE " + " AND ".join(clauses)
         query += " ORDER BY timestamp DESC LIMIT ?"
@@ -889,7 +896,7 @@ class MissionService:
         with sqlite3.connect(db_path) as conn:
             conn.row_factory = sqlite3.Row
             rows = conn.execute(query, params).fetchall()
-        return [dict(row) for row in rows]
+        return [self._normalize_runtime_identity(row) for row in rows]
 
     def _query_latest_queue_entry(self) -> dict[str, Any] | None:
         db_path = config.queue_db_path
@@ -905,20 +912,36 @@ class MissionService:
                 LIMIT 1
                 """
             ).fetchone()
-        return dict(row) if row else None
+        return self._normalize_queue_entry(row) if row else None
 
-    def _build_ticket_summary(
+    def _normalize_queue_entry(self, row: sqlite3.Row | dict[str, Any]) -> dict[str, Any]:
+        payload = dict(row)
+        task_ref = payload.get("task_ref") or payload.get("key")
+        payload["task_ref"] = task_ref
+        payload["key"] = payload.get("key") or task_ref
+        return payload
+
+    def _normalize_runtime_identity(self, row: sqlite3.Row | dict[str, Any]) -> dict[str, Any]:
+        payload = dict(row)
+        task_ref = payload.get("task_ref") or payload.get("ticket_id")
+        payload["task_ref"] = task_ref
+        payload["ticket_id"] = payload.get("ticket_id") or task_ref
+        return payload
+
+    def _build_task_summary(
         self,
-        ticket_key: str | None,
-        queued_ticket: dict[str, Any] | None,
+        task_ref: str | None,
+        queued_task: dict[str, Any] | None,
     ) -> dict[str, Any] | None:
-        if ticket_key is None and queued_ticket is None:
+        if task_ref is None and queued_task is None:
             return None
-        summary = queued_ticket.get("summary") if queued_ticket else None
+        summary = queued_task.get("summary") if queued_task else None
+        resolved_task_ref = task_ref or queued_task["task_ref"]
         return {
-            "key": ticket_key or queued_ticket["key"],
+            "task_ref": resolved_task_ref,
+            "key": queued_task.get("key") if queued_task else resolved_task_ref,
             "summary": summary,
-            "status": queued_ticket.get("status") if queued_ticket else None,
+            "status": queued_task.get("status") if queued_task else None,
         }
 
     def _probe_connections(self) -> dict[str, Any]:
@@ -957,7 +980,7 @@ class MissionService:
         self,
         active_session: dict[str, Any] | None,
         latest_session: dict[str, Any] | None,
-        queued_ticket: dict[str, Any] | None,
+        queued_task: dict[str, Any] | None,
         events: list[dict[str, Any]],
     ) -> MissionPhase:
         outcome = (latest_session or {}).get("outcome")
@@ -971,7 +994,7 @@ class MissionService:
             return "failed"
         if outcome == "done":
             return "completed"
-        if queued_ticket and queued_ticket.get("status") == "pending":
+        if queued_task and queued_task.get("status") == "pending":
             return "queued"
         return "idle"
 
@@ -1025,16 +1048,9 @@ class MissionService:
         summary = str(event.get("tool_args_summary") or "").casefold()
         if any(token in summary for token in ("pytest", "vitest", "ruff", "lint", "test")):
             return "verify"
-        if any(token in summary for token in ("jira", "ticket")):
-            return "jira"
         if any(token in summary for token in ("git push", "deploy", "merge")):
             return "deploy"
         return "agent"
-
-    def _get_jira_client(self) -> JiraClient:
-        if self._jira_client is None:
-            self._jira_client = JiraClient()
-        return self._jira_client
 
     def _validate_source(self, source: str) -> WorkspaceSource:
         allowed: set[WorkspaceSource] = {"all", "code", "docs", "config"}
@@ -1072,6 +1088,7 @@ class MissionService:
         payload: dict[str, Any],
         *,
         session_id: str | None = None,
+        task_ref: str | None = None,
         ticket_id: str | None = None,
         event_name: str | None = None,
     ) -> dict[str, Any]:
@@ -1080,7 +1097,10 @@ class MissionService:
             or (payload.get("active_session") or {}).get("session_id")
             or (payload.get("latest_session") or {}).get("session_id")
         )
-        ticket_key = ticket_id or (payload.get("ticket") or {}).get("key")
+        task_payload = payload.get("task") or payload.get("ticket") or {}
+        resolved_task_ref = (
+            task_ref or ticket_id or task_payload.get("task_ref") or task_payload.get("key")
+        )
         share_id = f"session:{resolved_session_id}" if resolved_session_id else "current"
         if event_name:
             self.share_metrics.record(event_name, share_id)
@@ -1116,7 +1136,8 @@ class MissionService:
             "url": share_url,
             "text": share_text,
             "session_id": resolved_session_id,
-            "ticket_id": ticket_key,
+            "task_ref": resolved_task_ref,
+            "ticket_id": resolved_task_ref,
             "metrics": metrics,
         }
 
@@ -1126,13 +1147,13 @@ class MissionService:
         return f"${value:.4f}"
 
     def _headline_from_payload(self, payload: dict[str, Any]) -> str:
-        ticket = payload.get("ticket") or {}
-        key = ticket.get("key")
-        summary = ticket.get("summary")
-        if key and summary:
-            return f"{key} · {summary}"
-        if key:
-            return str(key)
+        task = payload.get("task") or payload.get("ticket") or {}
+        task_ref = task.get("task_ref") or task.get("key")
+        summary = task.get("summary")
+        if task_ref and summary:
+            return f"{task_ref} · {summary}"
+        if task_ref:
+            return str(task_ref)
         return "No active objective"
 
     def _tone_class(self, status: Any) -> str:

@@ -48,7 +48,7 @@ describe("derivePipelineStage", () => {
     expect(
       derivePipelineStage({
         pipelineStatus: "processing",
-        processingStep: "Creating Jira ticket...",
+        processingStep: "Creating task record...",
         phase: "processing",
         loopActive: false,
       }),

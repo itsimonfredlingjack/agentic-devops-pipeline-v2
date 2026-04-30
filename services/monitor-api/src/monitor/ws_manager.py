@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from dataclasses import asdict
 from typing import Any
 
@@ -21,12 +22,23 @@ def _serialize(obj: Any) -> Any:
 class BroadcastManager:
     """Wraps python-socketio AsyncServer for the /monitor namespace."""
 
-    def __init__(self, sio: socketio.AsyncServer) -> None:
+    def __init__(
+        self,
+        sio: socketio.AsyncServer,
+        authorize: Callable[[dict[str, Any] | None], bool] | None = None,
+    ) -> None:
         self._sio = sio
+        self._authorize = authorize
         self._connected: set[str] = set()
 
         @sio.on("connect", namespace="/monitor")
-        async def on_connect(sid: str, environ: dict[str, Any]) -> None:
+        async def on_connect(
+            sid: str,
+            environ: dict[str, Any],
+            auth: dict[str, Any] | None = None,
+        ) -> None:
+            if self._authorize and not self._authorize(auth):
+                raise ConnectionRefusedError("unauthorized")
             self._connected.add(sid)
             logger.info("Monitor client connected: %s", sid)
 

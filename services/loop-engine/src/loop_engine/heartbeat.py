@@ -12,10 +12,17 @@ logger = logging.getLogger(__name__)
 class HeartbeatReporter:
     """Sends periodic heartbeat events to the monitor API."""
 
-    def __init__(self, monitor_url: str, session_id: str, interval: int = 30) -> None:
+    def __init__(
+        self,
+        monitor_url: str,
+        session_id: str,
+        interval: int = 30,
+        api_token: str = "",
+    ) -> None:
         self._url = f"{monitor_url}/events"
         self._session_id = session_id
         self._interval = interval
+        self._api_token = api_token
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
 
@@ -49,7 +56,14 @@ class HeartbeatReporter:
         req = urllib.request.Request(
             self._url,
             data=payload,
-            headers={"Content-Type": "application/json"},
+            headers={
+                "Content-Type": "application/json",
+                **(
+                    {"Authorization": f"Bearer {self._api_token}"}
+                    if self._api_token
+                    else {}
+                ),
+            },
             method="POST",
         )
         try:

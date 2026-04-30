@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+html,body{margin:0;padding:0}
+body{background:var(--bg);padding:20px;font-family:var(--font-sans);display:flex;gap:18px;align-items:flex-end}
+.chip{background:var(--bg-raised);border:1px solid var(--ink-200);padding:18px;width:120px;height:72px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;border-radius:6px}
+.lbl{font-family:var(--font-mono);font-size:10px;color:var(--fg3);text-transform:uppercase;letter-spacing:0.1em}
+.val{font-family:var(--font-mono);font-size:11px;color:var(--fg1)}
+.s1{box-shadow:var(--shadow-xs)}
+.s2{box-shadow:var(--shadow-sm)}
+.s3{box-shadow:var(--shadow-md)}
+.s4{box-shadow:var(--shadow-lg)}
+</style></head>
+<body>
+<div class="chip s1"><div class="lbl">shadow-xs</div><div class="val">subtle</div></div>
+<div class="chip s2"><div class="lbl">shadow-sm</div><div class="val">cards</div></div>
+<div class="chip s3"><div class="lbl">shadow-md</div><div class="val">hover</div></div>
+<div class="chip s4"><div class="lbl">shadow-lg</div><div class="val">modal</div></div>
+</body></html>

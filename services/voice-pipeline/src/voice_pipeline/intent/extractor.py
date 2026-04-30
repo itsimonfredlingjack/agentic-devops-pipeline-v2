@@ -1,7 +1,7 @@
 """Intent extraction via Ollama (local LLM).
 
 Sends sanitized transcription text to Ollama and parses the structured
-JSON response into a JiraTicketIntent Pydantic model.
+JSON response into a TaskIntent Pydantic model.
 
 VRAM note: Whisper must be unloaded before this module runs.
 The Ollama server manages its own VRAM; we simply call it via HTTP.
@@ -15,7 +15,7 @@ import httpx
 from pydantic import ValidationError
 
 from ..security.sanitizer import detect_prompt_injection_patterns, sanitize_for_llm
-from .models import JiraTicketIntent
+from .models import TaskIntent
 from .prompts import SYSTEM_PROMPT, build_clarification_prompt, build_extraction_prompt
 
 logger = logging.getLogger(__name__)
@@ -26,10 +26,10 @@ class IntentExtractionError(Exception):
 
 
 class IntentExtractor:
-    """Extracts structured Jira ticket intent from voice transcriptions.
+    """Extracts structured task intent from voice transcriptions.
 
     Calls the local Ollama API and parses the JSON response into a
-    JiraTicketIntent model. Detects and rejects prompt injection attempts.
+    TaskIntent model. Detects and rejects prompt injection attempts.
     """
 
     def __init__(
@@ -49,8 +49,8 @@ class IntentExtractor:
             self._client = httpx.AsyncClient(timeout=httpx.Timeout(self.timeout))
         return self._client
 
-    async def extract(self, transcribed_text: str) -> JiraTicketIntent:
-        """Extract Jira ticket intent from transcribed voice text.
+    async def extract(self, transcribed_text: str) -> TaskIntent:
+        """Extract task intent from transcribed voice text.
 
         Applies prompt injection detection before sending to Ollama.
 
@@ -58,7 +58,7 @@ class IntentExtractor:
             transcribed_text: Raw text from Whisper transcription.
 
         Returns:
-            Validated JiraTicketIntent Pydantic model.
+            Validated TaskIntent Pydantic model.
 
         Raises:
             IntentExtractionError: On injection detection, LLM failure, or parse error.
@@ -76,7 +76,7 @@ class IntentExtractor:
         original_text: str,
         questions: list[str],
         answer_text: str,
-    ) -> JiraTicketIntent:
+    ) -> TaskIntent:
         """Re-extract intent after a clarification round.
 
         Combines the original request with the user's answer to the
@@ -88,7 +88,7 @@ class IntentExtractor:
             answer_text: The user's clarification answer.
 
         Returns:
-            Updated JiraTicketIntent (hopefully with lower ambiguity).
+            Updated TaskIntent (hopefully with lower ambiguity).
 
         Raises:
             IntentExtractionError: On injection, LLM failure, or parse error.
@@ -143,8 +143,8 @@ class IntentExtractor:
         data = response.json()
         return data.get("response", "")
 
-    def _parse_response(self, raw: str) -> JiraTicketIntent:
-        """Parse the LLM JSON response into a JiraTicketIntent."""
+    def _parse_response(self, raw: str) -> TaskIntent:
+        """Parse the LLM JSON response into a TaskIntent."""
         cleaned = re.sub(r"```(?:json)?\s*|\s*```", "", raw).strip()
 
         try:
@@ -154,7 +154,7 @@ class IntentExtractor:
             raise IntentExtractionError(f"LLM returned invalid JSON: {exc}") from exc
 
         try:
-            intent = JiraTicketIntent.model_validate(data)
+            intent = TaskIntent.model_validate(data)
         except ValidationError as exc:
             logger.error("Intent validation failed: %s", exc)
             raise IntentExtractionError(f"Intent validation failed: {exc}") from exc

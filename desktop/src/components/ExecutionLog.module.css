@@ -1,0 +1,232 @@
+.panel {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.015);
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-family: var(--font-mono);
+}
+
+.liveIndicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--green);
+  letter-spacing: 0.06em;
+}
+
+.liveDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.failureBanner {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(90deg, var(--red-dim), transparent 60%);
+  border-left: 2px solid var(--red);
+}
+
+.failureLabel {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--red);
+  white-space: nowrap;
+}
+
+.failureText {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.logHeader {
+  display: grid;
+  grid-template-columns: 70px 140px 1fr 100px;
+  gap: 12px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.logRows {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 70px 140px 1fr 100px;
+  gap: 12px;
+  padding: 10px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  border-left: 2px solid transparent;
+  transition: all var(--duration-fast) var(--ease);
+  align-items: center;
+}
+
+.row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.timestamp {
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
+.tool {
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+.target {
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.status {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+}
+
+.duration {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.statusOk {
+  border-left-color: var(--green);
+  background: linear-gradient(90deg, var(--green-dim), transparent 60%);
+}
+
+.statusOk .status {
+  color: var(--green);
+  border-color: rgba(0, 214, 143, 0.3);
+  background: var(--green-dim);
+}
+
+.statusFail {
+  border-left-color: var(--red);
+  background: linear-gradient(90deg, var(--red-dim), transparent 60%);
+}
+
+.statusFail .status {
+  color: var(--red);
+  border-color: rgba(255, 71, 87, 0.3);
+  background: var(--red-dim);
+}
+
+.statusFail .tool {
+  color: var(--red);
+}
+
+.statusRunning {
+  border-left-color: var(--cyan);
+  background: linear-gradient(90deg, var(--cyan-dim), transparent 60%);
+}
+
+.statusRunning .status {
+  color: var(--cyan);
+  border-color: rgba(0, 212, 255, 0.3);
+  background: var(--cyan-dim);
+}
+
+.statusQueued {
+  border-left-color: var(--purple);
+  background: linear-gradient(90deg, var(--purple-dim), transparent 60%);
+}
+
+.statusQueued .status {
+  color: var(--purple);
+  border-color: rgba(139, 92, 246, 0.3);
+  background: var(--purple-dim);
+}
+
+.statusWaiting {
+  border-left-color: var(--amber);
+  background: linear-gradient(90deg, var(--amber-dim), transparent 60%);
+}
+
+.statusWaiting .status {
+  color: var(--amber);
+  border-color: rgba(255, 159, 67, 0.3);
+  background: var(--amber-dim);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@media (max-width: 768px) {
+  .logHeader,
+  .row {
+    grid-template-columns: 60px 100px 1fr 80px;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+}

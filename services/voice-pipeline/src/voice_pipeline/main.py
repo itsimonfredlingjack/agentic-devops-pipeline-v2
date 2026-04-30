@@ -2,12 +2,11 @@
 
 Entry points:
   POST /api/transcribe         — transcribe audio file → text
-  POST /api/extract            — extract Jira intent from text
-  POST /api/pipeline/run       — full pipeline: text/audio → Jira ticket
-  POST /api/webhook/jira       — receive Jira webhook events
-  GET  /api/loop/queue         — pending tickets for Ralph Loop
-  POST /api/loop/started       — mark ticket as started by loop runner
-  POST /api/loop/completed     — mark ticket as completed by loop runner
+  POST /api/extract            — extract task intent from text
+  POST /api/pipeline/run       — full pipeline: text/audio → structured task draft
+  GET  /api/loop/queue         — pending tasks for Ralph Loop
+  POST /api/loop/started       — mark task as started by loop runner
+  POST /api/loop/completed     — mark task as completed by loop runner
   WS   /ws/status              — real-time pipeline status broadcast
   GET  /health                 — health check
 
@@ -17,25 +16,31 @@ Run with:
 
 import asyncio
 import logging
+import secrets
 import tempfile
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
 from fastapi import (
+    Depends,
     FastAPI,
     File,
+    Header,
     HTTPException,
     UploadFile,
     WebSocket,
     WebSocketDisconnect,
+    status,
 )
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, model_validator
 
 from .config import Settings, get_settings
+from .demo_tasks import DemoTaskStore
 from .intent.extractor import IntentExtractionError, IntentExtractor
-from .intent.models import JiraTicketIntent
+from .intent.models import TaskIntent
+from .linear.client import AsyncLinearClient, LinearAPIError, LinearIssue
 from .loop_queue import LoopQueue
 from .persistent_loop_queue import PersistentLoopQueue
 from .pipeline.orchestrator import PipelineOrchestrator
@@ -48,6 +53,7 @@ logger = logging.getLogger(__name__)
 
 # Module-level sentinel for File() default (avoids B008 lint error)
 _AUDIO_FILE = File(..., description="Audio file (WAV/MP3/OGG/FLAC)")
+_SETTINGS_DEP = Depends(get_settings)
 
 # ---------------------------------------------------------------------------
 # WebSocket connection manager
@@ -99,6 +105,28 @@ _orchestrator: PipelineOrchestrator | None = None
 _loop_queue: LoopQueue | None = None
 _transcriber: Transcriber | None = None
 _extractor: IntentExtractor | None = None
+_linear: AsyncLinearClient | None = None
+_demo_tasks: DemoTaskStore | None = None
+
+
+def require_local_api_token(
+    authorization: str | None = Header(default=None),
+    settings: Settings = _SETTINGS_DEP,
+) -> None:
+    """Require the local desktop bearer token for task read/write APIs."""
+    expected = settings.sejfa_local_api_token
+    if not expected:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="SEJFA_LOCAL_API_TOKEN is required for task APIs.",
+        )
+
+    scheme, _, token = (authorization or "").partition(" ")
+    if scheme.lower() != "bearer" or not secrets.compare_digest(token, expected):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid task API token.",
+        )
 
 
 def _get_ws_manager() -> WebSocketManager:
@@ -119,6 +147,13 @@ def _get_orchestrator() -> PipelineOrchestrator:
 def _get_loop_queue() -> LoopQueue:
     assert _loop_queue is not None, "App not started"
     return _loop_queue
+
+
+def _get_demo_tasks() -> DemoTaskStore:
+    global _demo_tasks
+    if _demo_tasks is None:
+        _demo_tasks = DemoTaskStore()
+    return _demo_tasks
 
 
 def _get_transcriber(settings: Settings) -> Transcriber:
@@ -148,6 +183,61 @@ def _get_extractor(settings: Settings) -> IntentExtractor:
     return _extractor
 
 
+def _get_linear(settings: Settings) -> AsyncLinearClient:
+    global _linear
+    if _linear is None:
+        _linear = AsyncLinearClient(settings)
+    return _linear
+
+
+def _map_linear_priority(priority: int | None) -> str:
+    if priority == 1:
+        return "urgent"
+    if priority == 2:
+        return "high"
+    if priority == 3:
+        return "medium"
+    if priority == 4:
+        return "low"
+    return "none"
+
+
+def _map_linear_status(state_type: str, state_name: str) -> str:
+    normalized_type = state_type.lower()
+    normalized_name = state_name.lower()
+    if normalized_type == "completed":
+        return "done"
+    if normalized_type == "canceled":
+        return "canceled"
+    if normalized_type == "backlog":
+        return "backlog"
+    if normalized_type == "unstarted":
+        return "todo"
+    if normalized_type == "started":
+        if "review" in normalized_name:
+            return "review"
+        return "in-progress"
+    return "backlog"
+
+
+def _linear_issue_to_task_payload(issue: LinearIssue) -> dict[str, Any]:
+    return {
+        "id": issue.task_ref,
+        "linear_id": issue.id,
+        "title": issue.title,
+        "status": _map_linear_status(issue.state_type, issue.state_name),
+        "priority": _map_linear_priority(issue.priority),
+        "assignee": issue.assignee,
+        "labels": issue.labels,
+        "source": "linear",
+        "source_label": issue.team_name or "Linear",
+        "source_type": "system-of-record",
+        "issue_type": None,
+        "description": issue.description,
+        "url": issue.url,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Lifespan
 # ---------------------------------------------------------------------------
@@ -156,13 +246,22 @@ def _get_extractor(settings: Settings) -> IntentExtractor:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan: initialise and teardown singletons."""
-    global _ws_manager, _monitor, _orchestrator, _loop_queue, _transcriber, _extractor
+    global \
+        _ws_manager, \
+        _monitor, \
+        _orchestrator, \
+        _loop_queue, \
+        _transcriber, \
+        _extractor, \
+        _linear, \
+        _demo_tasks
 
     settings = get_settings()
 
     _ws_manager = WebSocketManager()
     _monitor = MonitorService()
     _loop_queue = PersistentLoopQueue(db_path=settings.queue_db_path)
+    _demo_tasks = DemoTaskStore()
 
     async def broadcast(state: dict[str, Any]) -> None:
         await _ws_manager.broadcast(state)  # type: ignore[union-attr]
@@ -172,6 +271,7 @@ async def lifespan(app: FastAPI):
         monitor=_monitor,
         broadcast=broadcast,
         loop_queue=_loop_queue,
+        demo_tasks=_demo_tasks,
     )
 
     logger.info(
@@ -188,6 +288,8 @@ async def lifespan(app: FastAPI):
         await _orchestrator.close()
     if _extractor:
         await _extractor.close()
+    if _linear:
+        await _linear.close()
     logger.info("Voice Pipeline shut down")
 
 
@@ -200,15 +302,16 @@ def create_app() -> FastAPI:
     settings = get_settings()
 
     app = FastAPI(
-        title="SEJFA Voice Pipeline",
-        description="Transcribes voice → extracts Jira intent → creates Jira ticket",
+        title="SEJFA Voice Intake Pipeline",
+        description="Transcribes voice -> extracts structured task intent -> previews or saves task records with Linear as the v1 tracker",
         version="0.1.0",
         lifespan=lifespan,
     )
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=settings.cors_origins,
+        allow_origin_regex=settings.sejfa_cors_origin_regex,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -223,9 +326,11 @@ def create_app() -> FastAPI:
         """Health check endpoint."""
         return {
             "status": "ok",
+            "mode": settings.effective_mode,
+            "task_backend": "demo" if settings.demo_mode else "linear",
             "whisper_model": settings.whisper_model,
             "ollama_model": settings.ollama_model,
-            "jira_configured": settings.jira_configured,
+            "linear_configured": settings.linear_configured,
             "ws_connections": len(_get_ws_manager()._connections),
         }
 
@@ -301,9 +406,9 @@ def create_app() -> FastAPI:
     class ExtractRequest(BaseModel):
         text: str
 
-    @app.post("/api/extract", tags=["intent"], response_model=JiraTicketIntent)
-    async def extract_intent(request: ExtractRequest) -> JiraTicketIntent:
-        """Extract Jira ticket intent from pre-transcribed text.
+    @app.post("/api/extract", tags=["intent"], response_model=TaskIntent)
+    async def extract_intent(request: ExtractRequest) -> TaskIntent:
+        """Extract the current structured task intent from pre-transcribed text.
 
         Applies prompt injection detection before calling Ollama.
         """
@@ -343,7 +448,7 @@ def create_app() -> FastAPI:
         Accepts JSON body: {"text": "..."} with the transcribed voice text.
 
         Returns either:
-          - {"ticket_key", "ticket_url", "summary", "transcribed_text"} on success
+          - {"task_ref", "task_url", "summary", "transcribed_text"} on success
           - {"status": "clarification_needed", "session_id", "questions", ...} if ambiguous
         """
         if not request.text.strip():
@@ -385,7 +490,7 @@ def create_app() -> FastAPI:
         Accepts JSON body: {"session_id": "...", "text": "..."}.
         The session_id comes from a previous clarification_needed response.
 
-        Returns either a ticket result or another clarification_needed.
+        Returns either a task result or another clarification_needed.
         """
         if not request.text.strip():
             raise HTTPException(status_code=400, detail="text must not be empty")
@@ -405,7 +510,7 @@ def create_app() -> FastAPI:
 
     @app.post("/api/pipeline/approve", tags=["pipeline"])
     async def approve_pipeline(request: ApproveRequest) -> dict[str, Any]:
-        """Approve a previewed pipeline session and create the Jira ticket."""
+        """Approve a previewed pipeline session and create the current tracker task."""
         orchestrator = _get_orchestrator()
         try:
             result = await orchestrator.continue_with_approval(
@@ -431,142 +536,214 @@ def create_app() -> FastAPI:
         return result
 
     # -----------------------------------------------------------------------
-    # Jira webhook
+    # Linear task read/write
     # -----------------------------------------------------------------------
 
-    @app.post("/api/webhook/jira", tags=["webhook"])
-    async def jira_webhook(payload: dict[str, Any]) -> dict[str, Any]:
-        """Receive Jira webhook events.
+    class TaskSaveRequest(BaseModel):
+        title: str = Field(..., min_length=3, max_length=255)
+        description: str = Field(default="")
+        priority: str = Field(default="none")
 
-        Filters for issue_created events on VOICE_INITIATED-labelled tickets.
-        """
-        event_type = payload.get("webhookEvent", "")
-        issue = payload.get("issue", {})
-        fields = issue.get("fields", {})
-        labels: list[str] = fields.get("labels", [])
+    def _priority_to_linear(priority: str) -> int | None:
+        normalized = priority.strip().lower()
+        if normalized == "urgent":
+            return 1
+        if normalized == "high":
+            return 2
+        if normalized == "medium":
+            return 3
+        if normalized == "low":
+            return 4
+        return None
 
-        if event_type == "jira:issue_created" and "VOICE_INITIATED" in labels:
-            issue_key = issue.get("key", "unknown")
-            summary = fields.get("summary", "")
-            logger.info("VOICE_INITIATED ticket created: %s — %s", issue_key, summary)
-            _get_monitor().add_event(
-                PipelineStatus.DONE,
-                f"Webhook confirmed ticket: {issue_key}",
+    @app.get("/api/tasks", tags=["tasks"], dependencies=[Depends(require_local_api_token)])
+    async def list_tasks(max_results: int = 20) -> list[dict[str, Any]]:
+        """List task records from the active task backend for the desktop inbox."""
+        if settings.demo_mode:
+            return _get_demo_tasks().list_tasks(max_results=max_results)
+
+        if not settings.linear_configured:
+            raise HTTPException(
+                status_code=503,
+                detail="Linear is not configured. Set LINEAR_API_KEY to enable the task inbox.",
             )
-            return {"status": "processed", "issue_key": issue_key}
 
-        return {"status": "ignored", "event": event_type}
-
-    # -----------------------------------------------------------------------
-    # Jira proxy (for desktop — avoids CORS)
-    # -----------------------------------------------------------------------
-
-    @app.get("/api/jira/issues", tags=["jira"])
-    async def jira_list_issues(
-        project: str | None = None,
-        max_results: int = 20,
-    ) -> list[dict[str, Any]]:
-        """Proxy: list Jira issues for the desktop app."""
         try:
-            from src.sejfa.integrations.jira_client import get_jira_client
+            issues = await _get_linear(settings).list_issues(max_results=max_results)
+        except LinearAPIError as exc:
+            raise HTTPException(status_code=502, detail=f"Linear unavailable: {exc}") from exc
 
-            client = get_jira_client()
-            project_key = project or settings.jira_project_key
-            jql = f"project = {project_key} ORDER BY updated DESC"
-            issues = client.search_issues(jql, max_results=max_results)
-            return [
-                {
-                    "key": i.key,
-                    "summary": i.summary,
-                    "status": i.status,
-                    "issue_type": i.issue_type,
-                    "priority": i.priority,
-                    "assignee": i.assignee,
-                    "labels": i.labels,
-                }
-                for i in issues
-            ]
-        except Exception as e:
-            raise HTTPException(status_code=502, detail=f"Jira unavailable: {e}") from e
+        return [_linear_issue_to_task_payload(issue) for issue in issues]
 
-    @app.get("/api/jira/issue/{key}", tags=["jira"])
-    async def jira_get_issue(key: str) -> dict[str, Any]:
-        """Proxy: fetch a single Jira issue for the desktop app."""
+    @app.get(
+        "/api/tasks/{task_id}",
+        tags=["tasks"],
+        dependencies=[Depends(require_local_api_token)],
+    )
+    async def get_task(task_id: str) -> dict[str, Any]:
+        """Fetch a single task record from the active task backend."""
+        if settings.demo_mode:
+            task = _get_demo_tasks().get_task(task_id)
+            if task is None:
+                raise HTTPException(status_code=404, detail=f"Task not found: {task_id}")
+            return task
+
+        if not settings.linear_configured:
+            raise HTTPException(
+                status_code=503,
+                detail="Linear is not configured. Set LINEAR_API_KEY to fetch task details.",
+            )
+
         try:
-            from src.sejfa.integrations.jira_client import get_jira_client
+            issue = await _get_linear(settings).get_issue(task_id)
+        except LinearAPIError as exc:
+            raise HTTPException(status_code=502, detail=f"Linear unavailable: {exc}") from exc
 
-            client = get_jira_client()
-            issue = client.get_issue(key)
-            return {
-                "key": issue.key,
-                "summary": issue.summary,
-                "description": issue.description,
-                "status": issue.status,
-                "issue_type": issue.issue_type,
-                "priority": issue.priority,
-                "assignee": issue.assignee,
-                "reporter": issue.reporter,
-                "labels": issue.labels,
-            }
-        except Exception as e:
-            raise HTTPException(status_code=502, detail=f"Jira unavailable: {e}") from e
+        return _linear_issue_to_task_payload(issue)
+
+    @app.post("/api/tasks", tags=["tasks"], dependencies=[Depends(require_local_api_token)])
+    async def create_task(request: TaskSaveRequest) -> dict[str, Any]:
+        """Create a new task from the desktop draft composer."""
+        if settings.demo_mode:
+            return _get_demo_tasks().create_task(
+                title=request.title,
+                description=request.description,
+                priority=request.priority,
+            )
+
+        if not settings.linear_configured:
+            raise HTTPException(
+                status_code=503,
+                detail="Linear is not configured. Set LINEAR_API_KEY to save tasks.",
+            )
+
+        try:
+            issue = await _get_linear(settings).create_issue(
+                title=request.title.strip(),
+                description=request.description.strip() or None,
+                priority=_priority_to_linear(request.priority),
+            )
+        except LinearAPIError as exc:
+            raise HTTPException(status_code=502, detail=f"Linear unavailable: {exc}") from exc
+
+        return _linear_issue_to_task_payload(issue)
+
+    @app.patch(
+        "/api/tasks/{task_id}",
+        tags=["tasks"],
+        dependencies=[Depends(require_local_api_token)],
+    )
+    async def update_task(task_id: str, request: TaskSaveRequest) -> dict[str, Any]:
+        """Update an existing task from the desktop dossier."""
+        if settings.demo_mode:
+            try:
+                return _get_demo_tasks().update_task(
+                    task_id=task_id,
+                    title=request.title,
+                    description=request.description,
+                    priority=request.priority,
+                )
+            except KeyError as exc:
+                raise HTTPException(status_code=404, detail=f"Task not found: {task_id}") from exc
+
+        if not settings.linear_configured:
+            raise HTTPException(
+                status_code=503,
+                detail="Linear is not configured. Set LINEAR_API_KEY to update tasks.",
+            )
+
+        try:
+            issue = await _get_linear(settings).update_issue(
+                task_id,
+                title=request.title.strip(),
+                description=request.description.strip(),
+                priority=_priority_to_linear(request.priority),
+            )
+        except LinearAPIError as exc:
+            raise HTTPException(status_code=502, detail=f"Linear unavailable: {exc}") from exc
+
+        return _linear_issue_to_task_payload(issue)
 
     # -----------------------------------------------------------------------
     # Ralph Loop queue
     # -----------------------------------------------------------------------
 
     class LoopStartedRequest(BaseModel):
-        key: str
+        task_ref: str | None = None
+        key: str | None = None
+
+        @model_validator(mode="after")
+        def normalize_task_ref(self) -> "LoopStartedRequest":
+            if self.task_ref is None and self.key is not None:
+                self.task_ref = self.key
+            return self
 
     class LoopCompletedRequest(BaseModel):
-        key: str
+        task_ref: str | None = None
+        key: str | None = None
         success: bool
+
+        @model_validator(mode="after")
+        def normalize_task_ref(self) -> "LoopCompletedRequest":
+            if self.task_ref is None and self.key is not None:
+                self.task_ref = self.key
+            return self
 
     @app.get("/api/loop/queue", tags=["loop"])
     async def get_loop_queue() -> list[dict[str, str]]:
-        """Return pending tickets waiting for Ralph Loop pickup."""
+        """Return pending tasks waiting for Ralph Loop pickup."""
         return _get_loop_queue().get_pending()
 
     @app.post("/api/loop/started", tags=["loop"])
     async def loop_started(request: LoopStartedRequest) -> dict[str, str]:
-        """Mark a ticket as started by the loop runner."""
+        """Mark a queued task as started by the loop runner."""
         queue = _get_loop_queue()
-        queue.mark_started(request.key)
+        task_ref = request.task_ref or request.key
+        if task_ref is None:
+            raise HTTPException(status_code=400, detail="task_ref is required")
+        queue.mark_started(task_ref)
 
         if _ws_manager:
-            await _ws_manager.broadcast({"type": "loop_started", "issue_key": request.key})
+            await _ws_manager.broadcast({"type": "loop_started", "task_ref": task_ref})
 
-        return {"status": "ok", "key": request.key}
+        return {"status": "ok", "task_ref": task_ref}
 
     @app.post("/api/loop/completed", tags=["loop"])
     async def loop_completed(request: LoopCompletedRequest) -> dict[str, str]:
-        """Mark a ticket as completed by the loop runner."""
+        """Mark a queued task as completed by the loop runner."""
         queue = _get_loop_queue()
-        queue.mark_completed(request.key, request.success)
+        task_ref = request.task_ref or request.key
+        if task_ref is None:
+            raise HTTPException(status_code=400, detail="task_ref is required")
+        queue.mark_completed(task_ref, request.success)
 
         if _ws_manager:
             await _ws_manager.broadcast(
                 {
                     "type": "loop_completed",
-                    "issue_key": request.key,
+                    "task_ref": task_ref,
                     "success": request.success,
                 }
             )
 
-        return {"status": "ok", "key": request.key, "success": str(request.success)}
+        return {
+            "status": "ok",
+            "task_ref": task_ref,
+            "success": str(request.success),
+        }
 
     @app.get("/api/loop/failed", tags=["loop"])
     async def get_loop_failed() -> list[dict]:
-        """Return all failed tickets with retry counts."""
+        """Return all failed tasks with retry counts."""
         return _get_loop_queue().get_failed()
 
-    @app.post("/api/loop/retry/{key}", tags=["loop"])
-    async def retry_loop_ticket(key: str) -> dict[str, str]:
-        """Reset a failed ticket back to pending for retry."""
+    @app.post("/api/loop/retry/{task_ref}", tags=["loop"])
+    async def retry_loop_task(task_ref: str) -> dict[str, str]:
+        """Reset a failed task back to pending for retry."""
         queue = _get_loop_queue()
-        if queue.reset_to_pending(key):
-            return {"status": "ok", "key": key}
-        return {"status": "not_found", "key": key}
+        if queue.reset_to_pending(task_ref):
+            return {"status": "ok", "task_ref": task_ref}
+        return {"status": "not_found", "task_ref": task_ref}
 
     return app
 

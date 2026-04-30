@@ -10,7 +10,7 @@ The core loop is the product:
 
 ```text
 incoming task or voice input
-  -> Jira issue / queue item
+  -> existing Linear task or transitional queue item
   -> Ralph Loop execution
   -> verification gates
   -> review feedback
@@ -41,12 +41,13 @@ Prefer the current repo and script behavior over older planning docs.
 - The ChatGPT companion server lives in `src/chatgpt_companion/`.
 - The desktop app lives in `desktop/`.
 - The root repo does not define its core workflow through `.github/workflows/`; use the checked-in scripts as the authoritative workflow surface.
+- Linear is the intended v1 task source of truth.
 
 ## Preferred Workflows
 
 ### 1. Start-task workflow
 
-Use this when beginning ticket work or any Ralph Loop session:
+Use this when beginning task work or any Ralph Loop session:
 
 ```bash
 bash scripts/preflight.sh
@@ -56,7 +57,6 @@ bash scripts/preflight.sh
 
 - git cleanliness
 - branch position on `main` or `master`
-- Jira connectivity
 - GitHub auth
 - required local files such as `.claude/settings.local.json` and `CURRENT_TASK.md`
 
@@ -75,7 +75,7 @@ Use the repo helpers instead of inventing ad hoc naming:
 Branch names follow:
 
 ```text
-{type}/{JIRA-ID}-{slug}
+{type}/{TASK-REF}-{slug}
 ```
 
 Supported branch types:
@@ -176,7 +176,7 @@ LOOP_RUNNER_REPO_DIR=/absolute/path/to/repo
 LOOP_RUNNER_POLL_INTERVAL=10
 ```
 
-The loop runner polls `/api/loop/queue`, marks work started, runs `claude --print "/start-task $ticket_key"`, then reports completion back to the backend.
+The loop runner polls `/api/loop/queue`, marks work started, runs `claude --print "/start-task $task_ref"`, then reports completion back to the backend.
 
 ### 6. Remote inference workflow
 

@@ -1,0 +1,378 @@
+<style>
+  .layout-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 22px;
+  }
+
+  .direction-card {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(13, 17, 22, 0.95), rgba(10, 12, 16, 0.98));
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  }
+
+  .direction-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(181, 142, 88, 0.45);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  }
+
+  .direction-card.selected {
+    border-color: rgba(181, 142, 88, 0.7);
+    box-shadow: 0 0 0 1px rgba(181, 142, 88, 0.5), 0 18px 40px rgba(0, 0, 0, 0.35);
+  }
+
+  .direction-top {
+    padding: 16px 16px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(229, 231, 235, 0.72);
+  }
+
+  .eyebrow strong {
+    color: #d6b27a;
+    font-weight: 600;
+  }
+
+  .direction-top h3 {
+    margin: 10px 0 8px;
+    font-size: 20px;
+    line-height: 1.2;
+  }
+
+  .direction-top p {
+    margin: 0;
+    color: rgba(226, 232, 240, 0.76);
+    line-height: 1.55;
+    font-size: 14px;
+  }
+
+  .mock-shell {
+    padding: 16px;
+    background:
+      radial-gradient(circle at 65% 5%, rgba(181, 142, 88, 0.12), transparent 28%),
+      linear-gradient(180deg, rgba(8, 10, 13, 0.96), rgba(7, 9, 12, 0.96));
+  }
+
+  .shell-grid {
+    display: grid;
+    gap: 10px;
+    min-height: 280px;
+  }
+
+  .shell-grid.deck-a {
+    grid-template-columns: 0.8fr 1.35fr 1.05fr;
+  }
+
+  .shell-grid.deck-b {
+    grid-template-columns: 1.45fr 0.95fr;
+    grid-template-rows: 1fr auto;
+  }
+
+  .shell-grid.deck-c {
+    grid-template-columns: 0.82fr 1.18fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .panel {
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(18, 22, 28, 0.88);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .panel-title {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(203, 213, 225, 0.56);
+  }
+
+  .band {
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .band.gold {
+    background: linear-gradient(90deg, rgba(181, 142, 88, 0.82), rgba(181, 142, 88, 0.22));
+  }
+
+  .band.blue {
+    background: linear-gradient(90deg, rgba(96, 165, 250, 0.82), rgba(96, 165, 250, 0.16));
+  }
+
+  .band.red {
+    background: linear-gradient(90deg, rgba(248, 113, 113, 0.78), rgba(248, 113, 113, 0.14));
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .chat-bubble {
+    min-height: 32px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .chat-bubble.user {
+    margin-left: 18%;
+    background: rgba(181, 142, 88, 0.18);
+  }
+
+  .chat-bubble.loop {
+    margin-right: 10%;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .chat-composer {
+    margin-top: auto;
+    height: 42px;
+    border-radius: 14px;
+    border: 1px solid rgba(181, 142, 88, 0.28);
+    background: rgba(181, 142, 88, 0.08);
+  }
+
+  .terminal-row {
+    height: 16px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .terminal-row.active {
+    background: linear-gradient(90deg, rgba(125, 211, 252, 0.24), rgba(255, 255, 255, 0.06));
+  }
+
+  .terminal-row.error {
+    background: linear-gradient(90deg, rgba(248, 113, 113, 0.18), rgba(255, 255, 255, 0.05));
+  }
+
+  .side-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mini-pill {
+    height: 24px;
+    min-width: 78px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .direction-bottom {
+    padding: 14px 16px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .direction-bottom ul {
+    margin: 0;
+    padding-left: 18px;
+    color: rgba(226, 232, 240, 0.72);
+    line-height: 1.55;
+    font-size: 13px;
+  }
+
+  .recommendation {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(181, 142, 88, 0.22);
+    background: linear-gradient(180deg, rgba(181, 142, 88, 0.08), rgba(181, 142, 88, 0.03));
+    color: rgba(239, 231, 217, 0.84);
+  }
+
+  .recommendation strong {
+    color: #d6b27a;
+  }
+
+  @media (max-width: 1200px) {
+    .layout-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<h2>Chat-First Cockpit Direction</h2>
+<p class="subtitle">You already chose chat-first. This step is only about which shell makes chat feel primary without losing trust, telemetry, and mission context.</p>
+
+<div class="layout-grid">
+  <div class="direction-card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="direction-top">
+      <div class="eyebrow"><strong>Recommended</strong> Option A</div>
+      <h3>Split Command Deck</h3>
+      <p>Compact controls on the left, execution trace in the center, dedicated loop chat on the right. Feels like an operator cockpit, not a blank dashboard.</p>
+    </div>
+    <div class="mock-shell">
+      <div class="shell-grid deck-a">
+        <div class="panel side-rail">
+          <div class="panel-title">Mission Rail</div>
+          <div class="band gold"></div>
+          <div class="pill-row">
+            <div class="mini-pill"></div>
+            <div class="mini-pill"></div>
+          </div>
+          <div class="stack">
+            <div class="terminal-row"></div>
+            <div class="terminal-row"></div>
+            <div class="terminal-row"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Execution Feed</div>
+          <div class="band blue"></div>
+          <div class="stack">
+            <div class="terminal-row active"></div>
+            <div class="terminal-row"></div>
+            <div class="terminal-row"></div>
+            <div class="terminal-row error"></div>
+            <div class="terminal-row"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Loop Chat</div>
+          <div class="stack">
+            <div class="chat-bubble user"></div>
+            <div class="chat-bubble loop"></div>
+            <div class="chat-bubble loop"></div>
+            <div class="chat-bubble user"></div>
+          </div>
+          <div class="chat-composer"></div>
+        </div>
+      </div>
+    </div>
+    <div class="direction-bottom">
+      <ul>
+        <li>Best balance of chat, telemetry, and intervention.</li>
+        <li>Preserves stable orientation while the run evolves.</li>
+        <li>Fits your existing three-column implementation direction.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="direction-card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="direction-top">
+      <div class="eyebrow">Option B</div>
+      <h3>Conversation Bridge</h3>
+      <p>Make chat the wide primary canvas and push the terminal into a shorter operational strip underneath. More modern, less obviously “monitoring tool.”</p>
+    </div>
+    <div class="mock-shell">
+      <div class="shell-grid deck-b">
+        <div class="panel" style="grid-column: 1 / span 1; grid-row: 1 / span 2;">
+          <div class="panel-title">Loop Thread</div>
+          <div class="band gold"></div>
+          <div class="stack">
+            <div class="chat-bubble user"></div>
+            <div class="chat-bubble loop"></div>
+            <div class="chat-bubble loop"></div>
+            <div class="chat-bubble user"></div>
+            <div class="chat-bubble loop"></div>
+          </div>
+          <div class="chat-composer"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Mission Context</div>
+          <div class="pill-row">
+            <div class="mini-pill"></div>
+            <div class="mini-pill"></div>
+          </div>
+          <div class="stack">
+            <div class="terminal-row"></div>
+            <div class="terminal-row"></div>
+            <div class="terminal-row"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Terminal Strip</div>
+          <div class="stack">
+            <div class="terminal-row active"></div>
+            <div class="terminal-row"></div>
+            <div class="terminal-row error"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="direction-bottom">
+      <ul>
+        <li>Strongest “chat with the loop” feeling.</li>
+        <li>Cleaner empty state than the current shell.</li>
+        <li>Risk: execution trace becomes too secondary for operators.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="direction-card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="direction-top">
+      <div class="eyebrow">Option C</div>
+      <h3>Intervention Stack</h3>
+      <p>Keep terminal and blockers dominant in the middle, but turn the left rail into a tighter mission stack and the right rail into a narrower control chat.</p>
+    </div>
+    <div class="mock-shell">
+      <div class="shell-grid deck-c">
+        <div class="panel">
+          <div class="panel-title">Mission Stack</div>
+          <div class="band gold"></div>
+          <div class="stack">
+            <div class="terminal-row"></div>
+            <div class="terminal-row"></div>
+            <div class="terminal-row"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Control Chat</div>
+          <div class="stack">
+            <div class="chat-bubble loop"></div>
+            <div class="chat-bubble user"></div>
+          </div>
+          <div class="chat-composer"></div>
+        </div>
+        <div class="panel" style="grid-column: 1 / span 2;">
+          <div class="panel-title">Execution + Alerts</div>
+          <div class="band red"></div>
+          <div class="stack">
+            <div class="terminal-row active"></div>
+            <div class="terminal-row"></div>
+            <div class="terminal-row error"></div>
+            <div class="terminal-row"></div>
+            <div class="terminal-row"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="direction-bottom">
+      <ul>
+        <li>Best if you want trust and intervention clarity above all else.</li>
+        <li>Feels more like a control room than a chat workspace.</li>
+        <li>Risk: does not solve the “I want to use this” emotional issue as strongly.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="recommendation">
+  <strong>My read:</strong> Option A is the right base. It keeps chat visibly first-class without demoting the execution feed into a hidden or toy-like secondary panel.
+</div>

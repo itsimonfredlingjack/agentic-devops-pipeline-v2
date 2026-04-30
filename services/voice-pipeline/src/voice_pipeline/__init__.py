@@ -1,1 +1,1 @@
-# Voice Pipeline - SEJFA Voice-to-Jira integration
+# Voice Pipeline - SEJFA voice/task intake integration

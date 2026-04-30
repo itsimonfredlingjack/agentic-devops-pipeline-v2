@@ -1,0 +1,216 @@
+
+
+
+
+Inlämningsuppgift
+Agil Mjukvaruutveckling och driftsättning
+
+Projekt: SEJFA — Agentic DevOps Loop
+
+
+Grupp 1
+Simon Fredling Jack
+
+Februari 2026
+
+
+
+
+Uppgift 1 — Utvecklingsprocess och arbetsmetodik
+
+1. Inledning
+1.1 Syfte
+Syftet med detta dokument är att beskriva utvecklingsprocessen och arbetsmetodiken i projektet SEJFA, en Flask-baserad webbapplikation som driftsätts på Azure. Dokumentet visar hur agila principer, modern DevOps-praxis och AI-driven automation samverkar för att möjliggöra effektiv och kvalitetssäkrad mjukvaruutveckling.
+1.2 Projektomfattning
+SEJFA-projektet omfattar en fullständig webblösning med fyra moduler: newsflash (nyhetshantering med SQLAlchemy), expense_tracker (utgiftshantering, in-memory), core (admin-autentisering) och monitor (hälsokontroll). Applikationen följer en trelagers-arkitektur och driftsätts via Docker-containrar till Azure Container Apps med en CI/CD-pipeline som körs via GitHub Actions.
+Det som gör projektet unikt är implementationen av en Agentic DevOps Loop — ett autonomt workflow där AI-agenter (Claude Code med Ralph Wiggum Loop-teknik) tar ägarskap över hela utvecklingslivscykeln, från Jira-ticket till produktion, utan mänsklig intervention.
+1.3 Målgrupp
+Dokumentet riktar sig till kursledningen, medstudenter och framtida IT-projektledare som vill förstå hur AI-agenter kan integreras i en agil utvecklingsprocess.
+2. Den inre utvecklingsloopen (Inner Development Loop)
+2.1 Jira och produktbacklog
+Projektets arbete styrs av en Jira-backlog. Varje uppgift representeras som ett Jira-issue med projektprefix GE (Grupp Ett). Agenten ansluter till Jira via Model Context Protocol (MCP), ett JSON-RPC 2.0-baserat protokoll som ger AI-agenten direkt åtkomst till Jira-data. När en uppgift startas hämtar agenten issue-detaljer, uppdaterar status till In Progress och skapar en feature-branch med namnmönstret feature/GE-xxx-beskrivning.
+CURRENT_TASK.md fungerar som agentens filbaserade långtidsminne och säkerställer att kontexten överlever även om agentens kontextfönster komprimeras.
+2.2 Git och GitHub — branchstrategi
+Projektet använder en trunk-based-inspirerad modell med feature-branches:
+main — produktionsgren, alltid i driftsättningsbart skick
+feature/GE-xxx-* — utvecklingsbrancher kopplade till Jira-tickets
+bugfix/GE-xxx-* — felrättningsbrancher
+hotfix/GE-xxx-* — akuta fixar direkt mot main
+Branchnamn valideras med regex: ^(feature|bugfix|hotfix)/([A-Z]+-\d+)-([a-z0-9-]+). Varje commit knyts till rätt Jira-ticket via smart commits, till exempel: GE-42 #done Implement subscriber CRUD.
+2.3 VS Code och utvecklingsmiljö
+Claude Code fungerar som den primära utvecklingsmiljön — en terminalbaserad AI-agent från Anthropic med direkt åtkomst till filsystem och shell. Till skillnad från traditionella kodassistenter som ger förslag, exekverar Claude Code hela operationer autonomt: läser filer, skriver kod, kör tester och committar ändringar.
+MCP-servrar monteras via .claude/settings.json och ger agenten tillgång till externa verktyg som Jira, Git och Context7 (dokumentationssökning).
+2.4 Jira-GitHub integration
+Integrationen mellan Jira och GitHub sker via flera mekanismer:
+Smart branch naming: agenten skapar branches som refererar till Jira-issue-nyckeln
+Smart commits: commit-meddelanden med Jira-kommandon (#done, #comment) uppdaterar issue-status automatiskt
+MCP-baserad tvåvägskommunikation: agenten kan både läsa från och skriva till Jira programmatiskt
+Automatiska statusuppdateringar: vid PR-skapande flyttas ticket till In Review, vid merge till Done
+3. Sprintarbete
+3.1 Sprintplanering
+Sprintplaneringen utgår från Jira-backlogen. Issues prioriteras och estimeras, varpå agenten tilldelas uppgifter. Planeringen fokuserar på att identifiera beroenden och säkerställa att varje uppgift har tillräcklig kontext för autonom exekvering. Agenten använder /start-task för att påbörja en uppgift, vilket automatiskt hämtar Jira-detaljer, skapar en branch och initierar CURRENT_TASK.md.
+3.2 User stories och uppgifter
+User stories följer formatet: "Som [roll] vill jag [funktionalitet] så att [nytta]". Varje story bryts ner i tekniska uppgifter som agenten kan exekvera. Acceptanskriterier definieras i Jira och blir direkt input till den testdrivna utvecklingsprocessen. Agenten konverterar acceptanskriterier till pytest-tester innan implementation påbörjas, i enlighet med TDD-principen Red-Green-Refactor.
+3.3 Pull requests och kodgranskning
+När agenten avslutat implementationen skapas en pull request automatiskt via finish-task-processen. PR:en innehåller:
+En beskrivning som refererar till Jira-ticketen
+Alla relevanta kodändringar med tester
+CI-pipeline-resultat (tester, linting, säkerhetskontroll)
+Kodgranskningen görs i två lager:
+Google Jules — Googles molnbaserade AI-kodgranskare drivs av Gemini-modeller med stort kontextfönster. Jules triggas via GitHub Actions (jules_review.yml) och analyserar PR:en ur ett strategiskt perspektiv: arkitektur, mönster, säkerhet.
+Mänsklig granskning — vid behov granskas PR:en av teammedlemmar. AI-granskningen fungerar som ett första kvalitetsfilter som fångar uppenbara problem innan mänskliga resurser involveras.
+Denna HiveMind-modell kombinerar den lokala agentens taktiska precision (Claude Code) med molnagentens strategiska överblick (Jules).
+3.4 Demo och feedback
+Varje sprint avslutas med en demo där färdig funktionalitet presenteras. Feedbacken dokumenteras och översätts till nya Jira-issues eller förbättringar av det autonoma flödet. Retrospektiv fokuserar på att förbättra agentens effektivitet, identifiera flaskhalsar i pipeline och optimera testsviter.
+4. Reflektion
+4.1 Utmaningar
+Flera utmaningar identifierades under projektets gång:
+Kontextförlust: AI-agentens kontextfönster är begränsat. Lösningen var CURRENT_TASK.md som filbaserat långtidsminne med all nödvändig kontextinformation.
+Ralph Wiggum-persistens: att få agenten att inte ge upp krävde stop-hook-mekanismen med exit code 2 — en fail-closed design med tre persistensmekanismer (stop-hook, pre-tool-use, post-tool-use).
+CI/CD self-healing: att bygga en pipeline som automatiskt skapar fix-PRs vid testfel krävde noggrann design för att undvika oändliga loopar. Lösningen var max 25 iterationer med auto-WIP-commit som säkerhetsventil.
+Säkerhet: prompt injection via Jira-titlar, YOLO-mode-risker och dependency-attacker (typosquatting) krävde Defense-in-Depth-strategi med XML-tags, inputsanering, sandboxing och PreToolUse-hooks.
+4.2 Lärdomar
+De viktigaste lärdomarna från projektet:
+TDD är ännu viktigare för AI-agenter än för mänskliga utvecklare — tester fungerar som agentens specifikation och verifieringsloop.
+File-based memory (CURRENT_TASK.md) är kritiskt för att överbrygga AI:ns kontextbegränsningar.
+Human-on-the-Loop (inte Human-in-the-Loop) är rätt modell — människan övervakar och justerar, inte godkänner varje steg.
+MCP-protokollet möjliggör verklig verktygskoppling för AI — JSON-RPC 2.0 med Host/Client/Server-arkitektur.
+Säkerhet kräver lagervis försvar — ingen enskild åtgärd räcker mot prompt injection och supply chain-attacker.
+4.3 AI som verktyg
+Claude Code representerar en ny kategori av utvecklarverktyg. Till skillnad från kopiloter som GitHub Copilot, som ger förslag rad för rad, tar Claude Code ägarskap av hela uppgifter. Agenten läser kravspecifikationer, skriver tester, implementerar lösningar, kör tester, debuggar fel och committar — allt autonomt.
+Ralph Wiggum Loop-tekniken (uppkallad efter Simpsons-karaktären som aldrig ger upp) säkerställer att agenten fortsätter tills testerna passerar. Stop-hooken fångar exit code 2 och tvingar agenten tillbaka till arbete. Detta skapar en completion promise pattern som fundamentalt förändrar tillförlitligheten hos AI-assisterad utveckling.
+Kombinationen av lokala agenter (Claude) och molnagenter (Jules) i HiveMind-modellen visar hur framtidens utvecklingsorganisationer kan struktureras: AI hanterar implementationsarbetet, människor fokuserar på arkitektur, design och strategiska beslut.
+5. Slutsats
+5.1 Sammanfattning
+Projektet demonstrerar att fullt autonom mjukvaruutveckling inte bara är teoretiskt möjlig utan praktiskt genomförbar. Genom att kombinera agil metodik med AI-agenter, MCP-protokollet och en self-healing CI/CD-pipeline skapas ett utvecklingsflöde som är snabbare, mer konsekvent och mer tillförlitligt än traditionella processer.
+Nyckelfaktorer för framgång: robust testsvit (243 tester), filbaserat långtidsminne, persistensmekanismer (Ralph Wiggum Loop), tvålagrig kodgranskning (Jules + mänsklig) och lagervis säkerhet.
+5.2 Kunskaper för rollen som IT-projektledare
+Projektet har utvecklat flera kompetenser relevanta för IT-projektledarrollen:
+Förståelse för agila processer i praktiken — sprintplanering, backlogs, retrospektiv
+Teknisk projektledning — CI/CD-pipelines, infrastruktur som kod, deployment-strategier
+AI-orchestration — koordinering av autonoma agenter, hantering av Human-on-the-Loop-modeller
+Riskhantering — säkerhetsanalys, prompt injection-mitigering, dependency-hantering
+DevOps-kultur — automatisering, continuous delivery, infrastruktur som kod
+Dessa färdigheter positionerar projektledaren för den nya verkligheten där AI-agenter är en central del av utvecklingsteam.
+
+Uppgift 2 — Software Design Description (SDD)
+
+1. Inledning
+1.1 Syfte
+Denna Software Design Description (SDD) beskriver den tekniska arkitekturen och designbesluten bakom SEJFA-applikationen. Dokumentet täcker applikationsarkitektur, databashantering, infrastruktur som kod och CI/CD-pipeline.
+1.2 Omfattning
+SEJFA är en Flask-baserad webbapplikation med fyra moduler:
+newsflash — nyhetshantering med SQLAlchemy ORM, CRUD-operationer och prenumeranthantering
+expense_tracker — utgiftshantering med in-memory-lagring
+core — admin-autentisering och behörighetskontroll
+monitor — hälsokontroll (/health endpoint) och systemövervakning
+1.3 Tech stack
+Python 3.12 med Flask som webbramverk
+SQLAlchemy som ORM med Flask-Migrate för databasmigrationer
+SQLite (lokal utveckling) / Azure SQL (produktion)
+Docker med Gunicorn (4 workers) för containeriserad drift
+GitHub Actions för CI/CD (8 workflows)
+Azure Container Registry (ACR) + Azure Container Apps för molndrift
+OIDC Federation för lösenordslös GitHub-till-Azure-autentisering
+2. Applikationsarkitektur
+2.1 Trelagers-arkitektur
+Applikationen följer en trelagers-arkitektur som separerar ansvar:
+Presentationslager — Flask Blueprints och Jinja2-templates hanterar HTTP-anrop och renderar vyer. Varje modul exponerar sina routes via en Blueprint.
+Affärslogiklager — Service-klasser implementerar affärsregler. Exempelvis hanterar SubscriptionService all prenumerantlogik oberoende av hur data lagras.
+Datalager — Repository-klasser abstraherar databasåtkomst. SubscriberRepository kapslar in SQLAlchemy-queries och ger service-lagret ett rent interface.
+2.2 Blueprints och App Factory
+Applikationen använder App Factory-mönstret, vilket innebär att Flask-applikationen skapas via en create_app()-funktion snarare än som en global variabel. Detta möjliggör:
+Enkel testkonfiguration — varje test kan skapa en fristående app-instans
+Miljöbaserad konfiguration — olika databas-URI:er för utveckling, test och produktion
+Modulär design — Blueprints registreras dynamiskt
+2.3 Kodexempel: App Factory
+def create_app(config: dict | None = None) -> Flask:
+    app = Flask(__name__)
+    default_db_uri = os.environ.get("DATABASE_URL", "sqlite:///newsflash.db")
+    app.config.setdefault("SQLALCHEMY_DATABASE_URI", default_db_uri)
+    db.init_app(app)
+    Migrate(app, db)
+    with app.app_context():
+        db.create_all()
+    subscriber_repository = SubscriberRepository()
+    subscription_service = SubscriptionService(repository=subscriber_repository)
+    newsflash_blueprint = create_newsflash_blueprint(subscription_service)
+    app.register_blueprint(newsflash_blueprint)
+    return app
+3. Databashantering
+3.1 SQLAlchemy-modeller
+Applikationens datamodell använder SQLAlchemy ORM för att definiera databasstrukturen som Python-klasser. Newsflash-modulen innehåller modeller för artiklar (Article), prenumeranter (Subscriber) och kategorier. Varje modell definierar sina kolumner, relationer och constraints deklarativt.
+Exempelvis har Subscriber-modellen kolumner för email (unikt), namn och aktiv-status, med automatiska tidsstämplar för skapande och uppdatering.
+3.2 Migrationer med Flask-Migrate
+Databasmigrationer hanteras av Flask-Migrate (baserat på Alembic). Migrationer versionshanteras i Git och kan appliceras automatiskt:
+flask db migrate — genererar ny migration från modellförändringar
+flask db upgrade — applicerar väntande migrationer
+flask db downgrade — rullar tillbaka senaste migrationen
+I CI/CD-pipelinen körs migrationer automatiskt som en del av deploy-steget, vilket säkerställer att databasschemat alltid matchar applikationskoden.
+3.3 SQLite vs Azure SQL
+Applikationen stödjer två databasmiljöer via en enda miljövariabel (DATABASE_URL):
+SQLite — används för lokal utveckling och testning. Kräver ingen extern infrastruktur och ger snabb feedback under utveckling.
+Azure SQL — används i produktion. Ger hög tillgänglighet, automatisk backup och skalbarhet. Anslutningssträngen konfigureras som miljövariabel i Azure Container Apps.
+Denna abstraktion möjliggörs av SQLAlchemy:s dialect-system — samma Python-kod körs mot båda databaserna utan ändringar.
+3.4 Seed-data
+Databasen seedas med initial testdata via seed-scripts som körs vid uppstart i utvecklingsläge. Detta inkluderar exempelartiklar, testprenumeranter och admin-användare. I produktion seedas enbart nödvändig konfigurationsdata.
+4. Allt som kod (Everything as Code)
+4.1 Applikationskod
+All affärslogik är skriven i Python och versionshanteras i Git. Kodbasen är strukturerad efter moduler (newsflash, expense_tracker, core, monitor) under src/sejfa/. Varje modul följer samma mönster: routes (Blueprint), services (affärslogik) och data (repository/modeller). Kodkvalitet upprätthålls av ruff (linting och formatering) med krav på minst 80% testtäckning.
+4.2 Docker och Gunicorn
+Containeriseringen definieras i en Dockerfile:
+Basimage: python:3.12-slim — minimal storlek, låg attackyta
+Säkerhet: non-root user (appuser) — containern körs aldrig som root
+WSGI-server: Gunicorn med 4 workers och 120s timeout — produktionsanpassad prestanda
+Healthcheck: inbyggd Docker HEALTHCHECK som pollar /health var 30:e sekund
+Denna konfiguration följer best practices för produktions-Python-containrar: minimal image, icke-root-exekvering, explicit healthcheck och cache-optimerad byggnation (requirements.txt kopieras före applikationskoden).
+4.3 CI/CD som kod
+Alla pipelines definieras som YAML i .github/workflows/:
+ci.yml — kör tester (pytest med coverage), linting (ruff) och säkerhetsskanning (safety) vid varje push och PR
+deploy.yml — bygger Docker-image, pushar till ACR och deployar till Azure Container Apps vid merge till main
+self_healing.yml — triggas vid CI-failure, skapar automatisk fix-PR via AI-agenten
+jules_review.yml — anropar Google Jules för AI-kodgranskning av PR:ar
+Totalt underhålls 8 GitHub Actions workflows som täcker hela livscykeln från kodkvalitet till produktion.
+4.4 Miljökonfiguration
+Känslig konfiguration separeras från kod via miljövariabler:
+DATABASE_URL — databasanslutning (SQLite lokalt, Azure SQL i produktion)
+AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID — OIDC-federation
+ACR_NAME — Azure Container Registry-namn
+Denna separation följer 12-Factor App-principen och möjliggör att samma Docker-image körs i alla miljöer med enbart konfigurationsändringar.
+5. CI/CD-pipeline
+5.1 Pipelineöversikt
+CI/CD-pipelinen implementerar continuous delivery med följande steg:
+GitHub (Push/PR)
+  → CI: Tester (pytest, 4 Python-versioner), Linting (ruff), Säkerhet (safety)
+  → Docker: Bygg image, tagga med commit-SHA och latest
+  → ACR: Push image till Azure Container Registry
+  → Azure Container Apps: Deploy ny revision
+  → Post-deploy verify: Healthcheck mot live-endpoint
+5.2 OIDC Federation — lösenordslös autentisering
+Deploy-pipelinen använder OIDC (OpenID Connect) federation för autentisering mot Azure. Istället för att lagra långlivade service principal-credentials i GitHub Secrets, etableras en federerad identitet:
+GitHub Actions presenterar en JWT-token till Azure AD
+Azure AD validerar tokenen mot den konfigurerade federerade identiteten
+En kortlivad åtkomsttoken utfärdas som ger deploy-behörighet
+Denna metod eliminerar risken för läckta credentials och följer zero-trust-principen. Konfigurationen kräver permissions: id-token: write i workflow-filen.
+5.3 CI-pipeline (ci.yml)
+CI-pipelinen körs vid varje push till main och vid pull requests. Den testar applikationen mot fyra Python-versioner (3.10, 3.11, 3.12, 3.13) och inkluderar tre jobb:
+test: pytest -xvs --cov=src --cov-fail-under=80 — kräver minst 80% kodtäckning
+lint: ruff check och ruff format — automatiserad kodkvalitet
+security: safety check — skannar dependencies mot kända sårbarheter
+5.4 Self-Healing Pipeline
+Vid CI-failure triggas self_healing.yml som automatiskt:
+Analyserar testfel och felmeddelanden
+Anropar AI-agenten (Claude Code) för att generera en fix
+Skapar en ny PR med föreslagna ändringar
+Kör CI igen mot fix-branchen
+Denna self-healing-mekanism minskar manuellt arbete vid regressionsbuggar och enklare fel. En säkerhetsgräns på max 25 iterationer förhindrar oändliga loopar.
+6. Slutsats och framtida förbättringar
+6.1 Sammanfattning
+SEJFA-projektet demonstrerar en modern, fullständigt automatiserad utvecklingsinfrastruktur. Genom att kombinera Flask:s trelagers-arkitektur med containeriserad drift (Docker/Gunicorn), automatiserade pipelines (GitHub Actions) och AI-driven kodgranskning (Jules) skapas en robust och skalbar lösning.
+Nyckelsiffror: 243 tester, 8 GitHub Actions workflows, 4 Flask-moduler, stöd för 4 Python-versioner, OIDC-baserad lösenordslös deploy och fullständig Everything-as-Code-strategi.
+6.2 Framtida förbättringar
+Dynamic MCP: agenten upptäcker och monterar MCP-servrar dynamiskt baserat på uppgiftens behov, istället för statisk konfiguration
+Hierarkisk modellstrategi: använda billigare modeller (Haiku) för rutinuppgifter och kraftfullare modeller (Opus) för komplexa arkitekturbeslut — kostnadsoptimering utan kvalitetsförlust
+Förbättrad säkerhet: ersätta hardkodade admin-credentials med miljövariabler, begränsa self-healing-pipelinens RCE-yta, implementera CODEOWNERS för .github/-katalogen
+Observability: centraliserad loggning, metrics och distributed tracing för både applikation och agentoperationer
+Multi-agent orchestration: skalning till flera parallella agenter som arbetar på olika delar av backlogen simultant

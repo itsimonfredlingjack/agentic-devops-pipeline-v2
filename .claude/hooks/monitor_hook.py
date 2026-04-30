@@ -29,8 +29,8 @@ SESSION_ID = os.environ.get("CLAUDE_SESSION_ID", str(uuid.uuid4()))
 _pending_events: dict[str, dict[str, Any]] = {}
 
 
-def _get_ticket_id() -> str | None:
-    """Extract ticket ID from git branch name (e.g., feature/DEV-42-foo -> DEV-42)."""
+def _get_task_ref() -> str | None:
+    """Extract task ref from git branch name (e.g., feature/DEV-42-foo -> DEV-42)."""
     try:
         branch = (
             subprocess.check_output(
@@ -82,7 +82,7 @@ def handle_pre_tool_use(hook_input: dict[str, Any]) -> None:
     event = {
         "event_id": event_id,
         "session_id": SESSION_ID,
-        "ticket_id": _get_ticket_id(),
+        "task_ref": _get_task_ref(),
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "event_type": "pre_tool_use",
         "tool_name": tool_name,
@@ -118,7 +118,7 @@ def handle_post_tool_use(hook_input: dict[str, Any]) -> None:
     event = {
         "event_id": event_id,
         "session_id": SESSION_ID,
-        "ticket_id": _get_ticket_id(),
+        "task_ref": _get_task_ref(),
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "event_type": "post_tool_use",
         "tool_name": tool_name,
@@ -138,7 +138,7 @@ def handle_stop(hook_input: dict[str, Any]) -> None:
     event = {
         "event_id": str(uuid.uuid4()),
         "session_id": SESSION_ID,
-        "ticket_id": _get_ticket_id(),
+        "task_ref": _get_task_ref(),
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "event_type": "stop",
         "tool_name": "session",

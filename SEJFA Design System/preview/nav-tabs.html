@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+html,body{margin:0;padding:0}
+body{background:var(--bg);padding:14px;font-family:var(--font-sans)}
+.nav{background:var(--vault-950);border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:14px;color:var(--vault-100)}
+.wm{font-family:var(--font-mono);font-size:14px;font-weight:500;letter-spacing:-0.3px}
+.links{display:flex;gap:14px;margin-left:auto;font-family:var(--font-mono);font-size:12px;color:var(--vault-300)}
+.links a{color:inherit;text-decoration:none;position:relative;padding:4px 2px}
+.links a.active{color:var(--loop-300)}
+.links a.active::after{content:"";position:absolute;bottom:-2px;left:0;right:0;height:1px;background:var(--loop-300)}
+.tabs{margin-top:12px;display:flex;gap:0;border-bottom:1px solid var(--ink-200);font-family:var(--font-mono);font-size:12px}
+.tabs a{padding:8px 14px;color:var(--fg3);text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs a.active{color:var(--fg1);border-bottom-color:var(--loop-500);font-weight:500}
+</style></head>
+<body>
+<nav class="nav"><img src="../assets/logo-mark.svg" width="24" height="24"><span class="wm">SEJFA</span>
+<div class="links"><a href="#">agent</a><a href="#" class="active">pipeline</a><a href="#">newsflash</a><a href="#">monitor</a></div></nav>
+<div class="tabs"><a href="#" class="active">Overview</a><a href="#">Runs</a><a href="#">Workflows</a><a href="#">Secrets</a></div>
+</body></html>

@@ -1,6 +1,6 @@
-"""SQLite-backed persistent ticket queue for Ralph Loop dispatch.
+"""SQLite-backed persistent task queue for Ralph Loop dispatch.
 
-Extends LoopQueue with durable storage so that pending tickets survive
+Extends LoopQueue with durable storage so that pending tasks survive
 server restarts.  Uses Python's stdlib sqlite3 -- zero new dependencies.
 """
 
@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 _SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS queue_entries (
     key         TEXT PRIMARY KEY,
+    task_ref    TEXT,
     summary     TEXT NOT NULL,
     status      TEXT NOT NULL DEFAULT 'pending',
     queued_at   REAL NOT NULL,
@@ -32,6 +33,10 @@ CREATE TABLE IF NOT EXISTS queue_entries (
 
 _MIGRATION_SQL = """
 ALTER TABLE queue_entries ADD COLUMN retry_count INTEGER NOT NULL DEFAULT 0;
+"""
+
+_TASK_REF_MIGRATION_SQL = """
+ALTER TABLE queue_entries ADD COLUMN task_ref TEXT;
 """
 
 
@@ -47,7 +52,7 @@ class PersistentLoopQueue(LoopQueue):
 
     Args:
         db_path: Filesystem path for the SQLite database file.
-        dedup_window: Seconds within which duplicate ticket keys are rejected.
+        dedup_window: Seconds within which duplicate task refs are rejected.
     """
 
     def __init__(
@@ -75,20 +80,44 @@ class PersistentLoopQueue(LoopQueue):
             conn.commit()
         except sqlite3.OperationalError:
             pass  # Column already exists
+        try:
+            conn.execute(_TASK_REF_MIGRATION_SQL)
+            conn.commit()
+        except sqlite3.OperationalError:
+            pass  # Column already exists
+
+        conn.execute(
+            """
+            UPDATE queue_entries
+            SET task_ref = key
+            WHERE task_ref IS NULL AND key IS NOT NULL
+            """
+        )
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS ix_queue_entries_task_ref ON queue_entries (task_ref)"
+        )
+        conn.commit()
         return conn
 
     def _restore_entries(self) -> None:
         """Load all rows from the database into the in-memory dict."""
         cursor = self._conn.execute(
-            "SELECT key, summary, status, queued_at, started_at, completed_at, success, retry_count "
+            "SELECT COALESCE(task_ref, key), summary, status, queued_at, started_at, completed_at, success, retry_count "
             "FROM queue_entries"
         )
         for row in cursor:
-            key, summary, status, queued_at, started_at, completed_at, success_int, retry_count = (
-                row
-            )
+            (
+                task_ref,
+                summary,
+                status,
+                queued_at,
+                started_at,
+                completed_at,
+                success_int,
+                retry_count,
+            ) = row
             entry = QueueEntry(
-                key=key,
+                task_ref=task_ref,
                 summary=summary,
                 status=TicketStatus(status),
                 queued_at=queued_at,
@@ -97,7 +126,7 @@ class PersistentLoopQueue(LoopQueue):
                 success=None if success_int is None else bool(success_int),
                 retry_count=retry_count or 0,
             )
-            self._entries[key] = entry
+            self._entries[entry.task_ref] = entry
         count = len(self._entries)
         if count:
             logger.info("Restored %d entries from %s", count, self._db_path)
@@ -106,10 +135,11 @@ class PersistentLoopQueue(LoopQueue):
         """Insert or replace a single entry in the database."""
         self._conn.execute(
             "INSERT OR REPLACE INTO queue_entries "
-            "(key, summary, status, queued_at, started_at, completed_at, success, retry_count) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            "(key, task_ref, summary, status, queued_at, started_at, completed_at, success, retry_count) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
-                entry.key,
+                entry.task_ref,
+                entry.task_ref,
                 entry.summary,
                 entry.status.value,
                 entry.queued_at,
@@ -125,32 +155,36 @@ class PersistentLoopQueue(LoopQueue):
     # Overridden LoopQueue methods (add write-through to SQLite)
     # ------------------------------------------------------------------
 
-    def add_ticket(self, key: str, summary: str) -> bool:
-        """Add a ticket to the queue and persist it. Returns False if deduplicated."""
-        added = super().add_ticket(key, summary)
+    def add_task(self, task_ref: str, summary: str) -> bool:
+        """Add a task to the queue and persist it. Returns False if deduplicated."""
+        added = super().add_task(task_ref, summary)
         if added:
-            self._upsert(self._entries[key])
+            self._upsert(self._entries[task_ref])
         return added
 
-    def mark_started(self, key: str) -> None:
-        """Mark a ticket as started and persist the change."""
-        super().mark_started(key)
-        entry = self._entries.get(key)
+    def add_ticket(self, key: str, summary: str) -> bool:
+        """Legacy wrapper for add_task during queue migration."""
+        return self.add_task(key, summary)
+
+    def mark_started(self, task_ref: str) -> None:
+        """Mark a task as started and persist the change."""
+        super().mark_started(task_ref)
+        entry = self._entries.get(task_ref)
         if entry is not None:
             self._upsert(entry)
 
-    def mark_completed(self, key: str, success: bool) -> None:
-        """Mark a ticket as completed and persist the change."""
-        super().mark_completed(key, success)
-        entry = self._entries.get(key)
+    def mark_completed(self, task_ref: str, success: bool) -> None:
+        """Mark a task as completed and persist the change."""
+        super().mark_completed(task_ref, success)
+        entry = self._entries.get(task_ref)
         if entry is not None:
             self._upsert(entry)
 
-    def reset_to_pending(self, key: str) -> bool:
-        """Reset a failed ticket to pending and persist the change."""
-        result = super().reset_to_pending(key)
+    def reset_to_pending(self, task_ref: str) -> bool:
+        """Reset a failed task to pending and persist the change."""
+        result = super().reset_to_pending(task_ref)
         if result:
-            entry = self._entries.get(key)
+            entry = self._entries.get(task_ref)
             if entry is not None:
                 self._upsert(entry)
         return result

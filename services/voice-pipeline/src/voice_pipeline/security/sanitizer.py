@@ -32,20 +32,6 @@ def sanitize_xml_content(raw_text: str | None) -> str:
     return encoded
 
 
-def validate_jira_id(jira_id: str) -> bool:
-    """Validate Jira ticket ID format (e.g., PROJ-123).
-
-    Args:
-        jira_id: The Jira ID to validate.
-
-    Returns:
-        True if valid, False otherwise.
-    """
-    if not jira_id:
-        return False
-    return bool(re.match(r"^[A-Z][A-Z0-9]+-[0-9]+$", jira_id))
-
-
 def detect_prompt_injection_patterns(text: str) -> list[str]:
     """Detect potential prompt injection patterns in text.
 

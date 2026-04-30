@@ -6,7 +6,7 @@ from ChatGPT Developer Mode.
 It is intentionally read-only in v1:
 
 - inspect the live local workspace
-- inspect Jira tickets
+- inspect current tasks and recent loop state
 - inspect recent mission sessions and events
 - render a compact mission dashboard widget in ChatGPT
 - expose standard MCP `search` and `fetch` tools so ChatGPT can retrieve repo context easily
@@ -73,7 +73,6 @@ npx @modelcontextprotocol/inspector@latest --server-url http://localhost:${SEJFA
 - `get_active_mission`
 - `list_recent_sessions`
 - `get_session_events`
-- `get_jira_issue`
 - `search_workspace`
 - `fetch_workspace_file`
 - `get_project_context`
@@ -85,7 +84,7 @@ npx @modelcontextprotocol/inspector@latest --server-url http://localhost:${SEJFA
 - `.env`, runtime databases, caches, build artifacts, and nested repos are blocked
 - no shell execution
 - no file mutation
-- no Jira writes
+- no tracker writes
 - no loop-control actions
 
 ## Helpful URLs

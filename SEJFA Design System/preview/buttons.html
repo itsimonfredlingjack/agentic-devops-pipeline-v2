@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+html,body{margin:0;padding:0}
+body{background:var(--bg);padding:16px;font-family:var(--font-sans);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font-family:var(--font-mono);font-size:13px;font-weight:500;padding:9px 16px;border-radius:4px;border:1px solid transparent;cursor:pointer;line-height:1.2;display:inline-flex;align-items:center;gap:6px;letter-spacing:0.01em}
+.primary{background:var(--vault-950);color:var(--vault-50);border-color:var(--vault-950)}
+.primary .ac{color:var(--loop-300)}
+.secondary{background:var(--bg-raised);color:var(--fg1);border-color:var(--ink-300)}
+.loop{background:var(--loop-500);color:#fff}
+.ghost{background:transparent;color:var(--fg1)}
+.destructive{background:transparent;color:#C8372E;border-color:#E6A69D}
+.sm{font-size:11px;padding:6px 10px}
+</style></head>
+<body>
+<button class="btn primary"><span class="ac">▸</span> Run agent</button>
+<button class="btn loop">Merge &amp; deploy</button>
+<button class="btn secondary">Cancel</button>
+<button class="btn ghost">Discard</button>
+<button class="btn destructive">Abort run</button>
+<button class="btn primary sm">sm</button>
+</body></html>

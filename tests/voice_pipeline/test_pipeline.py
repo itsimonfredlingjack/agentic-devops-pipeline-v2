@@ -7,9 +7,10 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 
 from src.voice_pipeline.config import Settings
-from src.voice_pipeline.intent.models import JiraTicketIntent
-from src.voice_pipeline.jira.client import JiraIssue
-from src.voice_pipeline.main import app
+from src.voice_pipeline.demo_tasks import DemoTaskStore
+from src.voice_pipeline.intent.models import TaskIntent
+from src.voice_pipeline.linear.client import LinearAPIError, LinearIssue
+from src.voice_pipeline.main import app, get_settings
 from src.voice_pipeline.pipeline.orchestrator import (
     ClarificationNeeded,
     PipelineOrchestrator,
@@ -17,6 +18,8 @@ from src.voice_pipeline.pipeline.orchestrator import (
     PipelineSession,
 )
 from src.voice_pipeline.pipeline.status import MonitorService, PipelineStatus
+
+AUTH_HEADERS = {"Authorization": "Bearer test-local-token"}
 
 
 class TestMonitorService:
@@ -105,12 +108,10 @@ class TestMonitorService:
 
 
 def _make_settings(**overrides) -> Settings:
-    """Create a Settings instance with Jira configured for testing."""
+    """Create a Settings instance with Linear configured for testing."""
     defaults = {
-        "jira_url": "https://test.atlassian.net",
-        "jira_email": "test@example.com",
-        "jira_api_token": "fake-token",
-        "jira_project_key": "TEST",
+        "linear_api_key": "linear-test-token",
+        "linear_team_key": "SEJ",
         "ambiguity_threshold": 0.3,
         "max_clarification_rounds": 3,
     }
@@ -118,9 +119,9 @@ def _make_settings(**overrides) -> Settings:
     return Settings(**defaults)
 
 
-def _make_intent(ambiguity: float = 0.1, questions: list[str] | None = None) -> JiraTicketIntent:
-    """Create a JiraTicketIntent with configurable ambiguity."""
-    return JiraTicketIntent(
+def _make_intent(ambiguity: float = 0.1, questions: list[str] | None = None) -> TaskIntent:
+    """Create a TaskIntent with configurable ambiguity."""
+    return TaskIntent(
         summary="Bygg login med OAuth",
         description="Implementera Google OAuth",
         acceptance_criteria="Given en användare\nWhen de loggar in\nThen autentiseras de",
@@ -132,18 +133,20 @@ def _make_intent(ambiguity: float = 0.1, questions: list[str] | None = None) -> 
     )
 
 
-def _make_jira_issue() -> JiraIssue:
-    """Create a test JiraIssue."""
-    return JiraIssue(
-        key="TEST-42",
-        summary="Bygg login med OAuth",
+def _make_linear_issue() -> LinearIssue:
+    return LinearIssue(
+        id="linear-42",
+        identifier="42",
+        team_key="SEJ",
+        team_name="SEJFA",
+        title="Bygg login med OAuth",
         description="Implementera Google OAuth",
-        issue_type="Story",
-        status="To Do",
-        priority="High",
-        labels=["auth", "VOICE_INITIATED"],
-        url="https://test.atlassian.net/browse/TEST-42",
-        raw={},
+        url="https://linear.app/sejfa/issue/SEJ-42/bygg-login-med-oauth",
+        priority=2,
+        state_name="Todo",
+        state_type="unstarted",
+        assignee="Tony",
+        labels=["auth"],
     )
 
 
@@ -160,9 +163,9 @@ class TestPipelineOrchestrator:
         mock_extractor.extract = AsyncMock(return_value=clear_intent)
         orchestrator._extractor = mock_extractor
 
-        mock_jira = AsyncMock()
-        mock_jira.create_issue = AsyncMock(return_value=_make_jira_issue())
-        orchestrator._jira = mock_jira
+        mock_linear = AsyncMock()
+        mock_linear.create_issue = AsyncMock(return_value=_make_linear_issue())
+        orchestrator._linear = mock_linear
 
         result = await orchestrator.run_from_text("bygg en login med OAuth")
 
@@ -174,10 +177,39 @@ class TestPipelineOrchestrator:
         result = await orchestrator.continue_with_approval(result.session_id)
 
         assert isinstance(result, PipelineResult)
-        assert result.ticket_key == "TEST-42"
+        assert result.task_ref == "SEJ-42"
+        assert result.task_url == "https://linear.app/sejfa/issue/SEJ-42/bygg-login-med-oauth"
         assert result.summary == "Bygg login med OAuth"
         assert result.session_id
-        mock_jira.create_issue.assert_called_once()
+        mock_linear.create_issue.assert_called_once()
+
+    async def test_run_from_text_demo_mode_creates_demo_task(self):
+        """Demo mode should keep the approval flow usable without Linear."""
+        settings = _make_settings(linear_api_key="", sejfa_mode="demo")
+        monitor = MonitorService()
+        orchestrator = PipelineOrchestrator(
+            settings=settings,
+            monitor=monitor,
+            demo_tasks=DemoTaskStore(),
+        )
+
+        clear_intent = _make_intent(ambiguity=0.1)
+        mock_extractor = AsyncMock()
+        mock_extractor.extract = AsyncMock(return_value=clear_intent)
+        orchestrator._extractor = mock_extractor
+
+        preview = await orchestrator.run_from_text("bygg en demo")
+
+        from src.voice_pipeline.pipeline.orchestrator import PreviewNeeded
+
+        assert isinstance(preview, PreviewNeeded)
+
+        result = await orchestrator.continue_with_approval(preview.session_id)
+
+        assert isinstance(result, PipelineResult)
+        assert result.task_ref.startswith("DEMO-")
+        assert result.task_url == ""
+        assert result.summary == "Bygg login med OAuth"
 
     async def test_run_from_text_ambiguous_returns_clarification(self):
         """When ambiguity is high, run_from_text should return ClarificationNeeded."""
@@ -224,9 +256,9 @@ class TestPipelineOrchestrator:
         clear_intent = _make_intent(ambiguity=0.1)
         mock_extractor.extract_with_clarification = AsyncMock(return_value=clear_intent)
 
-        mock_jira = AsyncMock()
-        mock_jira.create_issue = AsyncMock(return_value=_make_jira_issue())
-        orchestrator._jira = mock_jira
+        mock_linear = AsyncMock()
+        mock_linear.create_issue = AsyncMock(return_value=_make_linear_issue())
+        orchestrator._linear = mock_linear
 
         result2 = await orchestrator.continue_with_clarification(
             session_id=session_id,
@@ -241,7 +273,7 @@ class TestPipelineOrchestrator:
         result3 = await orchestrator.continue_with_approval(session_id)
 
         assert isinstance(result3, PipelineResult)
-        assert result3.ticket_key == "TEST-42"
+        assert result3.task_ref == "SEJ-42"
         assert result3.session_id == session_id
         # Session should be cleaned up
         assert session_id not in orchestrator._sessions
@@ -295,9 +327,9 @@ class TestPipelineOrchestrator:
         mock_extractor.extract_with_clarification = AsyncMock(return_value=ambiguous_intent)
         orchestrator._extractor = mock_extractor
 
-        mock_jira = AsyncMock()
-        mock_jira.create_issue = AsyncMock(return_value=_make_jira_issue())
-        orchestrator._jira = mock_jira
+        mock_linear = AsyncMock()
+        mock_linear.create_issue = AsyncMock(return_value=_make_linear_issue())
+        orchestrator._linear = mock_linear
 
         # Round 1: ambiguous
         result1 = await orchestrator.run_from_text("fixa grejen")
@@ -318,7 +350,7 @@ class TestPipelineOrchestrator:
         result3 = await orchestrator.continue_with_approval(session_id)
 
         assert isinstance(result3, PipelineResult)
-        assert result3.ticket_key == "TEST-42"
+        assert result3.task_ref == "SEJ-42"
 
     async def test_unknown_session_raises_value_error(self):
         """continue_with_clarification with unknown session_id should raise ValueError."""
@@ -367,16 +399,18 @@ class TestPipelineResultSerialization:
     def test_pipeline_result_to_dict(self):
         result = PipelineResult(
             session_id="sess-123",
-            ticket_key="TEST-1",
-            ticket_url="https://test.atlassian.net/browse/TEST-1",
-            summary="Test ticket",
+            task_ref="SEJ-1",
+            task_url="https://linear.app/sejfa/issue/SEJ-1/test-ticket",
+            summary="Test task",
             transcribed_text="original text",
         )
         d = result.to_dict()
         assert d["session_id"] == "sess-123"
-        assert d["ticket_key"] == "TEST-1"
-        assert d["ticket_url"] == "https://test.atlassian.net/browse/TEST-1"
-        assert d["summary"] == "Test ticket"
+        assert d["task_ref"] == "SEJ-1"
+        assert d["task_url"] == "https://linear.app/sejfa/issue/SEJ-1/test-ticket"
+        assert "ticket_key" not in d
+        assert "ticket_url" not in d
+        assert d["summary"] == "Test task"
         assert d["transcribed_text"] == "original text"
 
     def test_clarification_needed_to_dict(self):
@@ -438,9 +472,15 @@ class TestFastAPIEndpoints:
             response = await client.get("/health")
         assert response.status_code == 200
         data = response.json()
-        assert data["status"] == "ok"
-        assert "whisper_model" in data
-        assert "jira_configured" in data
+        assert data == {
+            "status": "ok",
+            "mode": data["mode"],
+            "task_backend": data["task_backend"],
+            "whisper_model": data["whisper_model"],
+            "ollama_model": data["ollama_model"],
+            "linear_configured": data["linear_configured"],
+            "ws_connections": data["ws_connections"],
+        }
 
     async def test_extract_endpoint_empty_text(self):
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
@@ -489,35 +529,6 @@ class TestFastAPIEndpoints:
             )
         assert response.status_code == 404
 
-    async def test_jira_webhook_ignored_event(self):
-        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
-            response = await client.post(
-                "/api/webhook/jira",
-                json={"webhookEvent": "jira:issue_updated", "issue": {"key": "X-1"}},
-            )
-        assert response.status_code == 200
-        assert response.json()["status"] == "ignored"
-
-    async def test_jira_webhook_voice_initiated(self):
-        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
-            response = await client.post(
-                "/api/webhook/jira",
-                json={
-                    "webhookEvent": "jira:issue_created",
-                    "issue": {
-                        "key": "PROJ-42",
-                        "fields": {
-                            "summary": "Voice ticket",
-                            "labels": ["VOICE_INITIATED"],
-                        },
-                    },
-                },
-            )
-        assert response.status_code == 200
-        data = response.json()
-        assert data["status"] == "processed"
-        assert data["issue_key"] == "PROJ-42"
-
 
 # ---------------------------------------------------------------------------
 # Ralph Loop queue endpoint tests
@@ -533,41 +544,235 @@ class TestLoopQueueEndpoints:
         assert response.status_code == 200
         assert response.json() == []
 
+    async def test_loop_queue_returns_task_ref_first(self):
+        """GET /api/loop/queue should emit task_ref as the primary queue identity."""
+        from src.voice_pipeline import main as app_mod
+
+        app_mod._loop_queue.add_task("DEV-9", "Queued task")
+
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.get("/api/loop/queue")
+
+        assert response.status_code == 200
+        assert response.json() == [{"task_ref": "DEV-9", "summary": "Queued task"}]
+
     async def test_loop_started_endpoint(self):
-        """POST /api/loop/started should return ok."""
+        """POST /api/loop/started should return task_ref-first response."""
         from src.voice_pipeline import main as app_mod
 
         # Pre-populate queue
-        app_mod._loop_queue.add_ticket("DEV-10", "Test ticket")
+        app_mod._loop_queue.add_task("DEV-10", "Test task")
 
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 "/api/loop/started",
-                json={"key": "DEV-10"},
+                json={"task_ref": "DEV-10"},
             )
         assert response.status_code == 200
         data = response.json()
         assert data["status"] == "ok"
-        assert data["key"] == "DEV-10"
+        assert data["task_ref"] == "DEV-10"
+        assert "key" not in data
 
-        # Ticket should no longer be pending
+        # Task should no longer be pending
         pending = app_mod._loop_queue.get_pending()
         assert len(pending) == 0
 
-    async def test_loop_completed_endpoint(self):
-        """POST /api/loop/completed should return ok with success status."""
+    async def test_loop_started_accepts_legacy_key_alias(self):
+        """POST /api/loop/started should still accept legacy key as an alias."""
         from src.voice_pipeline import main as app_mod
 
-        app_mod._loop_queue.add_ticket("DEV-11", "Another ticket")
+        app_mod._loop_queue.add_task("DEV-12", "Compat task")
+
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post("/api/loop/started", json={"key": "DEV-12"})
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "ok"
+        assert data["task_ref"] == "DEV-12"
+        assert "key" not in data
+
+    async def test_loop_completed_endpoint(self):
+        """POST /api/loop/completed should return task_ref-first response."""
+        from src.voice_pipeline import main as app_mod
+
+        app_mod._loop_queue.add_task("DEV-11", "Another task")
         app_mod._loop_queue.mark_started("DEV-11")
 
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.post(
                 "/api/loop/completed",
-                json={"key": "DEV-11", "success": True},
+                json={"task_ref": "DEV-11", "success": True},
             )
         assert response.status_code == 200
         data = response.json()
         assert data["status"] == "ok"
-        assert data["key"] == "DEV-11"
+        assert data["task_ref"] == "DEV-11"
+        assert "key" not in data
         assert data["success"] == "True"
+
+
+@pytest.mark.asyncio
+class TestLinearTaskEndpoints:
+    async def test_task_endpoint_rejects_missing_token(self, monkeypatch: pytest.MonkeyPatch):
+        settings = get_settings()
+        monkeypatch.setattr(settings, "sejfa_local_api_token", "test-local-token")
+
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.get("/api/tasks?max_results=1")
+
+        assert response.status_code == 401
+
+    async def test_task_endpoint_rejects_wrong_token(self, monkeypatch: pytest.MonkeyPatch):
+        settings = get_settings()
+        monkeypatch.setattr(settings, "sejfa_local_api_token", "test-local-token")
+
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.get(
+                "/api/tasks?max_results=1",
+                headers={"Authorization": "Bearer wrong-token"},
+            )
+
+        assert response.status_code == 401
+
+    async def test_cors_does_not_allow_wildcard_origin(self):
+        cors_middleware = [
+            entry
+            for entry in app.user_middleware
+            if entry.cls.__name__ == "CORSMiddleware"
+        ]
+
+        assert cors_middleware
+        assert cors_middleware[0].kwargs["allow_origins"] != ["*"]
+
+    async def test_list_tasks_uses_demo_backend_when_linear_is_missing(
+        self, monkeypatch: pytest.MonkeyPatch
+    ):
+        from src.voice_pipeline import main as app_mod
+
+        settings = get_settings()
+        monkeypatch.setattr(settings, "sejfa_mode", "auto")
+        monkeypatch.setattr(settings, "linear_api_key", "")
+        monkeypatch.setattr(settings, "sejfa_local_api_token", "test-local-token")
+        app_mod._demo_tasks = DemoTaskStore()
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app),
+            base_url="http://test",
+            headers=AUTH_HEADERS,
+        ) as client:
+            response = await client.get("/api/tasks?max_results=2")
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert len(payload) == 2
+        assert payload[0]["id"] == "DEMO-101"
+        assert payload[0]["source_label"] == "Demo Workspace"
+
+    async def test_list_tasks_uses_linear_backend(self, monkeypatch: pytest.MonkeyPatch):
+        from src.voice_pipeline import main as app_mod
+
+        settings = get_settings()
+        monkeypatch.setattr(settings, "linear_api_key", "linear-test-key")
+        monkeypatch.setattr(settings, "sejfa_local_api_token", "test-local-token")
+        app_mod._linear = AsyncMock()
+        app_mod._linear.list_issues = AsyncMock(return_value=[_make_linear_issue()])
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app),
+            base_url="http://test",
+            headers=AUTH_HEADERS,
+        ) as client:
+            response = await client.get("/api/tasks?max_results=10")
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload[0]["id"] == "SEJ-42"
+        assert payload[0]["source"] == "linear"
+        assert payload[0]["url"].endswith("/SEJ-42/bygg-login-med-oauth")
+
+    async def test_create_task_uses_linear_backend(self, monkeypatch: pytest.MonkeyPatch):
+        from src.voice_pipeline import main as app_mod
+
+        settings = get_settings()
+        monkeypatch.setattr(settings, "linear_api_key", "linear-test-key")
+        monkeypatch.setattr(settings, "linear_team_id", "team-123")
+        monkeypatch.setattr(settings, "sejfa_local_api_token", "test-local-token")
+        app_mod._linear = AsyncMock()
+        app_mod._linear.create_issue = AsyncMock(return_value=_make_linear_issue())
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app),
+            base_url="http://test",
+            headers=AUTH_HEADERS,
+        ) as client:
+            response = await client.post(
+                "/api/tasks",
+                json={
+                    "title": "Replace fake Linear mapping",
+                    "description": "Move the inbox off the Jira bridge.",
+                    "priority": "high",
+                },
+            )
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["id"] == "SEJ-42"
+        assert payload["priority"] == "high"
+
+    async def test_create_task_uses_demo_backend_when_forced(self, monkeypatch: pytest.MonkeyPatch):
+        from src.voice_pipeline import main as app_mod
+
+        settings = get_settings()
+        monkeypatch.setattr(settings, "sejfa_mode", "demo")
+        monkeypatch.setattr(settings, "linear_api_key", "")
+        monkeypatch.setattr(settings, "sejfa_local_api_token", "test-local-token")
+        app_mod._demo_tasks = DemoTaskStore()
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app),
+            base_url="http://test",
+            headers=AUTH_HEADERS,
+        ) as client:
+            response = await client.post(
+                "/api/tasks",
+                json={
+                    "title": "Make the demo mode less sad",
+                    "description": "Keep the desktop alive without Linear.",
+                    "priority": "high",
+                },
+            )
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["id"] == "DEMO-104"
+        assert payload["source"] == "manual"
+        assert payload["source_label"] == "Demo Workspace"
+
+    async def test_create_task_surfaces_linear_save_failure(self, monkeypatch: pytest.MonkeyPatch):
+        from src.voice_pipeline import main as app_mod
+
+        settings = get_settings()
+        monkeypatch.setattr(settings, "linear_api_key", "linear-test-key")
+        monkeypatch.setattr(settings, "linear_team_id", "team-123")
+        monkeypatch.setattr(settings, "sejfa_local_api_token", "test-local-token")
+        app_mod._linear = AsyncMock()
+        app_mod._linear.create_issue = AsyncMock(side_effect=LinearAPIError("Linear save failed"))
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app),
+            base_url="http://test",
+            headers=AUTH_HEADERS,
+        ) as client:
+            response = await client.post(
+                "/api/tasks",
+                json={
+                    "title": "Replace fake Linear mapping",
+                    "description": "Move the inbox off the old bridge.",
+                    "priority": "high",
+                },
+            )
+
+        assert response.status_code == 502
+        assert response.json()["detail"] == "Linear unavailable: Linear save failed"

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+html,body{margin:0;padding:0}
+body{background:var(--vault-950);padding:18px;font-family:var(--font-mono);color:var(--vault-100);font-size:12px;line-height:1.55;background-image:repeating-linear-gradient(to bottom,transparent 0 2px,rgba(255,255,255,0.02) 2px 3px)}
+.header{display:flex;justify-content:space-between;border-bottom:1px solid var(--vault-700);padding-bottom:6px;margin-bottom:8px;color:var(--vault-300);text-transform:uppercase;letter-spacing:0.12em;font-size:10px}
+.kv{display:flex;gap:8px}
+.k{color:var(--vault-400);width:90px;flex:0 0 90px;text-transform:uppercase;letter-spacing:0.08em;font-size:10px}
+.v{color:var(--vault-50)}
+.ok{color:var(--loop-300)}
+.warn{color:var(--heal-300)}
+.err{color:#E69189}
+</style></head>
+<body>
+  <div class="header"><span>agent · claude-code</span><span>iter 7 · 2m 14s</span></div>
+  <div class="kv"><div class="k">issue</div><div class="v">GE-42 · Implement Subscriber CRUD</div></div>
+  <div class="kv"><div class="k">branch</div><div class="v">feature/GE-42-subscriber-crud</div></div>
+  <div class="kv"><div class="k">tests</div><div class="v ok">243 / 243 passed</div></div>
+  <div class="kv"><div class="k">coverage</div><div class="v ok">87.4% &nbsp;<span style="color:var(--vault-400)">(min 80%)</span></div></div>
+  <div class="kv"><div class="k">lint</div><div class="v ok">ruff · clean</div></div>
+  <div class="kv"><div class="k">safety</div><div class="v warn">1 CVE (non-blocking)</div></div>
+  <div class="kv"><div class="k">jules</div><div class="v ok">approved · 2 suggestions</div></div>
+</body></html>

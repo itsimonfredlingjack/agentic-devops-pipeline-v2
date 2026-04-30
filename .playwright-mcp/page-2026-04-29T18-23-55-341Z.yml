@@ -1,0 +1,81 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e6]:
+      - button "Collapse sidebar" [ref=e7] [cursor=pointer]
+      - generic [ref=e8]: SEJFA COMMAND
+    - generic [ref=e9]:
+      - button "TASK LOOP" [ref=e10] [cursor=pointer]
+      - button "HISTORY" [ref=e11] [cursor=pointer]
+    - generic [ref=e12]:
+      - heading "SYSTEM TELEMETRY" [level=3] [ref=e13]
+      - 'status "Run monitor: Disconnected" [ref=e14]':
+        - generic [ref=e16]: Run Monitor
+      - 'status "Voice intake: Disconnected" [ref=e17]':
+        - generic [ref=e19]: Voice Intake
+    - generic [ref=e20]:
+      - button "TASKS" [ref=e21] [cursor=pointer]
+      - button "MY TASKS" [ref=e22] [cursor=pointer]
+      - button "PROJECTS" [ref=e23] [cursor=pointer]
+    - generic [ref=e24]:
+      - heading "TASK LOOP" [level=3] [ref=e25]
+      - list "Task inbox" [ref=e26]:
+        - listitem [ref=e27]:
+          - generic [ref=e28]: Inbox offline
+          - generic [ref=e29]: Linear task sync is unavailable.
+    - generic [ref=e30]:
+      - generic [ref=e31]: LOGGED IN AS
+      - generic [ref=e32]:
+        - generic [ref=e33]: sejfa
+        - strong [ref=e34]: IDLE
+      - generic [ref=e35]:
+        - generic [ref=e36]: Inbox
+        - strong [ref=e37]: "0"
+  - main [ref=e38]:
+    - generic [ref=e39]:
+      - generic [ref=e41]:
+        - generic [ref=e42]: SEJFA / task loop
+        - generic [ref=e43]: /
+        - generic [ref=e44]: Ready check
+      - generic [ref=e45]:
+        - button "Open command palette" [ref=e46] [cursor=pointer]:
+          - img [ref=e47]
+        - generic [ref=e50]: Idle
+        - generic [ref=e51]: AI
+    - region "Task loop desk" [ref=e53]:
+      - generic [ref=e54]:
+        - generic [ref=e55]:
+          - generic [ref=e56]: Loop readiness
+          - generic [ref=e57]: Select a task to inspect
+        - article "No task selected" [ref=e59]:
+          - heading "No task selected" [level=4] [ref=e60]
+          - paragraph [ref=e61]: Choose a task from the inbox or create a new one through intake to load the current loop context.
+      - complementary "Intake" [ref=e62]:
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - generic [ref=e65]:
+              - heading "Add intake" [level=2] [ref=e66]
+              - paragraph [ref=e67]: Add task context by text or voice without changing the selected loop target.
+            - generic [ref=e68]:
+              - generic [ref=e69]: Selected task
+              - generic [ref=e70]: No task selected
+              - generic [ref=e71]: Task inbox is currently unavailable.
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - button "Start recording" [ref=e74] [cursor=pointer]:
+                - img [ref=e75]
+              - generic [ref=e78]: No microphone detected
+            - generic [ref=e79]:
+              - generic [ref=e80]:
+                - generic [ref=e81]: Voice intake
+                - generic [ref=e82]: Prompt
+              - generic [ref=e83]:
+                - generic [ref=e84]: Microphone
+                - combobox "Select microphone input" [disabled] [ref=e85]:
+                  - option "Default microphone" [selected]
+              - generic [ref=e86]:
+                - generic [ref=e87]: Input level
+                - meter [ref=e88]
+              - generic [ref=e89]:
+                - generic [ref=e90]: Recording
+                - generic [ref=e91]: Standby
+              - generic [ref=e92]: Connect a microphone and choose it above before starting voice intake.

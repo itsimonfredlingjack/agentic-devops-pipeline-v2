@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+html,body{margin:0;padding:0}
+body{background:var(--bg);padding:16px;font-family:var(--font-sans)}
+.pipe{display:flex;align-items:stretch;gap:0;background:var(--bg-raised);border:1px solid var(--ink-200);border-radius:6px;padding:12px;box-shadow:var(--shadow-sm)}
+.step{flex:1;display:flex;flex-direction:column;gap:4px;padding:0 10px;border-right:1px dashed var(--ink-300)}
+.step:last-child{border-right:0}
+.name{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--fg3)}
+.val{font-family:var(--font-mono);font-size:13px;font-weight:500}
+.bar{height:3px;border-radius:2px;background:var(--ink-200);margin-top:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--loop-500)}
+.ok .val{color:var(--loop-600)}
+.run .val{color:var(--heal-700)}
+.wait .val{color:var(--fg3)}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:5px}
+</style></head>
+<body>
+<div class="pipe">
+  <div class="step ok"><div class="name"><span class="dot" style="background:var(--loop-500)"></span>CI · test</div><div class="val">243/243 ✓</div><div class="bar"><i style="width:100%"></i></div></div>
+  <div class="step ok"><div class="name"><span class="dot" style="background:var(--loop-500)"></span>CI · lint</div><div class="val">ruff clean</div><div class="bar"><i style="width:100%"></i></div></div>
+  <div class="step run"><div class="name"><span class="dot" style="background:var(--heal-500)"></span>Build · docker</div><div class="val">2m 08s</div><div class="bar"><i style="width:60%;background:var(--heal-500)"></i></div></div>
+  <div class="step wait"><div class="name"><span class="dot" style="background:var(--ink-300)"></span>ACR push</div><div class="val">queued</div><div class="bar"></div></div>
+  <div class="step wait"><div class="name"><span class="dot" style="background:var(--ink-300)"></span>Deploy</div><div class="val">—</div><div class="bar"></div></div>
+</div>
+</body></html>

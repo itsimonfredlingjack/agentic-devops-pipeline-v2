@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+html,body{margin:0;padding:0}
+body{background:var(--bg);padding:16px;font-family:var(--font-sans)}
+.hp{background:var(--bg-raised);border:1px solid var(--ink-200);border-radius:6px;padding:14px;display:grid;grid-template-columns:110px 1fr 80px;gap:14px;align-items:center}
+.h{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:var(--fg3)}
+.big{font-family:var(--font-mono);font-size:36px;font-weight:500;line-height:1;color:var(--loop-600)}
+.sub{font-family:var(--font-mono);font-size:11px;color:var(--fg3);margin-top:4px}
+.bars{display:flex;gap:2px;align-items:flex-end;height:48px}
+.bars i{display:block;width:6px;background:var(--loop-400);border-radius:1px}
+.pill{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;padding:3px 8px;border-radius:999px;background:#EDFAE2;color:#1D420A;justify-self:end}
+</style></head>
+<body>
+<div class="hp">
+  <div>
+    <div class="h">uptime · 24h</div>
+    <div class="big">99.98%</div>
+    <div class="sub">p95 · 142ms</div>
+  </div>
+  <div class="bars">
+    <i style="height:60%"></i><i style="height:72%"></i><i style="height:55%"></i><i style="height:80%"></i>
+    <i style="height:68%"></i><i style="height:74%"></i><i style="height:90%"></i><i style="height:62%"></i>
+    <i style="height:70%"></i><i style="height:88%"></i><i style="height:66%"></i><i style="height:78%"></i>
+    <i style="height:72%"></i><i style="height:82%"></i><i style="height:60%"></i><i style="height:92%"></i>
+    <i style="height:70%"></i><i style="height:84%"></i><i style="height:76%"></i><i style="height:95%"></i>
+  </div>
+  <div class="pill">healthy</div>
+</div>
+</body></html>

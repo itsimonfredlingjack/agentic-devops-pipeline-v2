@@ -63,7 +63,7 @@ printf '%s' "$state_json" | assert_json "import json,sys; d=json.load(sys.stdin)
 ok "State reset verified"
 
 log "Posting node transitions"
-for node in jira claude github jules actions; do
+for node in intake claude github jules actions; do
   msg="verify-${node}-$(date +%s)"
   api_post /api/monitor/state "{\"node\":\"${node}\",\"state\":\"active\",\"message\":\"${msg}\"}" >/dev/null
   sleep 0.2

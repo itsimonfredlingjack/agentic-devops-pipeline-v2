@@ -21,12 +21,19 @@ class LoopConfig:
     monitor_url: str = field(
         default_factory=lambda: os.getenv("SEJFA_MONITOR_API_URL", "http://127.0.0.1:8110")
     )
+    api_token: str = field(
+        default_factory=lambda: os.getenv("SEJFA_LOCAL_API_TOKEN")
+        or os.getenv("MONITOR_API_SECRET", "")
+    )
     log_dir: Path = field(
         default_factory=lambda: Path(os.getenv("LOOP_RUNNER_LOG_DIR", "data/loop-logs"))
     )
     max_retries: int = field(default_factory=lambda: int(os.getenv("LOOP_RUNNER_MAX_RETRIES", "3")))
     heartbeat_interval: int = field(
         default_factory=lambda: int(os.getenv("LOOP_RUNNER_HEARTBEAT_INTERVAL", "30"))
+    )
+    signal_poll_interval: int = field(
+        default_factory=lambda: int(os.getenv("LOOP_RUNNER_SIGNAL_POLL_INTERVAL", "2"))
     )
     max_backoff: int = 300  # 5 minutes max backoff
 

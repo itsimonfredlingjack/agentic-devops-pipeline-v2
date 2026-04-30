@@ -51,6 +51,7 @@ describe("appStore", () => {
       config: {
         voiceUrl: "http://127.0.0.1:8001",
         monitorUrl: "http://127.0.0.1:8110",
+        apiToken: "bridge-token",
       },
       onGlobalShortcut: () => {},
     };
@@ -58,6 +59,7 @@ describe("appStore", () => {
     expect(getDefaultServiceUrls()).toEqual({
       voiceUrl: "http://127.0.0.1:8001",
       monitorUrl: "http://127.0.0.1:8110",
+      apiToken: "bridge-token",
     });
   });
 
@@ -90,7 +92,7 @@ describe("appStore", () => {
     const event = {
       event_id: "e1",
       session_id: "s1",
-      ticket_id: null,
+      task_ref: null,
       timestamp: new Date().toISOString(),
       event_type: "tool_use",
       tool_name: "Read",
@@ -105,7 +107,7 @@ describe("appStore", () => {
       store.appendEvent({
         event_id: `e${i}`,
         session_id: "s1",
-        ticket_id: null,
+        task_ref: null,
         timestamp: new Date().toISOString(),
         event_type: "tool_use",
         tool_name: "Read",
@@ -120,7 +122,7 @@ describe("appStore", () => {
   });
 
   it("stores queue items", () => {
-    useAppStore.getState().setQueue([{ key: "DEV-1", summary: "Test task" }]);
+    useAppStore.getState().setQueue([{ taskRef: "DEV-1", summary: "Test task" }]);
     expect(useAppStore.getState().queue).toHaveLength(1);
   });
 
@@ -134,7 +136,7 @@ describe("appStore", () => {
   it("sets completion and derives done phase", () => {
     useAppStore.getState().setCompletion({
       session_id: "s1",
-      ticket_id: "DEV-1",
+      task_ref: "DEV-1",
       outcome: "done",
       pytest_summary: "5 passed",
       ruff_summary: "ok",
@@ -144,13 +146,65 @@ describe("appStore", () => {
     expect(useAppStore.getState().phase).toBe("done");
   });
 
+  it("clears completion and rederives phase", () => {
+    const store = useAppStore.getState();
+    store.setCompletion({
+      session_id: "s1",
+      task_ref: "DEV-1",
+      outcome: "blocked",
+      pytest_summary: null,
+      ruff_summary: null,
+      git_diff_summary: null,
+      pr_url: null,
+    });
+    store.clearCompletion();
+    expect(useAppStore.getState().completion).toBeNull();
+    expect(useAppStore.getState().phase).toBe("idle");
+  });
+
   it("resets all state", () => {
     useAppStore.getState().setLoopActive(true);
-    useAppStore.getState().setTicketKey("DEV-1");
+    useAppStore.getState().setTaskRef("DEV-1");
     useAppStore.getState().reset();
     expect(useAppStore.getState().phase).toBe("idle");
-    expect(useAppStore.getState().ticketKey).toBeNull();
+    expect(useAppStore.getState().taskRef).toBeNull();
     expect(useAppStore.getState().loopActive).toBe(false);
+  });
+
+  it("clears task ref and messages when session id changes", () => {
+    const store = useAppStore.getState();
+    store.setSessionId("s1");
+    store.setTaskRef("DEV-1");
+    store.appendConversationMessage({
+      message_id: "m1",
+      session_id: "s1",
+      timestamp: "2026-04-28T10:00:00Z",
+      sender: "user",
+      text: "hello",
+    });
+
+    store.setSessionId("s2");
+
+    expect(useAppStore.getState().taskRef).toBeNull();
+    expect(useAppStore.getState().conversationMessages).toEqual([]);
+  });
+
+  it("preserves task ref and messages when setting the same session id", () => {
+    const store = useAppStore.getState();
+    store.setSessionId("s1");
+    store.setTaskRef("DEV-1");
+    store.appendConversationMessage({
+      message_id: "m1",
+      session_id: "s1",
+      timestamp: "2026-04-28T10:00:00Z",
+      sender: "user",
+      text: "hello",
+    });
+
+    store.setSessionId("s1");
+
+    expect(useAppStore.getState().taskRef).toBe("DEV-1");
+    expect(useAppStore.getState().conversationMessages).toHaveLength(1);
   });
 
   it("defaults density to comfort", () => {

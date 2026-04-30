@@ -18,7 +18,6 @@ from src.chatgpt_companion.service import (
     pretty_json,
 )
 from src.chatgpt_companion.widget import load_widget_html
-from src.sejfa.integrations.jira_client import JiraAPIError
 
 WIDGET_URI = "ui://widget/sejfa-mission-dashboard-v1.html"
 
@@ -62,6 +61,10 @@ def _json_text_result(payload: dict) -> CallToolResult:
             )
         ]
     )
+
+
+def _resolve_task_ref(task_ref: str | None, ticket_id: str | None) -> str | None:
+    return task_ref or ticket_id
 
 
 @mcp.resource(
@@ -138,29 +141,15 @@ def list_recent_sessions_default() -> dict:
 )
 def get_session_events(
     session_id: str | None = None,
+    task_ref: str | None = None,
     ticket_id: str | None = None,
     limit: int = 25,
 ) -> dict:
-    return mission_service.get_session_events(
-        session_id=session_id,
-        ticket_id=ticket_id,
-        limit=limit,
-    )
-
-
-@mcp.tool(
-    title="Get Jira issue",
-    description=(
-        "Use this when you want Jira ticket details, status, labels, parent or subtask "
-        "context, and a compact comment summary."
-    ),
-    annotations=_readonly_annotations(),
-)
-def get_jira_issue(issue_key: str) -> dict:
-    try:
-        return mission_service.get_jira_issue(issue_key)
-    except (JiraAPIError, ValueError) as exc:
-        return {"error": str(exc), "issue_key": issue_key}
+    kwargs: dict[str, Any] = {"session_id": session_id, "limit": limit}
+    resolved_task_ref = _resolve_task_ref(task_ref, ticket_id)
+    if resolved_task_ref is not None:
+        kwargs["task_ref"] = resolved_task_ref
+    return mission_service.get_session_events(**kwargs)
 
 
 @mcp.tool(
@@ -271,9 +260,14 @@ def get_project_overview_context() -> dict:
 )
 def render_mission_dashboard(
     session_id: str | None = None,
+    task_ref: str | None = None,
     ticket_id: str | None = None,
 ) -> CallToolResult:
-    payload = mission_service.build_dashboard_payload(session_id=session_id, ticket_id=ticket_id)
+    kwargs: dict[str, Any] = {"session_id": session_id}
+    resolved_task_ref = _resolve_task_ref(task_ref, ticket_id)
+    if resolved_task_ref is not None:
+        kwargs["task_ref"] = resolved_task_ref
+    payload = mission_service.build_dashboard_payload(**kwargs)
     return CallToolResult(
         content=[
             TextContent(
@@ -314,13 +308,17 @@ def render_current_mission_dashboard() -> CallToolResult:
 )
 def get_mission_share(
     session_id: str | None = None,
+    task_ref: str | None = None,
     ticket_id: str | None = None,
 ) -> CallToolResult:
-    payload = mission_service.build_share_payload(
-        session_id=session_id,
-        ticket_id=ticket_id,
-        event_name="mission_share_requested",
-    )
+    kwargs: dict[str, Any] = {
+        "session_id": session_id,
+        "event_name": "mission_share_requested",
+    }
+    resolved_task_ref = _resolve_task_ref(task_ref, ticket_id)
+    if resolved_task_ref is not None:
+        kwargs["task_ref"] = resolved_task_ref
+    payload = mission_service.build_share_payload(**kwargs)
     share = payload.get("share") or {}
     return CallToolResult(
         content=[

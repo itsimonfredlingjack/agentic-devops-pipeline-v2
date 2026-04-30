@@ -7,14 +7,14 @@ export type PipelineStatus =
   | "done"
   | "error";
 
-export interface TicketResult {
-  key: string;
-  url: string;
+export interface TaskResult {
+  taskRef: string;
+  taskUrl: string;
   summary: string;
 }
 
 export interface QueueItem {
-  key: string;
+  taskRef: string;
   summary: string;
 }
 
@@ -43,15 +43,15 @@ export interface PreviewState {
 }
 
 export interface LoopEvent {
-  type: "ticket_queued" | "loop_started" | "loop_completed";
-  issue_key: string;
+  type: "task_queued" | "loop_started" | "loop_completed";
+  taskRef: string;
   summary?: string;
   success?: boolean;
 }
 
 export interface SessionSummary {
   session_id: string;
-  ticket_id: string | null;
+  task_ref?: string | null;
   started_at?: string | null;
   ended_at?: string | null;
   total_cost_usd?: number | null;
@@ -59,10 +59,94 @@ export interface SessionSummary {
   outcome?: string | null;
 }
 
+export type TaskPriority = "urgent" | "high" | "medium" | "low" | "none";
+
+export type TaskStatus =
+  | "backlog"
+  | "todo"
+  | "in-progress"
+  | "review"
+  | "done"
+  | "canceled";
+
+export type TaskSource = "linear" | "voice" | "manual" | "unknown";
+
+export type TaskSourceType =
+  | "system-of-record"
+  | "external-tracker"
+  | "draft"
+  | "unknown";
+
+export interface TaskSummary {
+  id: string;
+  title: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  assignee?: string;
+  labels: string[];
+  source: TaskSource;
+  sourceLabel: string;
+  sourceType: TaskSourceType;
+  issueType?: string;
+  description?: string | null;
+  url?: string;
+}
+
+export type TaskRunOutcome = "done" | "failed" | "blocked" | "aborted" | "pending";
+
+export interface TaskRunSummary {
+  runId: string;
+  taskRef: string | null;
+  startedAt?: string | null;
+  endedAt?: string | null;
+  totalCostUsd?: number | null;
+  totalEvents?: number | null;
+  outcome: TaskRunOutcome;
+}
+
+export type ConversationSender = "user" | "loop" | "system" | "blocker";
+
+export type ConversationAction = "retry" | "clarify";
+
+export type ConversationStatus = "info" | "success" | "warning" | "danger";
+
+export interface LoopConversationMessage {
+  message_id: string;
+  session_id: string;
+  timestamp: string;
+  sender: ConversationSender;
+  text: string;
+  status?: ConversationStatus;
+  details?: string | null;
+  actions?: ConversationAction[];
+}
+
+export interface LoopConversationMessageSubmit {
+  message: string;
+  sender?: ConversationSender;
+  status?: ConversationStatus;
+  details?: string | null;
+  actions?: ConversationAction[];
+  message_id?: string;
+}
+
+export interface SessionAction {
+  action: ConversationAction;
+  details?: string | null;
+  message_id?: string;
+}
+
+export interface SessionActionEvent {
+  session_id: string;
+  action: ConversationAction;
+  details?: string | null;
+  source?: string;
+}
+
 export interface EventRecord {
   event_id: string;
   session_id: string;
-  ticket_id: string | null;
+  task_ref?: string | null;
   timestamp: string;
   event_type: string;
   tool_name: string;
@@ -91,8 +175,8 @@ export interface GateEntry {
 
 export interface CompletionSummary {
   session_id: string;
-  ticket_id: string | null;
-  outcome: "done" | "failed" | "blocked" | "unknown";
+  task_ref?: string | null;
+  outcome: "done" | "failed" | "blocked" | "aborted" | "unknown";
   pytest_summary: string | null;
   ruff_summary: string | null;
   git_diff_summary: string | null;
@@ -140,8 +224,8 @@ export interface CommandCenterNavItem {
 }
 
 export interface VoicePipelineRunResult {
-  ticket_key: string;
-  ticket_url: string;
+  task_ref: string;
+  task_url: string;
   summary: string;
   transcribed_text?: string;
   session_id?: string;

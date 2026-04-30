@@ -19,6 +19,7 @@ VOICE_LOG_FILE="${STATE_DIR}/voice.log"
 MONITOR_LOG_FILE="${STATE_DIR}/monitor.log"
 COMPANION_LOG_FILE="${STATE_DIR}/companion.log"
 DESKTOP_LOG_FILE="${STATE_DIR}/desktop.log"
+TOKEN_FILE="${STATE_DIR}/local-api-token"
 
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 START_DESKTOP="${SEJFA_LOCAL_START_DESKTOP:-false}"
@@ -28,6 +29,27 @@ export SEJFA_MONITOR_API_URL="${SEJFA_MONITOR_API_URL:-http://127.0.0.1:${MONITO
 export SEJFA_CHATGPT_PUBLIC_BASE_URL="${SEJFA_CHATGPT_PUBLIC_BASE_URL:-http://127.0.0.1:${COMPANION_PORT}}"
 
 mkdir -p "${STATE_DIR}"
+
+ensure_local_api_token() {
+  if [[ -n "${SEJFA_LOCAL_API_TOKEN:-}" ]]; then
+    export SEJFA_LOCAL_API_TOKEN
+    return
+  fi
+
+  if [[ ! -f "${TOKEN_FILE}" ]]; then
+    umask 077
+    "${PYTHON_BIN}" - <<'PY' >"${TOKEN_FILE}"
+import secrets
+print(secrets.token_urlsafe(32))
+PY
+    chmod 600 "${TOKEN_FILE}"
+  fi
+
+  SEJFA_LOCAL_API_TOKEN="$(cat "${TOKEN_FILE}")"
+  export SEJFA_LOCAL_API_TOKEN
+}
+
+ensure_local_api_token
 
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
@@ -108,6 +130,7 @@ start_voice() {
   (
     cd "${REPO_ROOT}"
     exec env SEJFA_VOICE_URL="${SEJFA_VOICE_URL}" \
+      SEJFA_LOCAL_API_TOKEN="${SEJFA_LOCAL_API_TOKEN}" \
       "${PYTHON_BIN}" -m uvicorn voice_pipeline.main:app \
       --host 127.0.0.1 \
       --port "${VOICE_PORT}" \
@@ -136,6 +159,7 @@ start_monitor() {
     cd "${REPO_ROOT}"
     exec env SEJFA_MONITOR_PORT="${MONITOR_PORT}" \
       SEJFA_MONITOR_API_URL="${SEJFA_MONITOR_API_URL}" \
+      SEJFA_LOCAL_API_TOKEN="${SEJFA_LOCAL_API_TOKEN}" \
       "${PYTHON_BIN}" -m uvicorn monitor.api:app \
       --host 127.0.0.1 \
       --port "${MONITOR_PORT}" \
@@ -163,6 +187,7 @@ start_companion() {
   (
     cd "${REPO_ROOT}"
     exec env SEJFA_MONITOR_API_URL="${SEJFA_MONITOR_API_URL}" \
+      SEJFA_LOCAL_API_TOKEN="${SEJFA_LOCAL_API_TOKEN}" \
       SEJFA_CHATGPT_COMPANION_PORT="${COMPANION_PORT}" \
       SEJFA_CHATGPT_PUBLIC_BASE_URL="${SEJFA_CHATGPT_PUBLIC_BASE_URL}" \
       "${PYTHON_BIN}" -m uvicorn src.chatgpt_companion.mcp_server:app \
@@ -192,8 +217,10 @@ start_desktop() {
     cd "${REPO_ROOT}"
     exec env SEJFA_VOICE_URL="${SEJFA_VOICE_URL}" \
       SEJFA_MONITOR_API_URL="${SEJFA_MONITOR_API_URL}" \
+      SEJFA_LOCAL_API_TOKEN="${SEJFA_LOCAL_API_TOKEN}" \
       VITE_SEJFA_VOICE_URL="${SEJFA_VOICE_URL}" \
       VITE_SEJFA_MONITOR_URL="${SEJFA_MONITOR_API_URL}" \
+      VITE_SEJFA_LOCAL_API_TOKEN="${SEJFA_LOCAL_API_TOKEN}" \
       npm --workspace desktop run electron:dev -- --host 127.0.0.1 --port "${DESKTOP_PORT}"
   ) >"${DESKTOP_LOG_FILE}" 2>&1 &
   echo "$!" > "${DESKTOP_PID_FILE}"

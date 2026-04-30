@@ -7,7 +7,7 @@ function createActions() {
     setProcessingStep: vi.fn(),
     setClarification: vi.fn(),
     setPreview: vi.fn(),
-    setTicketKey: vi.fn(),
+    setTaskRef: vi.fn(),
   };
 }
 
@@ -63,17 +63,17 @@ describe("pipelineFlow", () => {
     expect(actions.setPipelineStatus).toHaveBeenCalledWith("previewing");
   });
 
-  it("maps ticket creation response", () => {
+  it("maps task creation response", () => {
     const actions = createActions();
     const result = applyPipelineServerResult(
       {
-        ticket_key: "SEJ-123",
+        task_ref: "SEJ-123",
       },
       actions,
     );
 
-    expect(result).toBe("ticket_created");
-    expect(actions.setTicketKey).toHaveBeenCalledWith("SEJ-123");
+    expect(result).toBe("task_created");
+    expect(actions.setTaskRef).toHaveBeenCalledWith("SEJ-123");
     expect(actions.setPipelineStatus).toHaveBeenCalledWith("done");
   });
 

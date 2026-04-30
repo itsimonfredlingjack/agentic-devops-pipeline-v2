@@ -2,6 +2,7 @@ interface SejfaBridge {
   config?: {
     voiceUrl: string;
     monitorUrl: string;
+    apiToken: string;
   };
   onGlobalShortcut: (
     callback: (

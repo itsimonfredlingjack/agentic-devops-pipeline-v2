@@ -1,17 +1,24 @@
 import "@fontsource/geist-mono";
-import { useEffect, useState, useCallback, useRef } from "react";
+import "./design/global.css";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Sidebar } from "./components/Sidebar";
-import { MasterWorkspace } from "./components/MasterWorkspace";
-import { CommandPalette } from "./components/CommandPalette";
+import { WorkspaceHeader } from "./components/WorkspaceHeader";
+import { MetricsBar } from "./components/MetricsBar";
+import { ExecutionLog } from "./components/ExecutionLog";
+import { VoiceIntake } from "./components/VoiceIntake";
+import { TaskDetail } from "./components/TaskDetail";
 import { useAppStore } from "./stores/appStore";
 import { useConnections } from "./hooks/useConnections";
 import { useElapsedTimer } from "./hooks/useElapsedTimer";
 import { useMicrophone } from "./hooks/useMicrophone";
+import { useTaskInbox } from "./hooks/useTaskInbox";
+import { resolveSelectedTask } from "./utils/taskSelection";
 import styles from "./App.module.css";
 
 export default function App() {
   useConnections();
   useElapsedTimer();
+  
   const {
     recording,
     permissionStatus,
@@ -24,16 +31,22 @@ export default function App() {
     startRecording,
     stopRecording,
   } = useMicrophone();
-  const [selectedTaskIndex, setSelectedTaskIndex] = useState(0);
+
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
-  const density = useAppStore((s) => s.density);
-  const activeWorkspaceSection = useAppStore((s) => s.activeWorkspaceSection);
+  const { tasks, loading: taskLoading, error: taskError } = useTaskInbox();
+  const selectedTask = resolveSelectedTask(tasks, selectedTaskId);
   const phase = useAppStore((s) => s.phase);
   const holdShortcutActive = useRef(false);
   const recordingRef = useRef(recording);
   const startRecordingRef = useRef(startRecording);
   const stopRecordingRef = useRef(stopRecording);
+
+  useEffect(() => {
+    if (!selectedTaskId && tasks.length > 0) {
+      setSelectedTaskId(tasks[0].id);
+    }
+  }, [selectedTaskId, tasks]);
 
   useEffect(() => {
     recordingRef.current = recording;
@@ -42,33 +55,9 @@ export default function App() {
   }, [recording, startRecording, stopRecording]);
 
   useEffect(() => {
-    window.sejfa?.onGlobalShortcut((action) => {
-      if (action === "start-voice-recording") {
-        void startRecordingRef.current();
-      } else if (action === "stop-voice-recording") {
-        stopRecordingRef.current();
-      } else if (action === "toggle-voice") {
-        if (recordingRef.current) {
-          stopRecordingRef.current();
-        } else {
-          void startRecordingRef.current();
-        }
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    const matchesShortcut = (event: KeyboardEvent): boolean => {
-      return (event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === "v";
-    };
-
-    const isShortcutRelease = (event: KeyboardEvent): boolean => {
-      return ["v", "V", "Meta", "Control", "Shift"].includes(event.key);
-    };
-
     const onKeyDown = (event: KeyboardEvent) => {
-      if (!matchesShortcut(event)) return;
-
+      const matchesShortcut = (event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === "v";
+      if (!matchesShortcut) return;
       event.preventDefault();
       if (holdShortcutActive.current) return;
       holdShortcutActive.current = true;
@@ -76,10 +65,11 @@ export default function App() {
     };
 
     const onKeyUp = (event: KeyboardEvent) => {
-      if (!holdShortcutActive.current || !isShortcutRelease(event)) return;
-
-      holdShortcutActive.current = false;
-      stopRecording();
+      if (!holdShortcutActive.current) return;
+      if (["v", "V", "Meta", "Control", "Shift"].includes(event.key)) {
+        holdShortcutActive.current = false;
+        stopRecording();
+      }
     };
 
     const onWindowBlur = () => {
@@ -91,7 +81,6 @@ export default function App() {
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
     window.addEventListener("blur", onWindowBlur);
-
     return () => {
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
@@ -99,54 +88,60 @@ export default function App() {
     };
   }, [startRecording, stopRecording]);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        setIsCommandPaletteOpen(true);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
-  const handleSelectTask = useCallback((idx: number) => {
-    setSelectedTaskIndex(idx);
-    setIsCommandPaletteOpen(false);
+  const handleSelectTask = useCallback((taskId: string) => {
+    setSelectedTaskId(taskId);
   }, []);
 
   return (
-    <div
-      className={styles.appRoot}
-      data-density={density}
-      data-section={activeWorkspaceSection}
-      data-phase={phase}
-    >
+    <div className={styles.appRoot} data-phase={phase}>
       <div className={styles.dragRegion} />
-      <Sidebar 
-        selectedIndex={selectedTaskIndex}
-        onSelectIndex={setSelectedTaskIndex}
+      
+      <Sidebar
+        tasks={tasks}
+        loading={taskLoading}
+        error={taskError}
+        selectedTaskId={selectedTask?.id ?? null}
+        onSelectTaskId={handleSelectTask}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
-      <MasterWorkspace 
-        selectedIndex={selectedTaskIndex}
-        recording={recording}
-        onStartVoice={() => void startRecording()}
-        onStopVoice={stopRecording}
-        permissionStatus={permissionStatus}
-        availableDevices={availableDevices}
-        selectedDeviceId={selectedDeviceId}
-        onSelectDevice={setSelectedDeviceId}
-        inputLevel={inputLevel}
-        recordingDurationMs={recordingDurationMs}
-        errorMessage={errorMessage}
-      />
-      <CommandPalette 
-        isOpen={isCommandPaletteOpen}
-        onClose={() => setIsCommandPaletteOpen(false)}
-        onSelectTask={handleSelectTask}
-      />
+
+      <main className={styles.main}>
+        <WorkspaceHeader
+          selectedTask={selectedTask}
+          phase={phase}
+        />
+
+        <div className={styles.content}>
+          <MetricsBar
+            toolCalls={24}
+            cost={1.24}
+            duration="2m 14s"
+            successRate={96}
+            tokens={8420}
+            retries={2}
+          />
+
+          <div className={styles.workspaceGrid}>
+            <div className={styles.primaryColumn}>
+              <ExecutionLog />
+            </div>
+
+            <div className={styles.secondaryColumn}>
+              <TaskDetail task={selectedTask} />
+              <VoiceIntake
+                selectedTask={selectedTask}
+                recording={recording}
+                onStartVoice={() => void startRecording()}
+                onStopVoice={stopRecording}
+                permissionStatus={permissionStatus}
+                inputLevel={inputLevel}
+                errorMessage={errorMessage}
+              />
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

@@ -1,85 +1,77 @@
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
-  display: flex;
-  justify-content: center;
-  padding-top: 15vh;
-  z-index: 10000;
-  animation: fadeIn 0.15s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 .modal {
   width: 100%;
-  max-width: 600px;
-  background: linear-gradient(180deg, var(--surface-command-panel-strong), #07080d);
-  border: 1px solid var(--surface-command-border);
-  border-radius: 12px;
-  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 0, 0, 1);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   height: fit-content;
-  max-height: 60vh;
-  animation: slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes slideDown {
-  from { transform: translateY(-20px) scale(0.98); opacity: 0; }
-  to { transform: translateY(0) scale(1); opacity: 1; }
+  max-height: min(70vh, 720px);
 }
 
 .searchContainer {
   display: flex;
   align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  gap: 16px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--glass-border);
+  gap: 14px;
+}
+
+.paletteTitle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .searchIcon {
-  color: #71717a;
+  color: var(--text-muted);
   font-size: 18px;
+  opacity: 0.6;
 }
 
 .searchInput {
   flex: 1;
   background: transparent;
   border: none;
-  color: #ffffff;
+  color: var(--vault-50);
   font-size: 16px;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-body);
 }
 
 .searchInput:focus-visible {
-  outline: 2px solid var(--status-info);
-  outline-offset: 2px;
-  border-radius: 4px;
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 6px;
 }
 
 .searchInput::placeholder {
-  color: #52525b;
+  color: var(--text-muted);
 }
 
 .commandList {
   list-style: none;
   margin: 0;
-  padding: 8px;
+  padding: 10px;
   overflow-y: auto;
+  max-height: 52vh;
 }
 
 .groupLabel {
-  padding: 8px 10px 4px;
-  font-family: var(--font-mono);
+  padding: 10px 12px 6px;
+  font-family: var(--font-body);
   font-size: 10px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
 }
 
 .commandItem {
@@ -87,66 +79,83 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
-  border-radius: 6px;
+  padding: 12px 14px;
+  border-radius: 10px;
   background: transparent;
   border: none;
   cursor: pointer;
   text-align: left;
-  transition: background var(--motion-fast);
+  transition: background var(--motion-fast), transform var(--motion-fast);
+}
+
+.commandItem:focus {
+  outline: none;
+}
+
+.commandItem:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateX(2px);
 }
 
 .activeItem {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .activeItem .itemLabel {
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .activeItem .itemIcon {
-  color: #3b82f6;
+  color: var(--color-accent-task);
 }
 
 .itemLeft {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .itemIcon {
-  color: #71717a;
-  font-family: "Geist Mono", monospace;
-  font-size: 14px;
-  width: 24px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
   text-align: center;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
 }
 
 .itemLabel {
   font-size: 14px;
-  color: #a1a1aa;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
 .itemShortcut {
-  font-family: "Geist Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
-  color: #52525b;
+  color: var(--text-muted);
   letter-spacing: 0.05em;
 }
 
 .itemMeta {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 10px;
   color: var(--text-muted);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  font-weight: 600;
 }
 
 .emptyState {
-  padding: 32px;
+  padding: 36px;
   text-align: center;
-  color: #52525b;
+  color: var(--text-muted);
   font-size: 14px;
 }
 
@@ -156,30 +165,31 @@
 }
 
 .emptyState span {
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .footer {
-  padding: 12px 20px;
-  background: rgba(255, 255, 255, 0.015);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 14px 22px;
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid var(--glass-border);
   display: flex;
-  gap: 20px;
+  gap: 24px;
 }
 
 .instruction {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 11px;
-  color: #71717a;
+  color: var(--text-muted);
 }
 
 .instruction kbd {
-  font-family: "Geist Mono", monospace;
-  padding: 2px 4px;
-  background: #18181b;
-  border: 1px solid #27272a;
-  border-radius: 3px;
-  color: #a1a1aa;
+  font-family: var(--font-mono);
+  padding: 3px 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--glass-border);
+  border-radius: 5px;
+  color: var(--text-muted);
+  font-size: 10px;
 }

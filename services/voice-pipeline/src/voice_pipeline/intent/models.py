@@ -1,10 +1,10 @@
-"""Pydantic v2 models for intent extraction output."""
+"""Pydantic v2 models for task intent extraction output."""
 
 from pydantic import BaseModel, Field, model_validator
 
 
-class JiraTicketIntent(BaseModel):
-    """Extracted intent for a Jira ticket.
+class TaskIntent(BaseModel):
+    """Extracted intent for a task draft.
 
     Produced by the LLM from transcribed voice input.
     """
@@ -13,7 +13,7 @@ class JiraTicketIntent(BaseModel):
         ...,
         min_length=3,
         max_length=255,
-        description="Short one-line ticket summary (Jira subject line).",
+        description="Short one-line task summary.",
         examples=["Bygg login-sida med Google OAuth"],
     )
     description: str = Field(
@@ -29,12 +29,12 @@ class JiraTicketIntent(BaseModel):
     )
     issue_type: str = Field(
         default="Story",
-        description="Jira issue type (Story, Bug, Task, Sub-task).",
+        description="Requested work type (Story, Bug, Task, Sub-task).",
         examples=["Story", "Bug", "Task"],
     )
     priority: str = Field(
         default="Medium",
-        description="Jira priority (Highest, High, Medium, Low, Lowest).",
+        description="Requested priority (Highest, High, Medium, Low, Lowest).",
         examples=["High", "Medium", "Low"],
     )
     ambiguity_score: float = Field(
@@ -49,13 +49,13 @@ class JiraTicketIntent(BaseModel):
     )
     labels: list[str] = Field(
         default_factory=list,
-        description="Jira labels to apply to the ticket.",
+        description="Labels to apply to the task record.",
     )
 
     @model_validator(mode="before")
     @classmethod
     def normalise_priority(cls, values: dict) -> dict:
-        """Normalise priority to Jira-valid values."""
+        """Normalise priority to supported values."""
         valid = {"Highest", "High", "Medium", "Low", "Lowest"}
         priority = values.get("priority", "Medium")
         if priority not in valid:
@@ -65,7 +65,7 @@ class JiraTicketIntent(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def normalise_issue_type(cls, values: dict) -> dict:
-        """Normalise issue_type to common Jira values."""
+        """Normalise issue_type to supported values."""
         valid = {"Story", "Bug", "Task", "Sub-task", "Epic"}
         issue_type = values.get("issue_type", "Story")
         if issue_type not in valid:
@@ -74,10 +74,10 @@ class JiraTicketIntent(BaseModel):
 
 
 class AmbiguityResult(BaseModel):
-    """Result when the intent is too ambiguous to create a ticket.
+    """Result when the intent is too ambiguous to create a task draft.
 
     Returned when ambiguity_score >= 0.7 and the LLM generates
-    clarification questions instead of a full ticket intent.
+    clarification questions instead of a full task intent.
     """
 
     questions: list[str] = Field(

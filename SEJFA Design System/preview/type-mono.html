@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+html,body{margin:0;padding:0}
+body{background:var(--vault-950);padding:18px;color:var(--vault-100);font-family:var(--font-mono);font-size:13px;line-height:1.55}
+.dim{color:var(--vault-300)}
+.ok{color:var(--loop-300)}
+.warn{color:var(--heal-300)}
+.err{color:#E69189}
+.caret::after{content:"▮";margin-left:2px;color:var(--loop-300);animation:b 1.1s steps(1) infinite}
+@keyframes b{50%{opacity:0}}
+</style></head>
+<body>
+<div><span class="dim">$</span> sejfa agent start <span class="ok">GE-42</span></div>
+<div class="dim">→ fetching issue… ok</div>
+<div class="dim">→ branch feature/GE-42-subscriber-crud</div>
+<div>iter <span class="ok">7</span> · tests <span class="ok">243/243</span> · cov <span class="ok">87%</span></div>
+<div class="warn">⟳ self-heal: flaky test retried (1/25)</div>
+<div class="err">✕ safety.check: 1 CVE in package urllib3@1.26.4</div>
+<div><span class="dim">$</span> <span class="caret"></span></div>
+</body></html>

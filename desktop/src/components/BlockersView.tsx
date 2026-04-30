@@ -1,12 +1,27 @@
 import { useState } from "react";
-import { submitClarification } from "@sejfa/data-client";
+import { retryLoopTask, submitClarification } from "@sejfa/data-client";
 import { useAppStore } from "../stores/appStore";
 import styles from "./BlockersView.module.css";
 
 export function BlockersView() {
-  const { clarification, stuckAlert, completion, voiceUrl, setClarification, clearStuckAlert, reset } = useAppStore();
+  const {
+    clarification,
+    stuckAlert,
+    completion,
+    voiceUrl,
+    taskRef,
+    setClarification,
+    clearStuckAlert,
+    clearCompletion,
+    reset,
+    setProcessingStep,
+  } = useAppStore();
   const [answer, setAnswer] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [retrying, setRetrying] = useState(false);
+  const [retryError, setRetryError] = useState<string | null>(null);
+
+  const retryTarget = completion?.task_ref ?? taskRef ?? null;
 
   const submitReply = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +41,7 @@ export function BlockersView() {
           <div className={styles.cardHeader}>NO ACTIVE ISSUES</div>
           <div className={styles.cardContent}>
             <p className={styles.mutedText}>Run status is stable.</p>
-            <p className={styles.mutedText}>Use run controls to send instructions or create a checkpoint.</p>
+            <p className={styles.mutedText}>Use the timeline, operator notes, and live abort control when you need intervention context.</p>
           </div>
         </div>
       </div>
@@ -53,7 +68,7 @@ export function BlockersView() {
       )}
 
       {stuckAlert && (
-        <div className={`${styles.blockerCard} ${styles.borderDanger}`} role="alert">
+        <div className={`${styles.blockerCard} ${styles.borderDanger}`} role="status" aria-live="polite">
           <div className={styles.cardHeader}>RUN BLOCKED: REPETITION DETECTED</div>
           <div className={styles.cardContent}>
              <pre className={styles.codeBlock}>{stuckAlert.pattern}</pre>
@@ -65,14 +80,64 @@ export function BlockersView() {
       )}
 
       {completion && (
-        <div className={`${styles.blockerCard} ${styles.borderSuccess}`} role="status">
-          <div className={styles.cardHeader}>RUN COMPLETE</div>
+        <div
+          className={`${styles.blockerCard} ${
+            completion.outcome === "done" ? styles.borderSuccess : styles.borderDanger
+          }`}
+          role="status"
+        >
+          <div className={styles.cardHeader}>
+            {completion.outcome === "done"
+              ? "RUN COMPLETE"
+              : completion.outcome === "blocked"
+                ? "RUN BLOCKED"
+                : completion.outcome === "aborted"
+                  ? "RUN ABORTED"
+                  : "RUN FAILED"}
+          </div>
           <div className={styles.cardContent}>
-            <p className={styles.mutedText}>Automation run completed. Confirm outputs and readiness before closing.</p>
+            <p className={styles.mutedText}>
+              {completion.outcome === "done"
+                ? "Automation run completed. Confirm outputs and readiness before closing."
+                : completion.outcome === "blocked"
+                  ? "The runner reported a blocked outcome. Review the conversation and re-queue when the task is unblocked."
+                  : completion.outcome === "aborted"
+                    ? "The run was stopped by operator action. Re-queue when you want the task to continue."
+                    : "The runner exited unsuccessfully. Review the trace, then retry when ready."}
+            </p>
           </div>
           <div className={styles.cardActions}>
+            {completion.outcome !== "done" && retryTarget && (
+              <button
+                className={styles.btnPrimary}
+                onClick={async () => {
+                  setRetrying(true);
+                  setRetryError(null);
+                  try {
+                    await retryLoopTask(voiceUrl, retryTarget);
+                    clearStuckAlert();
+                    clearCompletion();
+                    setProcessingStep("Retry queued...");
+                  } catch (error) {
+                    setRetryError(
+                      error instanceof Error ? error.message : "Failed to queue task retry.",
+                    );
+                  } finally {
+                    setRetrying(false);
+                  }
+                }}
+                disabled={retrying}
+              >
+                {retrying ? "QUEUING…" : "RETRY TASK"}
+              </button>
+            )}
             <button className={styles.btnPrimary} onClick={() => reset()}>CLOSE RUN</button>
           </div>
+          {retryError && (
+            <div className={styles.cardContent}>
+              <p className={styles.mutedText}>{retryError}</p>
+            </div>
+          )}
         </div>
       )}
     </div>

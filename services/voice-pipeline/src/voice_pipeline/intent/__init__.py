@@ -1,4 +1,4 @@
 from .extractor import IntentExtractor
-from .models import AmbiguityResult, JiraTicketIntent
+from .models import AmbiguityResult, TaskIntent
 
-__all__ = ["IntentExtractor", "JiraTicketIntent", "AmbiguityResult"]
+__all__ = ["IntentExtractor", "TaskIntent", "AmbiguityResult"]

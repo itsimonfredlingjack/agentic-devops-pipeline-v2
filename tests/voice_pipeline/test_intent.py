@@ -1,5 +1,6 @@
 """Tests for intent extraction module."""
 
+import importlib
 import json
 from unittest.mock import AsyncMock, MagicMock
 
@@ -7,13 +8,13 @@ import pytest
 from pydantic import ValidationError
 
 from src.voice_pipeline.intent.extractor import IntentExtractionError, IntentExtractor
-from src.voice_pipeline.intent.models import AmbiguityResult, JiraTicketIntent
+from src.voice_pipeline.intent.models import AmbiguityResult, TaskIntent
 from src.voice_pipeline.security.sanitizer import detect_prompt_injection_patterns, sanitize_for_llm
 
 
-class TestJiraTicketIntent:
+class TestTaskIntent:
     def test_valid_intent(self):
-        intent = JiraTicketIntent(
+        intent = TaskIntent(
             summary="Bygg login-sida med Google OAuth",
             description="Implementera login med Google",
             acceptance_criteria="Given en användare\nWhen de klickar login\nThen autentiseras de",
@@ -25,34 +26,38 @@ class TestJiraTicketIntent:
         assert intent.priority == "High"
 
     def test_invalid_priority_normalised_to_medium(self):
-        intent = JiraTicketIntent(
+        intent = TaskIntent(
             summary="Test",
             priority="SuperHigh",  # Invalid
         )
         assert intent.priority == "Medium"
 
     def test_invalid_issue_type_normalised_to_story(self):
-        intent = JiraTicketIntent(
+        intent = TaskIntent(
             summary="Test",
-            issue_type="Feature",  # Not a valid Jira type
+            issue_type="Feature",  # Not a valid supported task type
         )
         assert intent.issue_type == "Story"
 
     def test_ambiguity_score_bounds(self):
         with pytest.raises(ValidationError):
-            JiraTicketIntent(summary="Test", ambiguity_score=1.5)
+            TaskIntent(summary="Test", ambiguity_score=1.5)
 
         with pytest.raises(ValidationError):
-            JiraTicketIntent(summary="Test", ambiguity_score=-0.1)
+            TaskIntent(summary="Test", ambiguity_score=-0.1)
 
     def test_summary_max_length(self):
         long_summary = "x" * 300
-        intent = JiraTicketIntent(summary=long_summary[:255])
+        intent = TaskIntent(summary=long_summary[:255])
         assert len(intent.summary) <= 255
 
     def test_default_labels_empty(self):
-        intent = JiraTicketIntent(summary="Test")
+        intent = TaskIntent(summary="Test")
         assert intent.labels == []
+
+    def test_old_intent_alias_is_not_exported(self):
+        models = importlib.import_module("src.voice_pipeline.intent.models")
+        assert not hasattr(models, "JiraTicketIntent")
 
 
 class TestAmbiguityResult:
@@ -200,7 +205,7 @@ class TestIntentExtractor:
             )
 
     async def test_clarification_questions_in_intent(self):
-        intent = JiraTicketIntent(
+        intent = TaskIntent(
             summary="Fixa grejen",
             ambiguity_score=0.8,
             clarification_questions=["Vilken del?", "Vad är problemet?"],

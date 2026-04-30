@@ -4,6 +4,7 @@ Verifies that queue entries survive process restarts, deduplication
 works across instances, and all CRUD operations persist to disk.
 """
 
+import sqlite3
 from pathlib import Path
 
 from src.voice_pipeline.loop_queue import LoopQueue, TicketStatus
@@ -18,15 +19,15 @@ class TestPersistentLoopQueuePersistence:
 
         db_path = tmp_path / "queue.db"
 
-        # Instance 1: add tickets
+        # Instance 1: add tasks
         q1 = PersistentLoopQueue(db_path=db_path)
-        q1.add_ticket("DEV-1", "Build login")
-        q1.add_ticket("DEV-2", "Fix logout")
+        q1.add_task("DEV-1", "Build login")
+        q1.add_task("DEV-2", "Fix logout")
 
-        # Instance 2: should see both tickets
+        # Instance 2: should see both tasks
         q2 = PersistentLoopQueue(db_path=db_path)
         pending = q2.get_pending()
-        keys = {item["key"] for item in pending}
+        keys = {item["task_ref"] for item in pending}
         assert keys == {"DEV-1", "DEV-2"}
 
     def test_restart_recovery_preserves_status(self, tmp_path: Path) -> None:
@@ -36,10 +37,10 @@ class TestPersistentLoopQueuePersistence:
         db_path = tmp_path / "queue.db"
 
         q1 = PersistentLoopQueue(db_path=db_path)
-        q1.add_ticket("DEV-1", "Pending ticket")
-        q1.add_ticket("DEV-2", "Started ticket")
-        q1.add_ticket("DEV-3", "Completed ticket")
-        q1.add_ticket("DEV-4", "Failed ticket")
+        q1.add_task("DEV-1", "Pending task")
+        q1.add_task("DEV-2", "Started task")
+        q1.add_task("DEV-3", "Completed task")
+        q1.add_task("DEV-4", "Failed task")
         q1.mark_started("DEV-2")
         q1.mark_started("DEV-3")
         q1.mark_completed("DEV-3", success=True)
@@ -49,7 +50,7 @@ class TestPersistentLoopQueuePersistence:
         # New instance should recover all states
         q2 = PersistentLoopQueue(db_path=db_path)
         pending = q2.get_pending()
-        pending_keys = {item["key"] for item in pending}
+        pending_keys = {item["task_ref"] for item in pending}
         assert pending_keys == {"DEV-1"}
 
         # Verify internal entries have correct statuses
@@ -61,38 +62,108 @@ class TestPersistentLoopQueuePersistence:
         assert q2._entries["DEV-4"].success is False
 
     def test_deduplication_across_instances(self, tmp_path: Path) -> None:
-        """Enqueueing the same ticket_key twice should not create duplicates."""
+        """Enqueueing the same task ref twice should not create duplicates."""
         from src.voice_pipeline.persistent_loop_queue import PersistentLoopQueue
 
         db_path = tmp_path / "queue.db"
 
         q1 = PersistentLoopQueue(db_path=db_path)
-        assert q1.add_ticket("DEV-1", "Build login") is True
+        assert q1.add_task("DEV-1", "Build login") is True
         # Same key, same instance - should be deduplicated
-        assert q1.add_ticket("DEV-1", "Build login again") is False
+        assert q1.add_task("DEV-1", "Build login again") is False
 
         # New instance - ticket still exists, should still be dedup'd
         q2 = PersistentLoopQueue(db_path=db_path)
-        assert q2.add_ticket("DEV-1", "Build login yet again") is False
+        assert q2.add_task("DEV-1", "Build login yet again") is False
         pending = q2.get_pending()
         assert len(pending) == 1
         assert pending[0]["summary"] == "Build login"
+
+    def test_restores_legacy_key_rows_as_task_refs(self, tmp_path: Path) -> None:
+        """Legacy queue rows stored under key should restore as task-first entries."""
+        from src.voice_pipeline.persistent_loop_queue import PersistentLoopQueue
+
+        db_path = tmp_path / "queue.db"
+        with sqlite3.connect(db_path) as conn:
+            conn.executescript(
+                """
+                CREATE TABLE queue_entries (
+                    key TEXT PRIMARY KEY,
+                    summary TEXT NOT NULL,
+                    status TEXT NOT NULL DEFAULT 'pending',
+                    queued_at REAL NOT NULL,
+                    started_at REAL,
+                    completed_at REAL,
+                    success INTEGER,
+                    retry_count INTEGER NOT NULL DEFAULT 0
+                );
+                INSERT INTO queue_entries (key, summary, status, queued_at, retry_count)
+                VALUES ('LEG-7', 'Legacy queued task', 'pending', 10.0, 0);
+                """
+            )
+
+        queue = PersistentLoopQueue(db_path=db_path)
+        pending = queue.get_pending()
+
+        assert pending == [{"task_ref": "LEG-7", "summary": "Legacy queued task"}]
+
+    def test_additive_migration_adds_task_ref_column_and_backfills(self, tmp_path: Path) -> None:
+        """Existing queue DBs should gain task_ref without losing key-backed rows."""
+        from src.voice_pipeline.persistent_loop_queue import PersistentLoopQueue
+
+        db_path = tmp_path / "queue.db"
+        with sqlite3.connect(db_path) as conn:
+            conn.executescript(
+                """
+                CREATE TABLE queue_entries (
+                    key TEXT PRIMARY KEY,
+                    summary TEXT NOT NULL,
+                    status TEXT NOT NULL DEFAULT 'pending',
+                    queued_at REAL NOT NULL,
+                    started_at REAL,
+                    completed_at REAL,
+                    success INTEGER
+                );
+                INSERT INTO queue_entries (key, summary, status, queued_at, success)
+                VALUES ('LEG-9', 'Legacy storage row', 'pending', 20.0, NULL);
+                """
+            )
+
+        queue = PersistentLoopQueue(db_path=db_path)
+        pending = queue.get_pending()
+        assert pending == [{"task_ref": "LEG-9", "summary": "Legacy storage row"}]
+
+        with sqlite3.connect(db_path) as conn:
+            columns = [row[1] for row in conn.execute("PRAGMA table_info(queue_entries)")]
+            row = conn.execute(
+                "SELECT task_ref, key FROM queue_entries WHERE key = 'LEG-9'"
+            ).fetchone()
+
+        assert "task_ref" in columns
+        assert row == ("LEG-9", "LEG-9")
 
 
 class TestPersistentLoopQueueCRUD:
     """Tests for all CRUD operations backed by SQLite."""
 
     def test_add_and_get_pending(self, tmp_path: Path) -> None:
-        """Basic add_ticket and get_pending should work with SQLite backing."""
+        """Basic add_task and get_pending should work with SQLite backing."""
         from src.voice_pipeline.persistent_loop_queue import PersistentLoopQueue
 
         db_path = tmp_path / "queue.db"
         q = PersistentLoopQueue(db_path=db_path)
-        q.add_ticket("DEV-10", "Implement feature X")
+        q.add_task("DEV-10", "Implement feature X")
         pending = q.get_pending()
         assert len(pending) == 1
-        assert pending[0]["key"] == "DEV-10"
+        assert pending[0]["task_ref"] == "DEV-10"
         assert pending[0]["summary"] == "Implement feature X"
+
+        with sqlite3.connect(db_path) as conn:
+            row = conn.execute(
+                "SELECT task_ref, key FROM queue_entries WHERE key = 'DEV-10'"
+            ).fetchone()
+
+        assert row == ("DEV-10", "DEV-10")
 
     def test_mark_started_persists(self, tmp_path: Path) -> None:
         """mark_started should persist to SQLite."""
@@ -100,7 +171,7 @@ class TestPersistentLoopQueueCRUD:
 
         db_path = tmp_path / "queue.db"
         q1 = PersistentLoopQueue(db_path=db_path)
-        q1.add_ticket("DEV-5", "Some work")
+        q1.add_task("DEV-5", "Some work")
         q1.mark_started("DEV-5")
 
         q2 = PersistentLoopQueue(db_path=db_path)
@@ -114,7 +185,7 @@ class TestPersistentLoopQueueCRUD:
 
         db_path = tmp_path / "queue.db"
         q1 = PersistentLoopQueue(db_path=db_path)
-        q1.add_ticket("DEV-6", "Bugfix")
+        q1.add_task("DEV-6", "Bugfix")
         q1.mark_started("DEV-6")
         q1.mark_completed("DEV-6", success=True)
 
@@ -123,8 +194,8 @@ class TestPersistentLoopQueueCRUD:
         assert entry.status == TicketStatus.COMPLETED
         assert entry.success is True
 
-    def test_mark_unknown_key_no_error(self, tmp_path: Path) -> None:
-        """Marking an unknown key should not raise, matching LoopQueue behavior."""
+    def test_mark_unknown_task_ref_no_error(self, tmp_path: Path) -> None:
+        """Marking an unknown task ref should not raise, matching LoopQueue behavior."""
         from src.voice_pipeline.persistent_loop_queue import PersistentLoopQueue
 
         db_path = tmp_path / "queue.db"
@@ -134,21 +205,21 @@ class TestPersistentLoopQueueCRUD:
         # Should reach here without error
 
     def test_multiple_tickets_crud(self, tmp_path: Path) -> None:
-        """Full lifecycle with multiple tickets across restart."""
+        """Full lifecycle with multiple tasks across restart."""
         from src.voice_pipeline.persistent_loop_queue import PersistentLoopQueue
 
         db_path = tmp_path / "queue.db"
         q1 = PersistentLoopQueue(db_path=db_path)
 
-        q1.add_ticket("DEV-A", "Task A")
-        q1.add_ticket("DEV-B", "Task B")
-        q1.add_ticket("DEV-C", "Task C")
+        q1.add_task("DEV-A", "Task A")
+        q1.add_task("DEV-B", "Task B")
+        q1.add_task("DEV-C", "Task C")
         q1.mark_started("DEV-A")
         q1.mark_completed("DEV-A", success=True)
 
         q2 = PersistentLoopQueue(db_path=db_path)
         pending = q2.get_pending()
-        pending_keys = sorted(item["key"] for item in pending)
+        pending_keys = sorted(item["task_ref"] for item in pending)
         assert pending_keys == ["DEV-B", "DEV-C"]
 
 
@@ -165,11 +236,6 @@ class TestPersistentLoopQueueIsDropIn:
         """Settings should have a queue_db_path field with a default value."""
         from src.voice_pipeline.config import Settings
 
-        settings = Settings(
-            jira_url="https://test.atlassian.net",
-            jira_email="test@example.com",
-            jira_api_token="fake-token",
-            jira_project_key="TEST",
-        )
+        settings = Settings()
         assert hasattr(settings, "queue_db_path")
         assert settings.queue_db_path == "loop_queue.db"

@@ -165,7 +165,7 @@ export function useMicrophone() {
         setProcessingStep: store.setProcessingStep,
         setClarification: store.setClarification,
         setPreview: store.setPreview,
-        setTicketKey: store.setTicketKey,
+        setTaskRef: store.setTaskRef,
       });
 
       if (result === "unknown") {

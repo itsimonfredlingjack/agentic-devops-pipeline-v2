@@ -1,0 +1,79 @@
+.metricsBar {
+  display: grid;
+  grid-template-columns: minmax(280px, 1.5fr) repeat(6, minmax(88px, 0.55fr));
+  gap: var(--space-2);
+  align-items: stretch;
+}
+
+.incident {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  padding: 10px 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 71, 87, 0.18);
+  background: linear-gradient(90deg, rgba(255, 71, 87, 0.09), rgba(255, 255, 255, 0.015));
+  border-left: 2px solid var(--red);
+}
+
+.incidentState {
+  color: var(--red);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.incidentText {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.card {
+  padding: 10px 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 5px;
+}
+
+.value {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+@media (max-width: 1180px) {
+  .metricsBar {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .incident {
+    grid-column: 1 / -1;
+  }
+}
+
+.success .value {
+  color: var(--green);
+}
+
+.warning .value {
+  color: var(--amber);
+}
+
+.error .value {
+  color: var(--red);
+}

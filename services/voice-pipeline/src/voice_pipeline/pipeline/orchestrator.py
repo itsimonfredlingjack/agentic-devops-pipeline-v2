@@ -1,12 +1,12 @@
-"""Pipeline orchestrator: coordinates the full voice → Jira ticket flow.
+"""Pipeline orchestrator: coordinates the full voice -> structured task flow.
 
 Stages:
   recording    → audio file received
-  transcribing → Whisper transcribes audio (VRAM loaded → unloaded)
-  extracting   → Ollama extracts Jira intent (VRAM claimed)
+  transcribing → Whisper transcribes audio (VRAM loaded -> unloaded)
+  extracting   → Ollama extracts structured task intent (VRAM claimed)
   clarifying   → ambiguity detected, waiting for user clarification
-  creating     → Jira issue created via REST API
-  done         → pipeline complete; ticket URL returned
+  creating     → task saved to Linear
+  done         → pipeline complete; task URL returned
   error        → any stage failed
 
 At each transition the orchestrator broadcasts a status update to all
@@ -27,11 +27,12 @@ from typing import TYPE_CHECKING, Any
 from ..config import Settings
 
 if TYPE_CHECKING:
+    from ..demo_tasks import DemoTaskStore
     from ..loop_queue import LoopQueue
 
 from ..intent.extractor import IntentExtractionError, IntentExtractor
-from ..intent.models import JiraTicketIntent
-from ..jira.client import AsyncJiraClient, JiraAPIError
+from ..intent.models import TaskIntent
+from ..linear.client import AsyncLinearClient, LinearAPIError
 from ..transcriber.base import Transcriber, TranscriptionError
 from ..transcriber.whisper_local import WhisperLocalTranscriber
 from .status import MonitorService, PipelineStatus
@@ -47,7 +48,7 @@ class PipelineSession:
 
     session_id: str
     original_text: str
-    current_intent: JiraTicketIntent | None = None
+    current_intent: TaskIntent | None = None
     clarification_round: int = 0
     conversation_history: list[str] = field(default_factory=list)
 
@@ -58,22 +59,22 @@ class PipelineResult:
     def __init__(
         self,
         session_id: str,
-        ticket_key: str,
-        ticket_url: str,
+        task_ref: str,
+        task_url: str,
         summary: str,
         transcribed_text: str,
     ) -> None:
         self.session_id = session_id
-        self.ticket_key = ticket_key
-        self.ticket_url = ticket_url
+        self.task_ref = task_ref
+        self.task_url = task_url
         self.summary = summary
         self.transcribed_text = transcribed_text
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "session_id": self.session_id,
-            "ticket_key": self.ticket_key,
-            "ticket_url": self.ticket_url,
+            "task_ref": self.task_ref,
+            "task_url": self.task_url,
             "summary": self.summary,
             "transcribed_text": self.transcribed_text,
         }
@@ -115,7 +116,7 @@ class PreviewNeeded:
         session_id: str,
         transcribed_text: str,
         summary: str,
-        intent: JiraTicketIntent | None = None,
+        intent: TaskIntent | None = None,
     ) -> None:
         self.session_id = session_id
         self.transcribed_text = transcribed_text
@@ -143,7 +144,7 @@ class PreviewNeeded:
 
 
 class PipelineOrchestrator:
-    """Runs the voice → Jira pipeline and broadcasts status at each stage.
+    """Runs the voice -> task intake pipeline and broadcasts status at each stage.
 
     Designed for a single concurrent pipeline run (RTX 2060 VRAM constraint).
     The _lock prevents two simultaneous runs from fighting over GPU memory.
@@ -155,17 +156,19 @@ class PipelineOrchestrator:
         monitor: MonitorService,
         broadcast: BroadcastCallback | None = None,
         loop_queue: LoopQueue | None = None,
+        demo_tasks: DemoTaskStore | None = None,
     ) -> None:
         self._settings = settings
         self._monitor = monitor
         self._broadcast = broadcast
         self._loop_queue = loop_queue
+        self._demo_tasks = demo_tasks
         self._lock = asyncio.Lock()
         self._sessions: dict[str, PipelineSession] = {}
 
         self._transcriber: Transcriber | None = None
         self._extractor: IntentExtractor | None = None
-        self._jira: AsyncJiraClient | None = None
+        self._linear: AsyncLinearClient | None = None
 
     def _get_transcriber(self) -> Transcriber:
         if self._transcriber is None:
@@ -192,10 +195,10 @@ class PipelineOrchestrator:
             )
         return self._extractor
 
-    def _get_jira(self) -> AsyncJiraClient:
-        if self._jira is None:
-            self._jira = AsyncJiraClient(self._settings)
-        return self._jira
+    def _get_linear(self) -> AsyncLinearClient:
+        if self._linear is None:
+            self._linear = AsyncLinearClient(self._settings)
+        return self._linear
 
     async def _transition(self, stage: PipelineStatus, message: str) -> None:
         """Move to a new pipeline stage and broadcast the update."""
@@ -282,7 +285,7 @@ class PipelineOrchestrator:
                 for key, value in overrides.items():
                     if key in self._OVERRIDE_FIELDS:
                         intent_dict[key] = value
-                intent = JiraTicketIntent.model_validate(intent_dict)
+                intent = TaskIntent.model_validate(intent_dict)
 
             self._sessions.pop(session_id, None)
             return await self._create_ticket(intent, combined_text, session_id)
@@ -332,8 +335,10 @@ class PipelineOrchestrator:
         self, text: str
     ) -> PipelineResult | ClarificationNeeded | PreviewNeeded:
         """Internal: pipeline from transcribed text onwards."""
-        if not self._settings.jira_configured:
-            raise RuntimeError("Jira is not configured. Set JIRA_URL, JIRA_EMAIL, JIRA_API_TOKEN.")
+        if not self._settings.demo_mode and not self._settings.linear_configured:
+            raise RuntimeError(
+                "Linear is not configured. Set LINEAR_API_KEY to save approved tasks."
+            )
 
         session_id = uuid.uuid4().hex[:12]
 
@@ -387,7 +392,7 @@ class PipelineOrchestrator:
                 round_number=1,
             )
 
-        # Clear enough — pause for intent confirmation
+        # Clear enough — wait for intent confirmation
         session = PipelineSession(
             session_id=session_id,
             original_text=text,
@@ -522,55 +527,83 @@ class PipelineOrchestrator:
 
     async def _create_ticket(
         self,
-        intent: JiraTicketIntent,
+        intent: TaskIntent,
         text: str,
         session_id: str,
     ) -> PipelineResult:
-        """Create the Jira ticket from a validated intent."""
-        await self._transition(
-            PipelineStatus.CREATING,
-            f"Creating Jira ticket in {self._settings.jira_project_key}…",
-        )
-        jira = self._get_jira()
-        try:
-            issue = await jira.create_issue(
-                project_key=self._settings.jira_project_key,
-                summary=intent.summary,
-                description=intent.description,
-                acceptance_criteria=intent.acceptance_criteria,
-                issue_type=intent.issue_type,
-                priority=intent.priority,
-                labels=intent.labels,
-            )
-        except JiraAPIError as exc:
-            await self._transition(PipelineStatus.ERROR, str(exc))
-            raise
+        """Create the active task-backend record from a validated intent."""
+        if self._settings.demo_mode:
+            if self._demo_tasks is None:
+                raise RuntimeError("Demo task store is not available.")
 
-        await self._transition(
-            PipelineStatus.DONE,
-            f"Ticket created: {issue.key} — {issue.url}",
-        )
+            await self._transition(
+                PipelineStatus.CREATING,
+                "Saving approved task to demo workspace…",
+            )
+            task = self._demo_tasks.create_task(
+                title=intent.summary,
+                description=intent.description,
+                priority=intent.priority,
+            )
+            task_ref = str(task["id"])
+            task_url = str(task.get("url") or "")
+        else:
+            await self._transition(
+                PipelineStatus.CREATING,
+                "Saving approved task to Linear…",
+            )
+            linear = self._get_linear()
+            try:
+                issue = await linear.create_issue(
+                    title=intent.summary,
+                    description=intent.description,
+                    priority=self._priority_to_linear(intent.priority),
+                )
+            except LinearAPIError as exc:
+                await self._transition(PipelineStatus.ERROR, str(exc))
+                raise
+
+            task_ref = issue.task_ref
+            task_url = issue.url
+
+        completion_message = f"Task saved: {task_ref}"
+        if task_url:
+            completion_message = f"{completion_message} — {task_url}"
+
+        await self._transition(PipelineStatus.DONE, completion_message)
         self._monitor.set_task_info(title=intent.summary, status="completed")
 
-        # Auto-dispatch to Ralph Loop queue
         if self._settings.auto_dispatch_loop and self._loop_queue is not None:
-            queued = self._loop_queue.add_ticket(issue.key, intent.summary)
+            queued = self._loop_queue.add_task(task_ref, intent.summary)
             if queued and self._broadcast:
                 await self._broadcast(
                     {
-                        "type": "ticket_queued",
-                        "issue_key": issue.key,
+                        "type": "task_queued",
+                        "task_ref": task_ref,
                         "summary": intent.summary,
                     }
                 )
 
         return PipelineResult(
             session_id=session_id,
-            ticket_key=issue.key,
-            ticket_url=issue.url,
+            task_ref=task_ref,
+            task_url=task_url,
             summary=intent.summary,
             transcribed_text=text,
         )
+
+    @staticmethod
+    def _priority_to_linear(priority: str) -> int | None:
+        normalized = priority.strip().lower()
+        if normalized in {"highest", "urgent"}:
+            return 1
+        if normalized == "high":
+            return 2
+        if normalized == "medium":
+            return 3
+        if normalized in {"low", "lowest"}:
+            return 4
+        return None
 
     async def close(self) -> None:
         """Release all held resources on app shutdown."""
@@ -578,6 +611,6 @@ class PipelineOrchestrator:
             await self._transcriber.close()
         if self._extractor:
             await self._extractor.close()
-        if self._jira:
-            await self._jira.close()
+        if self._linear:
+            await self._linear.close()
         self._sessions.clear()

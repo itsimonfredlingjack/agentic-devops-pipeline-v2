@@ -172,14 +172,14 @@ npm --workspace desktop run electron:dev
 | **Tactical instruction** | Type instruction, click PIVOT | Instruction sent to monitor |
 | **Connection status** | Stop voice backend | Connection status shows disconnected |
 
-### Test the Jira proxy
+### Test the task inbox API
 
 ```bash
-# List issues
-curl http://localhost:8000/api/jira/issues
+# List tasks
+curl http://localhost:8000/api/tasks
 
-# Get single issue
-curl http://localhost:8000/api/jira/issue/DEV-42
+# Get single task
+curl http://localhost:8000/api/tasks/SEJ-42
 ```
 
 ### Test session controls
@@ -192,9 +192,6 @@ curl -X POST http://localhost:8110/sessions/test-session/abort
 curl -X POST http://localhost:8110/sessions/test-session/instructions \
   -H "Content-Type: application/json" \
   -d '{"message": "Focus on the error handling first"}'
-
-# Checkpoint
-curl -X POST http://localhost:8110/sessions/test-session/checkpoint
 
 # Check signals (what the hook reads)
 curl http://localhost:8110/sessions/test-session/signals
@@ -299,12 +296,11 @@ The ultimate test: voice → Jira → autonomous loop → PR.
    # PR exists
    gh pr list --state open
 
-   # Jira ticket transitioned
-   # Check in Jira UI or:
-   curl http://localhost:8000/api/jira/issue/<TICKET_KEY>
+   # Task still available in tracker:
+   curl http://localhost:8000/api/tasks/<TASK_REF>
 
    # Loop log exists
-   cat data/loop-logs/<TICKET_KEY>.log
+   cat data/loop-logs/<TASK_REF>.log
    ```
 
 ---
@@ -314,7 +310,7 @@ The ultimate test: voice → Jira → autonomous loop → PR.
 | Problem | Cause | Fix |
 |---------|-------|-----|
 | Preflight fails "not on main" | On a feature branch | `git checkout main` |
-| Preflight fails "Jira connection" | Missing .env credentials | Check JIRA_URL, JIRA_EMAIL, JIRA_API_TOKEN |
+| Preflight fails "environment configured" | Missing required local files | Restore `.claude/settings.local.json` and `CURRENT_TASK.md` |
 | Whisper timeout | ai-server2 overloaded | Check GPU usage: `ssh ai-server2 nvidia-smi` |
 | Loop runner "claude not found" | Claude Code not installed | Install Claude Code CLI |
 | Desktop shows mock data | Voice backend not running | Start voice pipeline on :8000 |

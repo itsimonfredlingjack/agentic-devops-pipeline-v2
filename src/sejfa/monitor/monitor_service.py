@@ -1,8 +1,8 @@
 """
-MonitorService: Manages workflow state and event logging for Claude Code monitoring.
+MonitorService: Manages workflow state and event logging for loop monitoring.
 
 Tracks which node is currently active in the agentic loop
-(JIRA, CLAUDE, GITHUB, JULES, ACTIONS) and maintains a real-time
+(INTAKE, CLAUDE, GITHUB, JULES, ACTIONS) and maintains a real-time
 event log for dashboard visualization.
 """
 
@@ -24,7 +24,7 @@ class MonitorService:
     """Manages real-time monitoring state for the Claude Code agentic loop."""
 
     # Valid node IDs in the workflow
-    VALID_NODES = {"jira", "claude", "github", "jules", "actions"}
+    VALID_NODES = {"intake", "claude", "github", "jules", "actions"}
 
     def __init__(self, max_events: int = 100):
         """
@@ -50,7 +50,7 @@ class MonitorService:
         Update the active node and log the transition.
 
         Args:
-            node_id: Node identifier (jira, claude, github, jules, actions)
+            node_id: Node identifier (intake, claude, github, jules, actions)
             state: Node state (active, inactive)
             message: Status message for the node
 

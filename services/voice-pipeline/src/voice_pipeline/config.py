@@ -4,6 +4,7 @@ All configuration is loaded from environment variables (or .env file).
 """
 
 from functools import lru_cache
+from typing import Literal
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -39,11 +40,38 @@ class Settings(BaseSettings):
     ollama_url: str = Field(default="http://localhost:11434", description="Ollama API base URL")
     ollama_timeout: int = Field(default=120, description="Ollama request timeout in seconds")
 
-    # Jira integration
-    jira_url: str = Field(default="", description="Jira base URL")
-    jira_email: str = Field(default="", description="Jira account email")
-    jira_api_token: str = Field(default="", description="Jira API token")
-    jira_project_key: str = Field(default="", description="Default Jira project key")
+    # Linear integration
+    sejfa_mode: Literal["auto", "demo", "full"] = Field(
+        default="auto",
+        description="Runtime mode: auto prefers full when Linear is configured, otherwise demo.",
+    )
+    linear_api_url: str = Field(
+        default="https://api.linear.app/graphql",
+        description="Linear GraphQL API endpoint",
+    )
+    linear_api_key: str = Field(default="", description="Linear personal API key")
+    linear_team_id: str = Field(
+        default="",
+        description="Default Linear team UUID for task creation",
+    )
+    linear_team_key: str = Field(
+        default="",
+        description="Default Linear team key for task creation when UUID is not set",
+    )
+
+    # Local desktop trust boundary
+    sejfa_local_api_token: str = Field(
+        default="",
+        description="Bearer token required for desktop-facing local task APIs",
+    )
+    sejfa_cors_origins: str = Field(
+        default="",
+        description="Comma-separated browser origins allowed to call local APIs",
+    )
+    sejfa_cors_origin_regex: str = Field(
+        default=r"^https?://(localhost|127\.0\.0\.1):\d+$",
+        description="Regex for local browser origins allowed by CORS",
+    )
 
     # OpenAI fallback (optional)
     openai_api_key: str = Field(default="", description="OpenAI API key for Whisper fallback")
@@ -53,12 +81,12 @@ class Settings(BaseSettings):
         default=0.3, description="Ambiguity score above which clarification is requested"
     )
     max_clarification_rounds: int = Field(
-        default=3, description="Max clarification rounds before forcing ticket creation"
+        default=3, description="Max clarification rounds before forcing task creation"
     )
 
     # Ralph Loop dispatch
     auto_dispatch_loop: bool = Field(
-        default=True, description="Auto-queue tickets for Ralph Loop after creation"
+        default=True, description="Auto-queue tasks for Ralph Loop after creation"
     )
     queue_db_path: str = Field(
         default="loop_queue.db",
@@ -72,14 +100,45 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO", description="Logging level")
 
     @property
-    def jira_configured(self) -> bool:
-        """True if all required Jira credentials are set."""
-        return bool(self.jira_url and self.jira_email and self.jira_api_token)
+    def linear_configured(self) -> bool:
+        """True if the Linear API key is set."""
+        return bool(self.linear_api_key)
+
+    @property
+    def effective_mode(self) -> Literal["demo", "full"]:
+        """Return the resolved runtime mode."""
+        if self.sejfa_mode == "demo":
+            return "demo"
+        if self.sejfa_mode == "full":
+            return "full"
+        return "full" if self.linear_configured else "demo"
+
+    @property
+    def demo_mode(self) -> bool:
+        """True when the app should serve the local demo flow."""
+        return self.effective_mode == "demo"
 
     @property
     def openai_configured(self) -> bool:
         """True if OpenAI API key is set (enables Whisper API fallback)."""
         return bool(self.openai_api_key)
+
+    @property
+    def cors_origins(self) -> list[str]:
+        """Explicit local browser origins allowed by CORS."""
+        if self.sejfa_cors_origins.strip():
+            return [
+                origin.strip()
+                for origin in self.sejfa_cors_origins.split(",")
+                if origin.strip()
+            ]
+        return [
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://localhost:5174",
+            "http://127.0.0.1:5174",
+            "null",
+        ]
 
 
 @lru_cache

@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 48px;
-  background: var(--phase-surface-bg), var(--surface-monitor-bg);
+  padding: 16px;
+  background: var(--bg-canvas);
   animation: fadeIn var(--motion-context);
   overflow-y: auto;
 }
@@ -14,21 +14,27 @@
 }
 
 .header {
-  margin-bottom: 40px;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.5fr) minmax(360px, 1fr);
+  gap: 14px;
+  align-items: end;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .filters {
   display: grid;
   grid-template-columns: minmax(220px, 1fr) 180px 180px;
   gap: 12px;
-  margin-bottom: 18px;
+  margin-bottom: 0;
 }
 
 .filterInput,
 .filterSelect {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--surface-monitor-border);
-  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
   color: var(--text-primary);
   font-size: 13px;
   padding: 10px 12px;
@@ -39,49 +45,77 @@
 }
 
 .title {
-  font-size: var(--type-display-size);
-  line-height: var(--type-display-line);
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.2;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   color: var(--text-primary);
-  margin-bottom: 8px;
 }
 
 .subtitle {
-  font-size: var(--type-section-size);
-  line-height: var(--type-section-line);
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.35;
   color: var(--text-muted);
 }
 
 .loading {
-  font-family: var(--font-mono);
-  font-size: var(--type-body-size);
-  color: var(--status-info);
-  text-align: center;
-  padding: 100px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 0;
+}
+
+.skeletonRow {
+  display: grid;
+  grid-template-columns: 120px 120px 1fr 100px 120px;
+  padding: 10px 12px;
+  gap: 12px;
+  align-items: center;
+}
+
+.skeletonLine {
+  composes: skeleton-line skeleton from global;
+  width: 80%;
+  height: 12px;
+}
+
+.skeletonLineShort {
+  composes: skeleton-line skeleton from global;
+  width: 50%;
+  height: 12px;
+}
+
+.skeletonLineTiny {
+  composes: skeleton-line skeleton from global;
+  width: 36px;
+  height: 12px;
+}
+
+.skeletonPill {
+  composes: skeleton-line skeleton from global;
+  width: 56px;
+  height: 20px;
+  border-radius: 4px;
 }
 
 .sessionList {
   display: flex;
   flex-direction: column;
-  border-collapse: collapse;
   width: 100%;
-}
-
-.sessionList thead,
-.sessionList tbody {
-  display: contents;
 }
 
 .listHeader {
   display: grid;
   grid-template-columns: 120px 120px 1fr 100px 120px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--surface-monitor-border);
-  font-family: var(--font-mono);
-  font-size: 10px;
+  min-height: 38px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--glass-border);
+  font-family: var(--font-body);
+  font-size: 11px;
   color: var(--text-muted);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.04em;
   font-weight: 600;
   text-align: left;
 }
@@ -89,7 +123,8 @@
 .sessionRow {
   display: grid;
   grid-template-columns: 120px 120px 1fr 100px 120px;
-  padding: 16px;
+  min-height: 46px;
+  padding: 8px 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   font-size: var(--type-body-size);
   line-height: var(--type-body-line);
@@ -102,8 +137,8 @@
   background: rgba(255, 255, 255, 0.035);
 }
 
-.detailRow td {
-  padding: 0 16px 16px;
+.detailRow {
+  padding: 0 12px 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
@@ -111,8 +146,8 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(220px, 1fr));
   gap: 14px 20px;
-  padding: 14px 16px;
-  border-radius: 10px;
+  padding: 12px;
+  border-radius: 6px;
   border: 1px solid rgba(148, 163, 184, 0.16);
   background: rgba(255, 255, 255, 0.02);
 }
@@ -120,10 +155,9 @@
 .detailLabel {
   display: block;
   color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.03em;
   margin-bottom: 4px;
 }
 
@@ -181,7 +215,7 @@
 }
 
 .empty {
-  padding: 100px 0;
+  padding: 48px 0;
   text-align: center;
   color: var(--text-muted);
   font-size: var(--type-section-size);
@@ -197,8 +231,43 @@
   margin-top: 4px;
 }
 
+.errorState {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--status-danger);
+  font-size: var(--type-section-size);
+  line-height: var(--type-section-line);
+}
+
+.errorState strong,
+.errorState span {
+  display: block;
+}
+
+.errorState span {
+  margin-top: 6px;
+  color: var(--text-muted);
+}
+
+.retryButton {
+  margin-top: 18px;
+  padding: 9px 14px;
+  border: 1px solid var(--status-danger-border);
+  border-radius: 6px;
+  background: var(--status-danger-bg);
+  color: var(--status-danger);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.retryButton:hover {
+  background: rgba(239, 68, 68, 0.16);
+}
+
 .container[data-density="compact"] {
-  padding: 28px;
+  padding: 12px;
 }
 
 .container[data-density="compact"] .header {
@@ -225,11 +294,77 @@
   padding: 10px 12px;
 }
 
-.container[data-density="compact"] .detailRow td {
+.container[data-density="compact"] .detailRow {
   padding: 0 12px 10px;
 }
 
 .container[data-density="compact"] .detailGrid {
   gap: 10px 14px;
   padding: 10px 12px;
+}
+
+/* Narrow viewport: stack filters and simplify columns */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+
+  .header {
+    grid-template-columns: 1fr;
+    align-items: start;
+    margin-bottom: 12px;
+  }
+
+  .filters {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .listHeader {
+    display: none;
+  }
+
+  .sessionRow {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 4px 12px;
+    padding: 12px;
+  }
+
+  .sessionId {
+    grid-column: 1;
+  }
+
+  .ticketId {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .cost {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .outcome {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .detailGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 16px 12px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .sessionRow {
+    padding: 10px 8px;
+  }
 }

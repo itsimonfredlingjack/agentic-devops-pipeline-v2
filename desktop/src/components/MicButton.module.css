@@ -1,9 +1,11 @@
 .mic {
-  width: 64px;
-  height: 64px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   border: 2px solid var(--glass-border);
   background: var(--glass-bg-strong);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: var(--text-secondary);
   cursor: pointer;
   display: grid;
@@ -21,15 +23,17 @@
   border-color: var(--glass-border-hover);
   color: var(--text-primary);
   background: var(--glass-bg-hover);
+  transform: scale(1.06);
 }
 
 .mic:disabled {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: not-allowed;
+  transform: none;
 }
 
 .mic:focus-visible {
-  box-shadow: 0 0 0 3px rgba(88, 86, 214, 0.4);
+  box-shadow: var(--focus-ring);
   outline: none;
 }
 
@@ -37,27 +41,27 @@
   border-color: var(--phase-listening);
   color: var(--phase-listening);
   box-shadow:
-    0 0 24px rgba(48, 176, 199, 0.3),
-    inset 0 0 12px rgba(48, 176, 199, 0.1);
-  animation: pulse 1.5s ease-in-out infinite;
+    0 0 30px rgba(var(--phase-listening-rgb), 0.35),
+    inset 0 0 16px rgba(var(--phase-listening-rgb), 0.12);
+  animation: pulse 2s ease-in-out infinite;
 }
 
 @keyframes pulse {
   0%, 100% { 
-    box-shadow: 0 0 24px rgba(48, 176, 199, 0.3), inset 0 0 12px rgba(48, 176, 199, 0.1);
+    box-shadow: 0 0 30px rgba(var(--phase-listening-rgb), 0.35), inset 0 0 16px rgba(var(--phase-listening-rgb), 0.12);
     transform: scale(1);
     background: var(--glass-bg-strong);
   }
   50% { 
-    box-shadow: 0 0 40px rgba(48, 176, 199, 0.6), inset 0 0 20px rgba(48, 176, 199, 0.25);
-    transform: scale(1.05);
-    background: rgba(48, 176, 199, 0.15);
+    box-shadow: 0 0 50px rgba(var(--phase-listening-rgb), 0.65), inset 0 0 28px rgba(var(--phase-listening-rgb), 0.3);
+    transform: scale(1.08);
+    background: rgba(var(--phase-listening-rgb), 0.18);
   }
 }
 
 .icon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 @media (prefers-reduced-motion: reduce) {

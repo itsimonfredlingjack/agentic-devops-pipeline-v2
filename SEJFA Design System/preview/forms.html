@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+html,body{margin:0;padding:0}
+body{background:var(--bg);padding:16px;font-family:var(--font-sans);display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fld{display:flex;flex-direction:column;gap:4px}
+.lbl{font-family:var(--font-mono);font-size:10px;color:var(--fg3);text-transform:uppercase;letter-spacing:0.12em}
+.in{font-family:var(--font-mono);font-size:13px;padding:8px 10px;background:#fff;border:1px solid var(--ink-300);border-radius:3px;color:var(--fg1);outline:none}
+.in:focus{border-color:var(--loop-500);box-shadow:0 0 0 3px rgba(67,163,20,0.18)}
+.in.err{border-color:#C8372E}
+.help{font-family:var(--font-mono);font-size:10px;color:var(--fg3)}
+.help.err{color:#C8372E}
+.tog{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px}
+.sw{width:32px;height:18px;background:var(--ink-300);border-radius:999px;position:relative;transition:background var(--dur-2)}
+.sw.on{background:var(--loop-500)}
+.sw::before{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left var(--dur-2)}
+.sw.on::before{left:16px}
+</style></head>
+<body>
+<div class="fld"><div class="lbl">Jira issue</div><input class="in" value="GE-42"></div>
+<div class="fld"><div class="lbl">Branch</div><input class="in" value="feature/GE-42-crud"></div>
+<div class="fld"><div class="lbl">Email</div><input class="in err" value="not-an-email"><div class="help err">must be a valid email</div></div>
+<div class="fld"><div class="lbl">Ralph loop</div><label class="tog"><span class="sw on"></span>persist until green</label></div>
+</body></html>

@@ -22,6 +22,11 @@ def _monitor_events_url() -> str:
     return f"{raw}/events"
 
 
+def _auth_headers() -> dict[str, str]:
+    token = os.getenv("SEJFA_LOCAL_API_TOKEN") or os.getenv("MONITOR_API_SECRET")
+    return {"Authorization": f"Bearer {token}"} if token else {}
+
+
 def post_event(event: dict[str, Any]) -> None:
     """POST event to Monitor API. Silently fails if API is down."""
     try:
@@ -29,7 +34,7 @@ def post_event(event: dict[str, Any]) -> None:
         req = urllib.request.Request(
             _monitor_events_url(),
             data=data,
-            headers={"Content-Type": "application/json"},
+            headers={"Content-Type": "application/json", **_auth_headers()},
             method="POST",
         )
         urllib.request.urlopen(req, timeout=TIMEOUT_S)

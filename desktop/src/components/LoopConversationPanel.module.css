@@ -98,7 +98,7 @@
   transition: border-color var(--motion-fast), background var(--motion-fast);
 }
 
-.searchInput:focus {
+.searchInput:focus-visible {
   outline: none;
   border-color: var(--glass-border-hover);
   background: rgba(255, 255, 255, 0.05);
@@ -125,7 +125,7 @@
   transition: border-color var(--motion-fast);
 }
 
-.senderFilter select:focus {
+.senderFilter select:focus-visible {
   outline: none;
   border-color: var(--glass-border-hover);
 }
@@ -177,6 +177,12 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .messageCard {
+    animation: none;
+  }
+}
+
 .messageCard.from-user {
   border-left: 3px solid var(--status-info);
 }
@@ -201,7 +207,7 @@
 }
 
 .senderChip {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 11px;
   letter-spacing: 0.1em;
   color: var(--text-primary);
@@ -236,7 +242,7 @@
 
 .statusChip {
   width: fit-content;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 11px;
   border: 1px solid var(--status-info-border);
   color: var(--status-info);
@@ -273,7 +279,7 @@
   border: 1px solid var(--glass-border);
   padding: 7px 12px;
   color: var(--text-muted);
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 11px;
   text-transform: uppercase;
   background: rgba(255, 255, 255, 0.03);
@@ -306,7 +312,7 @@
   transition: border-color var(--motion-fast), background var(--motion-fast);
 }
 
-.composerInput:focus {
+.composerInput:focus-visible {
   outline: none;
   border-color: var(--glass-border-hover);
   background: rgba(255, 255, 255, 0.05);
@@ -321,7 +327,7 @@
   border-radius: 8px;
   border: 1px solid var(--loop-500);
   background: var(--loop-500);
-  color: #0f1e07;
+  color: var(--text-primary);
   font-weight: 700;
   letter-spacing: 0.06em;
   font-size: 12px;
@@ -340,7 +346,7 @@
   padding: 10px 14px 12px;
   color: var(--vault-400);
   font-size: 11px;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   border-top: 1px solid var(--glass-border);
 }
 

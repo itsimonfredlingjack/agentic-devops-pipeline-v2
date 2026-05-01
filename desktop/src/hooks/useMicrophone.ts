@@ -30,6 +30,7 @@ export function detectPermissionFromError(error: unknown): MicrophonePermissionS
 
 export function useMicrophone() {
   const voiceUrl = useAppStore((s) => s.voiceUrl);
+  const apiToken = useAppStore((s) => s.apiToken);
 
   const [recording, setRecording] = useState(false);
   const [permissionStatus, setPermissionStatus] = useState<MicrophonePermissionStatus>("unknown");
@@ -177,6 +178,53 @@ export function useMicrophone() {
       store.setPipelineStatus("error");
     }
   }, [voiceUrl]);
+
+  const sendTextIntake = useCallback(
+    async (text: string) => {
+      const trimmed = text.trim();
+      if (!trimmed) return;
+
+      const store = useAppStore.getState();
+      store.setPipelineStatus("processing");
+      store.setProcessingStep("Processing text intake…");
+      setErrorMessage(null);
+
+      try {
+        const response = await fetch(`${voiceUrl}/api/pipeline/run`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(apiToken ? { Authorization: `Bearer ${apiToken}` } : {}),
+          },
+          body: JSON.stringify({ text: trimmed }),
+        });
+
+        if (!response.ok) {
+          setErrorMessage(`Text intake returned HTTP ${response.status}`);
+          store.setPipelineStatus("error");
+          return;
+        }
+
+        const data = await response.json();
+        const result = applyPipelineServerResult(data, {
+          setPipelineStatus: store.setPipelineStatus,
+          setProcessingStep: store.setProcessingStep,
+          setClarification: store.setClarification,
+          setPreview: store.setPreview,
+          setTaskRef: store.setTaskRef,
+        });
+
+        if (result === "unknown") {
+          setErrorMessage("Text intake returned an unknown response shape.");
+          store.setPipelineStatus("error");
+        }
+      } catch {
+        setErrorMessage("Failed to submit text intake.");
+        store.setPipelineStatus("error");
+      }
+    },
+    [voiceUrl, apiToken],
+  );
 
   const startRecording = useCallback(async () => {
     if (recording) {
@@ -355,5 +403,6 @@ export function useMicrophone() {
     errorMessage,
     startRecording,
     stopRecording,
+    sendTextIntake,
   };
 }

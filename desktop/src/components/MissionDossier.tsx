@@ -9,245 +9,115 @@ interface MissionDossierProps {
   variant?: "editor" | "preflight";
 }
 
-export function MissionDossier({ targetedTask, variant = "editor" }: MissionDossierProps) {
+export function MissionDossier({ targetedTask, variant: _variant }: MissionDossierProps) {
   const voiceUrl = useAppStore((state) => state.voiceUrl);
   const apiToken = useAppStore((state) => state.apiToken);
-  const [title, setTitle] = useState(targetedTask?.title ?? "");
-  const [description, setDescription] = useState(targetedTask?.description ?? "");
+  const [intent, setIntent] = useState("");
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
-    setTitle(targetedTask?.title ?? "");
-    setDescription(targetedTask?.description ?? "");
+    setIntent("");
     setSaveState("idle");
-    setStatusMessage(null);
-    setCopied(false);
-  }, [targetedTask?.id, targetedTask?.title, targetedTask?.description]);
+  }, [targetedTask?.id]);
 
   if (!targetedTask) {
     return (
-      <article className={styles.dossierEmpty} aria-label="No task selected">
-        <h4 className={styles.emptyTitle}>No task selected</h4>
+      <div className={styles.empty}>
+        <span className={styles.emptyIcon}>⚡</span>
+        <p className={styles.emptyTitle}>Select a task or describe a new mission</p>
         <p className={styles.emptyText}>
-          Choose a task from the inbox or create a new one through intake to load the current loop context.
+          Use the command prompt above or pick a task from the inbox to load the loop context.
         </p>
-      </article>
+      </div>
     );
   }
 
   const statusLabel = targetedTask.status.replace("-", " ");
-  const startCommand = `/start-task ${targetedTask.id}`;
   const isDemoTask = targetedTask.id.startsWith("DEMO-");
-  const saveButtonLabel = isDemoTask ? "Save demo task" : "Save to Linear";
-  const saveSuccessLabel = isDemoTask
-    ? `Saved ${targetedTask.id} in the demo workspace.`
-    : `Saved ${targetedTask.id} to Linear.`;
-  const saveFailureLabel = isDemoTask
-    ? "Could not save this demo task."
-    : "Could not save this task to Linear.";
-  const savePathDescription = isDemoTask
-    ? "This task context writes to the local demo workspace so the loop stays usable without Linear."
-    : "This task context writes directly to Linear through the voice-pipeline backend.";
 
   const handleSave = async () => {
     setSaveState("saving");
-    setStatusMessage(null);
     try {
       await updateTaskRecord(
-        voiceUrl,
+        voiceUrl ?? "",
         targetedTask.id,
         {
-          title: title.trim(),
-          description: description.trim(),
+          title: targetedTask.title,
+          description: (intent.trim() || targetedTask.description) ?? undefined,
           priority: targetedTask.priority,
         },
         { apiToken },
       );
       setSaveState("saved");
-      setStatusMessage(saveSuccessLabel);
-    } catch (error) {
-      setSaveState("error");
-      setStatusMessage(error instanceof Error ? error.message : saveFailureLabel);
-    }
-  };
-
-  const handleCopyStart = async () => {
-    try {
-      await navigator.clipboard.writeText(startCommand);
-      setCopied(true);
     } catch {
-      setCopied(false);
+      setSaveState("error");
     }
   };
-
-  if (variant === "preflight") {
-    return (
-      <article
-        className={styles.preflightContainer}
-        aria-label={`Loop readiness for ${targetedTask.id}`}
-      >
-        <div className={styles.readinessStrip} aria-label="Loop readiness checks">
-          <span className={styles.readinessChip}>Task selected</span>
-          <span className={styles.readinessChip}>Start command ready</span>
-          <span className={styles.readinessChip}>Verification pending</span>
-        </div>
-
-        <div className={styles.preflightRows}>
-          <div className={styles.preflightRow}>
-            <span className={styles.preflightLabel}>Target ID</span>
-            <span className={styles.preflightValue}>
-              <span className={styles.preflightPill}>{targetedTask.priority} priority</span>
-              {targetedTask.id}
-            </span>
-          </div>
-          <div className={styles.preflightRow}>
-            <span className={styles.preflightLabel}>Summary</span>
-            <span className={styles.preflightValueStrong}>{targetedTask.title}</span>
-          </div>
-          <div className={styles.preflightRow}>
-            <span className={styles.preflightLabel}>Status</span>
-            <span className={styles.statusPill} data-status={targetedTask.status}>
-              {statusLabel}
-            </span>
-          </div>
-          <div className={styles.preflightRow}>
-            <span className={styles.preflightLabel}>Assignee</span>
-            <span className={styles.preflightValue}>{targetedTask.assignee ?? "Unassigned"}</span>
-          </div>
-        </div>
-
-        <div className={styles.preflightBlock}>
-          <span className={styles.preflightBlockLabel}>Description</span>
-          <p>{targetedTask.description || "No description is available for this task."}</p>
-        </div>
-
-        <div className={styles.preflightBlock}>
-          <span className={styles.preflightBlockLabel}>Context map</span>
-          <div className={styles.preflightContextGrid}>
-            <span>Source</span>
-            <strong>{targetedTask.sourceLabel}</strong>
-            <span>Issue type</span>
-            <strong>{targetedTask.issueType ?? "Task"}</strong>
-            <span>Labels</span>
-            <strong>{targetedTask.labels.length > 0 ? targetedTask.labels.join(", ") : "None"}</strong>
-            <span>Manual start</span>
-            <code>{startCommand}</code>
-          </div>
-        </div>
-      </article>
-    );
-  }
 
   return (
-    <article
-      className={styles.dossierContainer}
-      aria-label={`Task context for ${targetedTask.id}`}
-      data-watermark={targetedTask.id}
-    >
-      <div className={styles.metadataStrip}>
-        <span
-          className={styles.statusPill}
-          data-status={targetedTask.status}
-          aria-label={`Status: ${statusLabel}`}
-        >
+    <div className={styles.container}>
+      {/* Hero intent prompt */}
+      <textarea
+        className={styles.intentPrompt}
+        value={intent}
+        onChange={(e) => setIntent(e.target.value)}
+        placeholder="Describe what you want SEJFA to do…"
+        aria-label="Mission intent"
+        rows={3}
+      />
+
+      {/* Collapsible task details */}
+      <button
+        className={styles.detailsToggle}
+        onClick={() => setShowDetails(!showDetails)}
+        aria-expanded={showDetails}
+      >
+        <span className={styles.detailsId}>{targetedTask.id}</span>
+        <span className={styles.detailsStatus} data-status={targetedTask.status}>
           {statusLabel}
         </span>
-        <span
-          className={styles.priorityPill}
-          data-priority={targetedTask.priority}
-          aria-label={`Priority: ${targetedTask.priority}`}
-        >
-          {targetedTask.priority} priority
-        </span>
-        <span className={styles.metaInline}>
-          <strong>Source</strong>
-          {targetedTask.sourceLabel}
-        </span>
-        {targetedTask.assignee && (
-          <span className={styles.metaInline}>
-            <strong>Assignee</strong>
-            <span className={styles.assigneeGroup}>
-              <span>{targetedTask.assignee}</span>
-            </span>
-          </span>
-        )}
-      </div>
+        <span className={styles.detailsChevron}>{showDetails ? "▾" : "▸"}</span>
+      </button>
 
-      <div className={styles.dossierHero}>
-        <p className={styles.ticketId}>{targetedTask.id}</p>
-        <input
-          className={styles.titleInput}
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          aria-label="Task title"
-        />
-      </div>
-
-      <div className={styles.dossierDetails}>
-        <div className={styles.briefingSection}>
-          <h4 className={styles.sectionHeader}>Description</h4>
-          <textarea
-            className={styles.descriptionEditor}
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            aria-label="Task description"
-          />
-
-          {targetedTask.labels.length > 0 && (
-            <div className={styles.labelSection}>
-              {targetedTask.labels.map((label) => (
-                <span key={label} className={styles.labelPill}>
-                  {label}
-                </span>
-              ))}
+      {showDetails && (
+        <div className={styles.detailsPanel}>
+          <div className={styles.detailRow}>
+            <span className={styles.detailLabel}>Summary</span>
+            <span className={styles.detailValue}>{targetedTask.title}</span>
+          </div>
+          <div className={styles.detailRow}>
+            <span className={styles.detailLabel}>Priority</span>
+            <span className={styles.detailValue}>{targetedTask.priority}</span>
+          </div>
+          {targetedTask.description && (
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Description</span>
+              <span className={styles.detailValue}>{targetedTask.description}</span>
+            </div>
+          )}
+          {targetedTask.assignee && (
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Assignee</span>
+              <span className={styles.detailValue}>{targetedTask.assignee}</span>
             </div>
           )}
         </div>
+      )}
 
-        <div className={styles.contextList}>
-          <div className={styles.contextItem}>
-            <span className={styles.contextLabel}>Save path</span>
-            <span className={styles.contextValue}>{savePathDescription}</span>
-          </div>
-
-          <div className={styles.contextItem}>
-            <span className={styles.contextLabel}>Manual start-task</span>
-            <code className={styles.commandBlock}>{startCommand}</code>
-          </div>
-
-          <div className={styles.contextItem}>
-              <span className={styles.contextLabel}>Run note</span>
-            <span className={styles.contextValue}>
-              Saving the task and starting the Ralph Loop are separate actions by design.
-            </span>
-          </div>
-        </div>
+      {/* Action bar */}
+      <div className={styles.actions}>
+        <button
+          className={styles.btnPrimary}
+          onClick={() => void handleSave()}
+          disabled={saveState === "saving"}
+        >
+          {saveState === "saving" ? "Saving…" : isDemoTask ? "Save Draft" : "Submit to Loop"}
+        </button>
+        <span className={styles.actionStatus}>
+          {saveState === "saved" ? "✓ Saved" : saveState === "error" ? "✗ Failed" : ""}
+        </span>
       </div>
-
-      <footer className={styles.actionArea}>
-        <div className={styles.actionGroup}>
-          <button
-            type="button"
-            className={styles.primaryButton}
-            onClick={() => void handleSave()}
-            disabled={saveState === "saving" || !title.trim()}
-          >
-            {saveState === "saving" ? "Saving…" : saveButtonLabel}
-          </button>
-          <button type="button" className={styles.secondaryButton} onClick={() => void handleCopyStart()}>
-            {copied ? "Copied /start-task" : "Copy /start-task"}
-          </button>
-          {targetedTask.url && (
-            <a className={styles.linkButton} href={targetedTask.url} target="_blank" rel="noreferrer">
-              Open source record
-            </a>
-          )}
-        </div>
-
-        <span className={styles.ctaStatus}>{statusMessage ?? "Task record ready"}</span>
-      </footer>
-    </article>
+    </div>
   );
 }

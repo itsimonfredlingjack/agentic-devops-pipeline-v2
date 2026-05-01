@@ -7,6 +7,10 @@ interface MetricsBarProps {
   successRate: number;
   tokens?: number;
   retries?: number;
+  incident?: {
+    state: string;
+    text: string;
+  } | null;
 }
 
 export function MetricsBar({
@@ -16,13 +20,16 @@ export function MetricsBar({
   successRate,
   tokens,
   retries,
+  incident,
 }: MetricsBarProps) {
   return (
     <div className={styles.metricsBar}>
-      <div className={styles.incident}>
-        <span className={styles.incidentState}>Partial failure</span>
-        <span className={styles.incidentText}>test.run failed 2 assertions · verify.health still running</span>
-      </div>
+      {incident && (
+        <div className={styles.incident}>
+          <span className={styles.incidentState}>{incident.state}</span>
+          <span className={styles.incidentText}>{incident.text}</span>
+        </div>
+      )}
       <MetricCard label="Tool calls" value={toolCalls.toString()} variant="default" />
       <MetricCard label="Burn" value={`$${cost.toFixed(2)}`} variant="warning" />
       <MetricCard label="Run time" value={duration} variant="default" />

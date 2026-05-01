@@ -151,7 +151,7 @@
 }
 
 .promptPrefix {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   color: var(--status-info);
   font-size: 14px;
   font-weight: 600;

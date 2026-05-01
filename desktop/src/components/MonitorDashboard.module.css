@@ -107,7 +107,7 @@
 
 .telLabel {
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--vault-400);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -131,7 +131,7 @@
 
 .densityLabel {
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--vault-400);
   letter-spacing: 0.06em;
 }
@@ -218,8 +218,8 @@
 }
 
 .loopNodeKey {
-  font-family: var(--font-mono);
-  font-size: 10px;
+  font-family: var(--font-body);
+  font-size: 11px;
   color: var(--vault-400);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -240,7 +240,7 @@
 }
 
 .loopLane {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 11px;
   color: var(--vault-400);
   letter-spacing: 0.04em;
@@ -291,7 +291,7 @@
 
 .panelTitle {
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--vault-400);
   letter-spacing: 0.14em;
   font-weight: 700;
@@ -299,7 +299,7 @@
 }
 
 .liveIndicator {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 11px;
   color: var(--loop-300);
   animation: pulseOpacity 2.5s infinite ease-in-out;
@@ -308,6 +308,14 @@
 @keyframes pulseOpacity {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .monitorDash,
+  .pulseActive,
+  .liveIndicator {
+    animation: none;
+  }
 }
 
 .qualityCard {
@@ -322,7 +330,7 @@
 
 .cardTitle {
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--vault-400);
   letter-spacing: 0.14em;
   margin-bottom: 14px;
@@ -347,7 +355,7 @@
 .metricRow span:first-child {
   color: var(--vault-400);
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 600;
@@ -408,7 +416,7 @@
 
 .subLabel {
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--vault-400);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -425,7 +433,7 @@
   font-family: var(--font-mono);
   font-size: 11px;
   background: rgba(200, 55, 46, 0.12);
-  color: #e69189;
+  color: var(--status-danger);
   padding: 3px 8px;
   border-radius: 6px;
   border: 1px solid var(--status-danger-border);

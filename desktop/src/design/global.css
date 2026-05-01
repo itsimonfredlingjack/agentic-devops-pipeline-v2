@@ -1,4 +1,4 @@
-@import './tokens.css';
+@import '../index.css';
 
 * {
   margin: 0;
@@ -67,4 +67,10 @@ body {
 
 .animate-pulse {
   animation: pulse 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse {
+    animation: none;
+  }
 }

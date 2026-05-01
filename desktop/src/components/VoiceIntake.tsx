@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Mic, MicOff, Keyboard } from "lucide-react";
+import { useAppStore } from "../stores/appStore";
 import styles from "./VoiceIntake.module.css";
 
 interface Task {
@@ -12,6 +14,7 @@ interface VoiceIntakeProps {
   recording: boolean;
   onStartVoice: () => void;
   onStopVoice: () => void;
+  onTextIntake: (text: string) => void;
   permissionStatus: string;
   inputLevel: number;
   errorMessage: string | null;
@@ -22,64 +25,118 @@ export function VoiceIntake({
   recording,
   onStartVoice,
   onStopVoice,
+  onTextIntake,
+  permissionStatus,
+  inputLevel,
   errorMessage,
 }: VoiceIntakeProps) {
+  const { phase, processingStep, pipelineStatus } = useAppStore();
+  const [promptText, setPromptText] = useState("");
+  const isExecuting = phase === "loop" || phase === "done" || phase === "error";
+  const isCollapsed = isExecuting && !recording;
+  const isIdleHero = phase === "idle" && !recording && !selectedTask;
+
+  const handleSubmitPrompt = () => {
+    const text = promptText.trim();
+    if (!text) return;
+    onTextIntake(text);
+    setPromptText("");
+  };
+
+  const processingLabel =
+    recording
+      ? "Recording… speak your task context"
+      : processingStep || (pipelineStatus === "processing" ? "Processing intake…" : "");
+
   return (
-    <div className={styles.panel}>
-      <div className={styles.header}>
-        <div className={styles.title}>Voice Intake</div>
-        <div className={styles.subtitle}>Human Context</div>
-      </div>
-
-      <div className={styles.body}>
-        {selectedTask && (
-          <div className={styles.contextBox}>
-            <div className={styles.contextLabel}>Selected Task</div>
-            <div className={styles.contextId}>{selectedTask.id}</div>
-            <div className={styles.contextTitle}>{selectedTask.title}</div>
-            {selectedTask.branch && (
-              <div className={styles.contextMeta}>{selectedTask.branch}</div>
-            )}
+    <div className={`${styles.centerpiece} ${isCollapsed ? styles.collapsed : ""}`} data-recording={recording ? "true" : "false"} data-phase={phase}>
+      {isIdleHero && (
+        <div className={styles.idleHero}>
+          <div className={styles.idleWordmark} aria-label="SEJFA">
+            {"SEJFA".split("").map((letter, index) => (
+              <span key={`${letter}-${index}`} className={styles.idleLetter}>
+                {letter}
+              </span>
+            ))}
           </div>
-        )}
+          <p className={styles.idleTagline}>
+            Select a task or hold <kbd>⌘</kbd><kbd>⇧</kbd><kbd>V</kbd> to speak
+          </p>
+        </div>
+      )}
 
-        <div className={styles.inputSection}>
+      {!isIdleHero && (
+        <>
+          {/* Large mic button */}
           <button
-            className={`${styles.micButton} ${recording ? styles.micRecording : ""}`}
+            className={`${styles.micLarge} ${recording ? styles.micActive : ""}`}
             onMouseDown={onStartVoice}
             onMouseUp={onStopVoice}
             onMouseLeave={recording ? onStopVoice : undefined}
-            title="Hold to record"
+            aria-label={recording ? "Stop recording" : "Start recording"}
+            disabled={permissionStatus === "denied"}
           >
-            {recording ? <MicOff size={20} /> : <Mic size={20} />}
+            {recording ? <MicOff size={36} strokeWidth={1.5} /> : <Mic size={36} strokeWidth={1.5} />}
           </button>
 
+          {/* Hint text */}
           <div className={styles.hint}>
             <Keyboard size={12} />
             <span>Hold cmd+shift+V to record</span>
           </div>
 
-          {recording && (
-            <div className={styles.recordingIndicator}>
-              <div className={styles.recordingDot} />
-              <span>Recording...</span>
+          {/* Live transcription area */}
+          {(recording || pipelineStatus === "processing" || Boolean(processingStep)) && (
+            <div className={styles.transcript}>
+              <div className={styles.recordingIndicator}>
+                <div className={styles.recordingDot} />
+                <span>{processingLabel}</span>
+              </div>
+              {recording && (
+                <div className={styles.levelBar} aria-hidden="true">
+                  <div
+                    className={styles.levelFill}
+                    style={{ width: `${Math.max(4, Math.round(inputLevel * 100))}%` }}
+                  />
+                </div>
+              )}
             </div>
           )}
-        </div>
+        </>
+      )}
 
-        {errorMessage && (
-          <div className={styles.error}>{errorMessage}</div>
-        )}
-
-        <div className={styles.injectSection}>
-          <button className={styles.injectButton} disabled={!selectedTask}>
-            Inject into Current Loop
-          </button>
-          <div className={styles.injectHint}>
-            Context will be added without changing the selected task target
-          </div>
+      {/* SEJFA prompt line */}
+      {!isCollapsed && !isIdleHero && (
+        <div className={styles.promptLine}>
+          <input
+            className={styles.promptInput}
+            value={promptText}
+            onChange={(event) => setPromptText(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                handleSubmitPrompt();
+              }
+            }}
+            placeholder={isExecuting ? "Add context or command…" : "Describe what you want SEJFA to do…"}
+            disabled={isExecuting}
+            aria-label="SEJFA command prompt"
+          />
         </div>
-      </div>
+      )}
+
+      {/* Task context — subtle, below prompt */}
+      {selectedTask && !isCollapsed && !isIdleHero && (
+        <div className={styles.contextChip}>
+          <span className={styles.contextId}>{selectedTask.id}</span>
+          <span className={styles.contextTitle}>{selectedTask.title}</span>
+        </div>
+      )}
+
+      {/* Error message */}
+      {errorMessage && (
+        <div className={styles.error}>{errorMessage}</div>
+      )}
     </div>
   );
 }

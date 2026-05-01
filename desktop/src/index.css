@@ -71,6 +71,128 @@
   /* TRANSITIONS */
   --motion-fast: 150ms ease;
   --motion-normal: 250ms ease;
+  --transition-normal: 250ms ease;
+  --motion-context: 400ms;
+
+  /* GLASS / VAULT SYSTEM (orphaned tokens now defined) */
+  --glass-border: rgba(139, 160, 202, 0.12);
+  --glass-border-hover: rgba(139, 160, 202, 0.20);
+  --glass-bg: rgba(10, 16, 30, 0.90);
+  --glass-bg-strong: rgba(18, 27, 47, 0.96);
+  --glass-bg-hover: rgba(255, 255, 255, 0.04);
+  --glass-blur: 12px;
+  --glass-radius: 8px;
+  --glass-radius-lg: 12px;
+
+  /* VAULT TEXT SCALE */
+  --vault-50: rgba(244, 247, 255, 0.96);
+  --vault-100: rgba(244, 247, 255, 0.88);
+  --vault-400: rgba(201, 213, 236, 0.56);
+
+  /* LOOP / STATUS COLORS — semantic tokens for state indicators */
+  /* Use --status-* for badges, pills, alerts, blocker cards, monitor states */
+  --status-success: #78e0a6;
+  --status-success-bg: rgba(16, 185, 129, 0.08);
+  --status-success-border: rgba(120, 224, 166, 0.3);
+  --status-success-glow: rgba(120, 224, 166, 0.3);
+
+  --status-danger: #ff7d88;
+  --status-danger-bg: rgba(239, 68, 68, 0.04);
+  --status-danger-border: rgba(255, 125, 136, 0.3);
+  --status-danger-glow: rgba(255, 125, 136, 0.3);
+
+  --status-warning: #ffce73;
+  --status-warning-bg: rgba(245, 158, 11, 0.08);
+  --status-warning-border: rgba(255, 206, 115, 0.3);
+  --status-warning-glow: rgba(255, 206, 115, 0.3);
+
+  --status-info: #79d4ff;
+  --status-info-bg: rgba(121, 212, 255, 0.14);
+  --status-info-border: rgba(121, 212, 255, 0.3);
+
+  /* LOOP RUNNER COLORS — decorative, specific to PipelineStageRail / loop UI */
+  --loop-500: #10b981;
+  --loop-300: #78e0a6;
+  --loop-600: #059669;
+
+  /* PHASE */
+  --phase-listening: #0EA5E9;
+  --active-phase-rgb: 14, 165, 233;
+  --phase-listening-rgb: 14, 165, 233;
+
+  /* TYPE SCALE */
+  --type-body-size: 13px;
+  --type-body-line: 1.5;
+  --type-section-size: 14px;
+  --type-section-line: 1.4;
+  --type-meta-size: 10px;
+  --type-meta-line: 1.4;
+
+  /* MISC ORPHANS */
+  --void: #000000;
+  --abyss: #060912;
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.45);
+  --shadow-hud: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow-red: 0 0 16px rgba(255, 71, 87, 0.25);
+  --shadow-glow-cyan: 0 0 16px rgba(0, 212, 255, 0.25);
+  --shadow-glow-green: 0 0 16px rgba(0, 214, 143, 0.25);
+  --border-subtle: rgba(139, 160, 202, 0.12);
+  --chip-bg-loop: rgba(16, 185, 129, 0.08);
+  --chip-bg-task: rgba(59, 130, 246, 0.08);
+  --color-text-primary: rgba(244, 247, 255, 0.96);
+  --color-text-secondary: rgba(201, 213, 236, 0.78);
+  --color-text-muted: rgba(153, 169, 201, 0.72);
+  --color-accent-loop: #10b981;
+  --color-accent-task: #3b82f6;
+  --focus-ring: 0 0 0 2px rgba(59, 130, 246, 0.20);
+
+  /* PRIMARY ACTION COLORS (used in buttons, CTAs) */
+  --primary-500: #3b82f6;
+  --primary-600: #2563eb;
+  --primary-400: #4f8bf9;
+  --primary-soft: rgba(59, 130, 246, 0.14);
+
+  /* TEXT LABELS */
+  --text-label: #71717a;
+  --text-tertiary: #a1a1aa;
+
+  /* LEGACY ALIASES (tokens.css compat) */
+  --font-sans: var(--font-body);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --canvas: var(--bg-canvas);
+  --surface: var(--bg-panel);
+  --elevated: var(--bg-card);
+  --elevated-hover: var(--bg-hover);
+  --input: var(--bg-input);
+
+  --cyan: var(--neon-cyan);
+  --cyan-dim: var(--neon-cyan-dim);
+  --cyan-glow: var(--neon-cyan-glow);
+
+  --green: var(--neon-green);
+  --green-dim: var(--neon-green-dim);
+  --green-glow: var(--neon-green-glow);
+
+  --amber: var(--neon-amber);
+  --amber-dim: var(--neon-amber-dim);
+  --amber-glow: var(--neon-amber-glow);
+
+  --red: var(--neon-red);
+  --red-dim: var(--neon-red-dim);
+  --red-glow: var(--neon-red-glow);
+
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139, 92, 246, 0.12);
+  --purple-glow: rgba(139, 92, 246, 0.25);
+
+  --border: var(--border-default);
+  --space-8: 32px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
 }
 
 * {

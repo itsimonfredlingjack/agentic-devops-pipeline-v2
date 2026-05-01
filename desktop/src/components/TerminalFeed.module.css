@@ -58,7 +58,7 @@
 .statusText {
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-dim);
 }
@@ -109,6 +109,12 @@
 
 @keyframes pulse {
   50% { opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
 }
 
 .codeBlock {

@@ -26,7 +26,7 @@
 }
 
 .subtitle {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-muted);
   margin-top: 2px;
   font-family: var(--font-mono);
@@ -37,7 +37,7 @@
   align-items: center;
   gap: 6px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--green);
   letter-spacing: 0.06em;
@@ -69,7 +69,7 @@
 
 .failureLabel {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -89,7 +89,7 @@
   gap: 12px;
   padding: 10px 18px;
   border-bottom: 1px solid var(--border);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -145,7 +145,7 @@
 }
 
 .status {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
   padding: 2px 8px;
@@ -154,7 +154,7 @@
 }
 
 .duration {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-dim);
 }
 
@@ -220,6 +220,12 @@
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liveDot {
+    animation: none;
+  }
 }
 
 @media (max-width: 768px) {

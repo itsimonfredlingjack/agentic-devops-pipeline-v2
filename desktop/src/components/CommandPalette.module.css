@@ -67,7 +67,7 @@
 .groupLabel {
   padding: 10px 12px 6px;
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.1em;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -88,8 +88,9 @@
   transition: background var(--motion-fast), transform var(--motion-fast);
 }
 
-.commandItem:focus {
+.commandItem:focus-visible {
   outline: none;
+  box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.35);
 }
 
 .commandItem:hover {
@@ -138,14 +139,14 @@
 
 .itemShortcut {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-muted);
   letter-spacing: 0.05em;
 }
 
 .itemMeta {
-  font-family: var(--font-body);
-  font-size: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   color: var(--text-muted);
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -191,5 +192,5 @@
   border: 1px solid var(--glass-border);
   border-radius: 5px;
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 11px;
 }

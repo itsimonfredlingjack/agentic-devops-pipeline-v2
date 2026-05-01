@@ -82,7 +82,7 @@ function useMcpBridge() {
   const [payload, setPayload] = useState<MissionPayload | null>(
     window.openai?.toolOutput ?? null,
   );
-  const [status, setStatus] = useState("Connecting to host bridge…");
+  const [status, setStatus] = useState("Connecting…");
   const requestId = useRef(0);
   const pending = useRef(new Map<number, { resolve: (value: any) => void; reject: (error: any) => void }>());
 
@@ -91,36 +91,23 @@ function useMcpBridge() {
       if (event.source !== window.parent) return;
       const message = event.data;
       if (!message || message.jsonrpc !== "2.0") return;
-
       if ("id" in message && typeof message.id === "number") {
         const pendingRequest = pending.current.get(message.id);
         if (!pendingRequest) return;
         pending.current.delete(message.id);
-        if (message.error) {
-          pendingRequest.reject(message.error);
-        } else {
-          pendingRequest.resolve(message.result);
-        }
+        if (message.error) pendingRequest.reject(message.error);
+        else pendingRequest.resolve(message.result);
         return;
       }
-
       if ("method" in message && message.method === "ui/notifications/tool-result") {
         setPayload(message.params?.structuredContent ?? null);
-        setStatus("Live mission context ready");
-      }
-
-      if ("method" in message && message.method === "ui/notifications/tool-input" && !payload) {
-        setStatus("Waiting for mission data…");
+        setStatus("Live");
       }
     };
-
     window.addEventListener("message", onMessage as EventListener, { passive: true });
     void initializeBridge();
-
-    return () => {
-      window.removeEventListener("message", onMessage as EventListener);
-    };
-  }, [payload]);
+    return () => window.removeEventListener("message", onMessage as EventListener);
+  }, []);
 
   async function initializeBridge() {
     try {
@@ -130,10 +117,8 @@ function useMcpBridge() {
         protocolVersion: "2026-01-26",
       });
       rpcNotify("ui/notifications/initialized", {});
-      setStatus(window.openai?.toolOutput ? "Live mission context ready" : "Bridge initialized");
-    } catch (error) {
-      console.error("Bridge initialization failed", error);
-      setStatus("Bridge initialization failed");
+    } catch {
+      setStatus("Offline");
     }
   }
 
@@ -145,28 +130,13 @@ function useMcpBridge() {
     return new Promise<any>((resolve, reject) => {
       const id = ++requestId.current;
       pending.current.set(id, { resolve, reject });
-      const request: JsonRpcRequest = { jsonrpc: "2.0", id, method, params };
-      window.parent.postMessage(request, "*");
+      window.parent.postMessage({ jsonrpc: "2.0", id, method, params } as JsonRpcRequest, "*");
     });
   }
 
   async function callTool(name: string, args?: Record<string, unknown>) {
-    if (window.openai?.callTool) {
-      const result = await window.openai.callTool(name, args);
-      if (result?.structuredContent) {
-        setPayload(result.structuredContent);
-      }
-      return result;
-    }
-
-    const result = await rpcRequest("tools/call", {
-      name,
-      arguments: args ?? {},
-    });
-    if (result?.structuredContent) {
-      setPayload(result.structuredContent);
-    }
-    return result;
+    if (window.openai?.callTool) return window.openai.callTool(name, args);
+    return rpcRequest("tools/call", { name, arguments: args ?? {} });
   }
 
   async function sendFollowUpMessage(prompt: string) {
@@ -174,254 +144,135 @@ function useMcpBridge() {
       await window.openai.sendFollowUpMessage({ prompt });
       return;
     }
-
-    rpcNotify("ui/message", {
-      role: "user",
-      content: [{ type: "text", text: prompt }],
-    });
+    rpcNotify("ui/message", { role: "user", content: [{ type: "text", text: prompt }] });
   }
 
   return { payload, status, callTool, sendFollowUpMessage };
 }
 
-function formatMoney(value?: number) {
-  if (typeof value !== "number") return "pending";
-  return `$${value.toFixed(4)}`;
-}
-
 function statusTone(status?: string) {
   switch ((status ?? "").toLowerCase()) {
-    case "passed":
-    case "completed":
-    case "done":
-      return "good";
-    case "failed":
-    case "blocked":
-      return "bad";
-    case "running":
-    case "queued":
-      return "active";
-    default:
-      return "pending";
+    case "passed": case "completed": case "done": return "good";
+    case "failed": case "blocked": return "bad";
+    case "running": case "queued": return "active";
+    default: return "pending";
   }
 }
 
 export default function App() {
   const { payload, status, callTool, sendFollowUpMessage } = useMcpBridge();
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
-  const [shareStatus, setShareStatus] = useState<string | null>(null);
 
-  const latestSession = payload?.active_session ?? payload?.latest_session ?? null;
   const headline = useMemo(() => {
     const taskRef = payload?.task?.task_ref ?? payload?.task?.key ?? payload?.ticket?.key;
     const summary = payload?.task?.summary ?? payload?.ticket?.summary;
-    if (taskRef) {
-      return `${taskRef} ${summary ? `· ${summary}` : ""}`;
-    }
-    return "No active objective";
+    if (taskRef) return `${taskRef}${summary ? ` · ${summary}` : ""}`;
+    return "No mission loaded — ask \"what's my current task?\" to begin.";
   }, [payload]);
 
-  async function handleRefresh() {
-    setLoadingAction("refresh");
-    try {
-      const result = await callTool("get_active_mission");
-      if (result?.structuredContent) {
-        await callTool("render_mission_dashboard");
-      }
-    } finally {
-      setLoadingAction(null);
-    }
-  }
+  const handleRefresh = () => {
+    setLoadingAction("r");
+    callTool("get_active_mission").finally(() => setLoadingAction(null));
+  };
 
-  useEffect(() => {
-    if (!shareStatus) return;
-    const timeout = window.setTimeout(() => setShareStatus(null), 3500);
-    return () => window.clearTimeout(timeout);
-  }, [shareStatus]);
+  const handleAskReview = () => {
+    setLoadingAction("a");
+    sendFollowUpMessage(
+      "Review the current SEJFA mission, UI flow, and implementation context. Point out what looks underspecified, risky, or worth improving next.",
+    ).finally(() => setLoadingAction(null));
+  };
 
-  async function handleLoadEvents() {
-    if (!latestSession?.session_id) return;
-    setLoadingAction("events");
-    try {
-      await callTool("get_session_events", { session_id: latestSession.session_id, limit: 16 });
-    } finally {
-      setLoadingAction(null);
-    }
-  }
-
-  async function handleShareMission() {
-    setLoadingAction("share");
-    setShareStatus(null);
-    try {
-      const result = await callTool("get_mission_share", {
-        session_id: latestSession?.session_id,
-        task_ref: latestSession?.task_ref ?? payload?.task?.task_ref ?? payload?.task?.key ?? payload?.ticket?.key,
-      });
-      const share = result?.structuredContent?.share ?? payload?.share;
-      const shareText = share?.text;
-      if (!shareText) {
-        setShareStatus("Share link unavailable right now.");
-        return;
-      }
-      await navigator.clipboard.writeText(shareText);
-      setShareStatus("Share brief copied. Paste it into Slack, Jira, or chat.");
-    } catch (error) {
-      console.error("Share copy failed", error);
-      setShareStatus("Couldn’t copy the share brief.");
-    } finally {
-      setLoadingAction(null);
-    }
-  }
-
-  async function handleAskReview() {
-    setLoadingAction("review");
-    try {
-      await sendFollowUpMessage(
-        "Review the current SEJFA mission, UI flow, and implementation context. Point out what looks underspecified, risky, or worth improving next.",
-      );
-    } finally {
-      setLoadingAction(null);
-    }
-  }
+  const events = payload?.latest_events ?? [];
+  const gates = payload?.gates ?? [];
+  const alerts = payload?.alerts ?? [];
+  const connections = payload?.connections ?? {};
 
   return (
     <main className="shell">
-      <section className="hero card">
-        <div className="eyebrow">SEJFA ChatGPT Companion</div>
-        <div className="heroRow">
-          <div>
-            <h1>{payload?.phase_label ?? "Idle"}</h1>
-            <p className="headline">{headline}</p>
+      {/* Status bar */}
+      <header className="statusBar">
+        <span className={`statusDot tone-${statusTone(payload?.mission_phase)}`} />
+        <span className="phaseLabel">{payload?.phase_label ?? "Idle"}</span>
+        <span className="taskRef">{headline}</span>
+        <span className="connectionBadge">{status}</span>
+      </header>
+
+      {/* Threaded messages */}
+      <section className="thread">
+        {/* Sentinel gates as inline badges */}
+        {gates.length > 0 && (
+          <div className="gateRow">
+            {gates.map((gate) => (
+              <span key={gate.name} className={`gateBadge tone-${statusTone(gate.status)}`}>
+                {gate.name}: {gate.status}
+              </span>
+            ))}
           </div>
-          <div className={`phaseBadge tone-${statusTone(payload?.mission_phase)}`}>
-            {(payload?.mission_phase ?? "idle").replace("_", " ")}
+        )}
+
+        {/* Alerts as system messages */}
+        {alerts.map((alert, i) => (
+          <div key={`alert-${i}`} className="message system">
+            <div className="messageMeta">
+              <span className="sender">System</span>
+              <span className="time">alert</span>
+            </div>
+            <p className="messageBody">{alert}</p>
           </div>
-        </div>
-        <p className="statusLine">{status}</p>
-      </section>
+        ))}
 
-      <section className="grid">
-        <div className="column">
-          <article className="card">
-            <div className="sectionTitle">Mission Snapshot</div>
-            <div className="statGrid">
-              <div className="stat">
-                <span>Session</span>
-                <strong>{latestSession?.session_id ?? "waiting"}</strong>
-              </div>
-              <div className="stat">
-                <span>Outcome</span>
-                <strong>{latestSession?.outcome ?? "in progress"}</strong>
-              </div>
-              <div className="stat">
-                <span>Cost</span>
-                <strong>{formatMoney(latestSession?.total_cost_usd)}</strong>
-              </div>
-              <div className="stat">
-                <span>Events</span>
-                <strong>{latestSession?.total_events ?? 0}</strong>
-              </div>
+        {/* Connections as system message */}
+        {Object.keys(connections).length > 0 && (
+          <div className="message system">
+            <div className="messageMeta">
+              <span className="sender">System</span>
+              <span className="time">connections</span>
             </div>
-          </article>
-
-          <article className="card">
-            <div className="sectionTitle">Sentinels</div>
-            <div className="gateGrid">
-              {(payload?.gates ?? []).map((gate) => (
-                <div key={gate.name} className={`gateCard tone-${statusTone(gate.status)}`}>
-                  <span>{gate.name}</span>
-                  <strong>{gate.status}</strong>
-                </div>
-              ))}
-              {(!payload?.gates || payload.gates.length === 0) && (
-                <div className="empty">Sentinels appear after your first gate runs.</div>
-              )}
-            </div>
-          </article>
-
-          <article className="card">
-            <div className="sectionTitle">Connections</div>
-            <div className="connectionList">
-              {Object.entries(payload?.connections ?? {}).map(([name, value]) => (
-                <div key={name} className="connectionRow">
-                  <span>{name}</span>
-                  <strong>{value.reachable ? `online${value.status_code ? ` (${value.status_code})` : ""}` : "offline"}</strong>
-                </div>
-              ))}
-              {Object.keys(payload?.connections ?? {}).length === 0 && (
-                <div className="empty">Connections will show once the monitor API is reachable.</div>
-              )}
-            </div>
-          </article>
-        </div>
-
-        <div className="column">
-          <article className="card">
-            <div className="sectionTitle">Recent Activity</div>
-            <div className="timeline">
-              {(payload?.latest_events ?? []).map((event, index) => (
-                <div key={event.event_id ?? `${event.timestamp}-${index}`} className="timelineItem">
-                  <div className={`dot tone-${statusTone(event.error ? "failed" : event.success === false ? "failed" : "running")}`} />
-                  <div className="timelineBody">
-                    <div className="timelineHeader">
-                      <strong>{event.tool_name ?? "Event"}</strong>
-                      <span>{event.timestamp ?? ""}</span>
-                    </div>
-                    <p>{event.error ?? event.tool_args_summary ?? "No detail provided."}</p>
-                  </div>
-                </div>
-              ))}
-              {(!payload?.latest_events || payload.latest_events.length === 0) && (
-                <div className="empty">Events appear as the loop progresses.</div>
-              )}
-            </div>
-          </article>
-
-          <article className="card">
-            <div className="sectionTitle">Alerts</div>
-            {payload?.alerts && payload.alerts.length > 0 ? (
-              <ul className="alertList">
-                {payload.alerts.map((alert) => (
-                  <li key={alert}>{alert}</li>
-                ))}
-              </ul>
-            ) : (
-              <div className="empty">No active alerts.</div>
-            )}
-          </article>
-
-          <article className="card actionDock">
-            <div className="sectionTitle">Read-only Actions</div>
-            {payload?.share?.url && (
-              <div className="shareCallout">
-                <strong>Shareable snapshot</strong>
-                <p>{payload.share.url}</p>
-                <span>
-                  Opens tracked: {payload.share.metrics?.mission_share_opened ?? 0}
+            <p className="messageBody">
+              {Object.entries(connections).map(([name, v]) => (
+                <span key={name} className="inlineBadge">
+                  {name}: {v.reachable ? "online" : "offline"}
                 </span>
-              </div>
-            )}
-            {shareStatus && <div className="shareStatus">{shareStatus}</div>}
-            <div className="buttonRow">
-              <button onClick={handleRefresh} disabled={loadingAction !== null}>
-                {loadingAction === "refresh" ? "Refreshing…" : "Refresh Mission"}
-              </button>
-              <button onClick={handleShareMission} disabled={loadingAction !== null}>
-                {loadingAction === "share" ? "Copying…" : "Share Mission Link"}
-              </button>
-              <button
-                onClick={handleLoadEvents}
-                disabled={loadingAction !== null || !latestSession?.session_id}
-              >
-                {loadingAction === "events" ? "Loading…" : "Load Session Events"}
-              </button>
-              <button onClick={handleAskReview} disabled={loadingAction !== null}>
-                {loadingAction === "review" ? "Asking…" : "Ask for Review"}
-              </button>
+              ))}
+            </p>
+          </div>
+        )}
+
+        {/* Event messages */}
+        {events.map((event, index) => (
+          <div
+            key={event.event_id ?? `evt-${index}`}
+            className={`message ${event.error ? "error" : ""}`}
+          >
+            <div className="messageMeta">
+              <span className="sender">{event.tool_name ?? "Event"}</span>
+              <span className="time">{event.timestamp ?? ""}</span>
             </div>
-          </article>
-        </div>
+            <p className="messageBody">
+              {event.error ?? event.tool_args_summary ?? "Loading event details — refresh if needed."}
+            </p>
+            {event.success !== null && (
+              <span className={`outcomePill ${event.success === false ? "fail" : "ok"}`}>
+                {event.success === false ? "failed" : "ok"}
+              </span>
+            )}
+          </div>
+        ))}
+
+        {events.length === 0 && alerts.length === 0 && (
+          <div className="threadEmpty">Events appear as the loop progresses.</div>
+        )}
       </section>
+
+      {/* Action bar */}
+      <footer className="actionBar">
+        <button className="ghost" onClick={handleRefresh} disabled={loadingAction !== null}>
+          Refresh
+        </button>
+        <button className="primary" onClick={handleAskReview} disabled={loadingAction !== null}>
+          {loadingAction === "a" ? "Asking…" : "Ask for Review"}
+        </button>
+      </footer>
     </main>
   );
 }

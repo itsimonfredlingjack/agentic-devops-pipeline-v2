@@ -14,7 +14,24 @@
   gap: 16px;
   padding: 14px 24px;
   border-bottom: 1px solid var(--border-default);
+  border-top: 3px solid transparent;
   background: var(--bg-workspace);
+}
+
+.workspace[data-phase="listening"] .topBar {
+  border-top-color: var(--neon-cyan);
+}
+
+.workspace[data-phase="loop"] .topBar {
+  border-top-color: var(--neon-magenta);
+}
+
+.workspace[data-phase="done"] .topBar {
+  border-top-color: var(--neon-green);
+}
+
+.workspace[data-phase="error"] .topBar {
+  border-top-color: var(--neon-red);
 }
 
 .topBarLeft {
@@ -50,51 +67,10 @@
   border: 1px solid var(--border-default);
   background: var(--bg-panel);
   color: var(--text-secondary);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.phasePill[data-phase="listening"] {
-  color: var(--neon-cyan);
-  border-color: var(--border-cyan);
-  background: var(--neon-cyan-dim);
-  box-shadow: var(--glow-cyan);
-}
-
-.phasePill[data-phase="loop"] {
-  color: var(--neon-magenta);
-  border-color: var(--border-magenta);
-  background: var(--neon-magenta-dim);
-  box-shadow: var(--glow-magenta);
-}
-
-.phasePill[data-phase="done"] {
-  color: var(--neon-green);
-  border-color: var(--border-green);
-  background: var(--neon-green-dim);
-  box-shadow: var(--glow-green);
-}
-
-.phasePill[data-phase="error"] {
-  color: var(--neon-red);
-  border-color: var(--neon-red);
-  background: var(--neon-red-dim);
-  box-shadow: var(--glow-red);
-}
-
-.avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: var(--bg-card);
-  border: 1px solid var(--border-default);
+  font-family: var(--font-body);
+  font-size: 11px;
   color: var(--text-secondary);
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 10px;
 }
 
@@ -128,7 +104,8 @@
 }
 
 .metricLabel {
-  font-size: 10px;
+  font-family: var(--font-body);
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -180,7 +157,8 @@
 }
 
 .panelTitle {
-  font-size: 10px;
+  font-family: var(--font-body);
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
